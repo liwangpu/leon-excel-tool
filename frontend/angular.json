@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "leon-ng11-learn": {
+    "excel-tool": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -38,7 +38,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "image/dist",
+            "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -93,24 +93,24 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "port": 9002,
-            "browserTarget": "leon-ng11-learn:build"
+            "browserTarget": "excel-tool:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "leon-ng11-learn:build:production"
+              "browserTarget": "excel-tool:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "leon-ng11-learn:build"
+            "browserTarget": "excel-tool:build"
           }
         }
       }
     }
   },
-  "defaultProject": "leon-ng11-learn",
+  "defaultProject": "excel-tool",
   "cli": {
     "analytics": false
   }

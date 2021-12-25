@@ -1,17 +1,11 @@
-import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Component, OnInit, ChangeDetectionStrategy, Input, Injector, ChangeDetectorRef, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { NzModalRef, NzModalService } from 'ng-zorro-antd/modal';
-import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
-import { Subscription } from 'rxjs';
-import * as fromService from '../../services';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, Inject } from '@angular/core';
+import { NzModalService } from 'ng-zorro-antd/modal';
 import { API_GATEWAY } from 'src/app/tokens';
 import { OtherEditComponent } from '../other-edit/other-edit.component';
 import { filter } from 'rxjs/operators';
-
-interface IFormValue {
-
-}
+import { saveAs } from 'file-saver';
+import * as faker from 'faker';
 
 @Component({
   selector: 'app-other',
@@ -21,25 +15,32 @@ interface IFormValue {
 export class OtherComponent implements OnInit {
 
   public datas: Array<Object> = [];
-
+  public exportUrl: string;
   public constructor(
     @Inject(NzModalService)
-    private readonly modal: NzModalService
+    private readonly modal: NzModalService,
+    @Inject(API_GATEWAY)
+    protected apiGateway: string,
+    protected readonly http: HttpClient,
   ) {
+    this.exportUrl = `${this.apiGateway}/EmployedStatistic/ExportOther`;
   }
 
   public ngOnInit(): void {
+
   }
 
-  public export(): void {
-
+  public exportExcel(): void {
+    this.http.post(this.exportUrl, { datas: this.datas }, { responseType: 'blob' })
+      .subscribe(res => {
+        saveAs(res, `${faker.datatype.uuid()}.xlsx`);
+      });
   }
 
   public uploadExcel(): void {
     const ref = this.modal.create({
       nzTitle: '上传表格',
       nzContent: OtherEditComponent,
-      // nzViewContainerRef: this.viewContainerRef,
       nzWrapClassName: 'excel-tool-modal',
       nzWidth: 700,
       nzMaskClosable: false,
@@ -48,23 +49,14 @@ export class OtherComponent implements OnInit {
       nzCancelText: null,
       nzOkText: null,
       nzComponentParams: {
-        // initValue: {
-        //   componentId: this.componentId
-        // }
       },
     });
 
     ref.afterClose
       .pipe(filter(res => res ? true : false))
       .subscribe((res) => {
-        console.log('res:', res);
         this.datas = res.datas;
-
-        // this.gridRefreshFn();
-        // this.refreshComponent.emit();
       });
   }
-
-
 
 }

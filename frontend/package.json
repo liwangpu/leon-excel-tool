@@ -1,5 +1,5 @@
 {
-  "name": "leon-ng11-learn",
+  "name": "excel-tool",
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
@@ -23,6 +23,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "ng-zorro-antd": "^11.4.2",
+    "file-saver": "^2.0.2",
     "rxjs": "~6.6.0",
     "subsink": "^1.0.1",
     "tslib": "^2.0.0",

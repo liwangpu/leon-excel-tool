@@ -1,5 +1,5 @@
 import { HttpClient, HttpEvent, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
-import { Component, forwardRef, Input, OnInit } from '@angular/core';
+import { Component, forwardRef, Input } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NzUploadFile, NzUploadXHRArgs } from 'ng-zorro-antd/upload';
 import { Subscription } from 'rxjs';
@@ -47,7 +47,6 @@ export class ExcelUploaderComponent implements ControlValueAccessor {
 
   public fileUpload(item: NzUploadXHRArgs): Subscription {
     const formData = new FormData();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.fileList.forEach((file: any) => {
       formData.append('files', file);
     });
