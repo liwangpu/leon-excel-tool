@@ -12,6 +12,7 @@ import { ExcelUploaderComponent } from './components/excel-uploader/excel-upload
 import { OtherEditComponent } from './components/other-edit/other-edit.component';
 import { NzModalModule } from 'ng-zorro-antd/modal';
 import { EditModalComponent } from './components/edit-modal/edit-modal.component';
+import { NzTableModule } from 'ng-zorro-antd/table';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { EditModalComponent } from './components/edit-modal/edit-modal.component
     NzUploadModule,
     NzButtonModule,
     NzModalModule,
+    NzTableModule,
   ],
   providers: [
     EmployedStatisticService

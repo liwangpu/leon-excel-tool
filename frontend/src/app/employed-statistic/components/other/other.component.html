@@ -1,6 +1,32 @@
 <div class="header">
     <button nz-button (click)='uploadExcel()'>上传表格</button>
+    <button nz-button (click)='export()'>导出数据</button>
 </div>
 <div class="content">
-
+    <nz-table #basicTable [nzData]="datas">
+        <thead>
+            <tr>
+                <th>公司</th>
+                <th>年度</th>
+                <th>中高级职称</th>
+                <th>国内公司</th>
+                <th>外籍常驻人员</th>
+                <th>大专以上</th>
+                <th>年末从业人员</th>
+                <th>留学归国人员</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of basicTable.data">
+                <td>{{ data['_名称'] }}</td>
+                <td>{{ data['_年度'] }}</td>
+                <td>{{ data['_中高级职称'] }}</td>
+                <td>{{ data['_国内公司'] }}</td>
+                <td>{{ data['_外籍常驻人员'] }}</td>
+                <td>{{ data['_大专以上'] }}</td>
+                <td>{{ data['_年末从业人员'] }}</td>
+                <td>{{ data['_留学归国人员'] }}</td>
+            </tr>
+        </tbody>
+    </nz-table>
 </div>

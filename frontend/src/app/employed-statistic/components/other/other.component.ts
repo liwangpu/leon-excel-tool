@@ -20,6 +20,8 @@ interface IFormValue {
 })
 export class OtherComponent implements OnInit {
 
+  public datas: Array<Object> = [];
+
   public constructor(
     @Inject(NzModalService)
     private readonly modal: NzModalService
@@ -27,6 +29,10 @@ export class OtherComponent implements OnInit {
   }
 
   public ngOnInit(): void {
+  }
+
+  public export(): void {
+
   }
 
   public uploadExcel(): void {
@@ -52,6 +58,7 @@ export class OtherComponent implements OnInit {
       .pipe(filter(res => res ? true : false))
       .subscribe((res) => {
         console.log('res:', res);
+        this.datas = res.datas;
 
         // this.gridRefreshFn();
         // this.refreshComponent.emit();
