@@ -1,0 +1,11 @@
+@import '../common-modal-form.scss';
+
+:host {
+    display: block;
+    width: 100%;
+    height: 380px;
+    padding: 20px 18px;
+    form {
+        @include CommonModalForm;
+    }
+}
