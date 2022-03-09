@@ -1,0 +1,11 @@
+{
+    "files.eol": "\n",
+    "prettier.endOfLine": "lf",
+    "javascript.referencesCodeLens.enabled": true,
+    "typescript.implementationsCodeLens.enabled": true,
+    "typescript.referencesCodeLens.enabled": true,
+    "javascript.implicitProjectConfig.experimentalDecorators": true,
+    "editor.detectIndentation": false,
+    "editor.wordWrap": "on",
+    "typescript.tsdk": "node_modules\\typescript\\lib"
+}

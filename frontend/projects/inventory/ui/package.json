@@ -1,0 +1,14 @@
+{
+    "ngPackage": {
+        "lib": {
+            "entryFile": "index.ts",
+            "umdModuleIds": {
+                "@cxist/mirror-core2": "@cxist/mirror-core2",
+                "@cxist/mirror-approval-flow-designer2": "@cxist/mirror-approval-flow-designer2",
+                "ng-zorro-antd/input": "ng-zorro-antd/input",
+                "ng-zorro-antd/tabs": "ng-zorro-antd/tabs",
+                "subsink": "subsink"
+            }
+        }
+    }
+}

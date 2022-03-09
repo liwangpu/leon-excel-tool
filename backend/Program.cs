@@ -17,7 +17,7 @@ namespace ExcelTool
                     webBuilder.UseStartup<Startup>();
                     webBuilder.UseWebRoot("wwwroot");
 #if DEBUG
-                    webBuilder.UseUrls("http://*:9001");
+                    webBuilder.UseUrls("http://*:3101");
 #endif
                 });
     }

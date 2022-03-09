@@ -15,16 +15,24 @@ import { NzButtonModule } from 'ng-zorro-antd/button';
 import { IconDefinition } from '@ant-design/icons-angular';
 import { MenuFoldOutline, MenuUnfoldOutline } from '@ant-design/icons-angular/icons';
 import { NzIconModule } from 'ng-zorro-antd/icon';
-import { AppConfigService } from './services';
-import { API_GATEWAY } from './tokens';
+import { EnvStoreService } from './services';
+import { API_GATEWAY, ENV_STORE, IEnvStore } from '@pucst/core';
 
 registerLocaleData(zh);
 
 const icons: Array<IconDefinition> = [MenuFoldOutline, MenuUnfoldOutline];
 
-const appInitializerFn: Function = (appConfig: AppConfigService) =>
-    () => appConfig.loadAppConfig();
-const apiGatewayFn: Function = (configSrv: AppConfigService) => `${configSrv.appConfig?.apiGateway}`;
+export function apiGatewayFn(configSrv: EnvStoreService): string {
+    // tslint:disable-next-line: prefer-immediate-return
+    const apiGateway: string = `${configSrv.getEnvConfig().apiGateway}`;
+    return apiGateway;
+}
+
+export function appInitializerFn(store: IEnvStore): Function {
+    // tslint:disable-next-line: prefer-immediate-return
+    const fn: Function = () => store.loadEnvConfig();
+    return fn;
+}
 
 @NgModule({
     declarations: [
@@ -42,19 +50,11 @@ const apiGatewayFn: Function = (configSrv: AppConfigService) => `${configSrv.app
         NzIconModule.forRoot(icons),
     ],
     providers: [
-        AppConfigService,
+        EnvStoreService,
         { provide: NZ_I18N, useValue: zh_CN },
-        {
-            provide: APP_INITIALIZER,
-            useFactory: appInitializerFn,
-            multi: true,
-            deps: [AppConfigService]
-        },
-        {
-            provide: API_GATEWAY,
-            useFactory: apiGatewayFn,
-            deps: [AppConfigService]
-        },
+        { provide: ENV_STORE, useExisting: EnvStoreService },
+        { provide: APP_INITIALIZER, useFactory: appInitializerFn, multi: true, deps: [ENV_STORE] },
+        { provide: API_GATEWAY, useFactory: apiGatewayFn, deps: [EnvStoreService] },
     ],
     bootstrap: [AppComponent]
 })

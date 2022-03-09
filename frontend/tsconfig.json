@@ -1,4 +1,3 @@
-/* To learn more about this file see: https://angular.io/config/tsconfig. */
 {
   "compileOnSave": false,
   "compilerOptions": {
@@ -11,10 +10,44 @@
     "moduleResolution": "node",
     "importHelpers": true,
     "target": "es2015",
+    "paths": {
+      "@env/*": [
+        "src/environments/*"
+      ],
+      "@pucst/shared": [
+        "projects/shared/src/public-api.ts"
+      ],
+      "@pucst/shared/*": [
+        "projects/shared/*"
+      ],
+      "@pucst/inventory": [
+        "projects/shared/src/public-api.ts"
+      ],
+      "@pucst/inventory/*": [
+        "projects/inventory/*"
+      ],
+      "@pucst/core": [
+        "projects/core/src/public-api.ts"
+      ],
+      "@pucst/core/*": [
+        "projects/core/*"
+      ],
+    },
     "module": "es2020",
     "lib": [
       "es2018",
       "dom"
     ]
-  }
+  },
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts",
+    "projects/inventory/src/inventory-routing.module.ts"
+  ],
+  "exclude": [
+    "dist/**",
+    "node_modules/**",
+    "**/test.ts",
+    "**/*.spec.ts"
+  ]
 }

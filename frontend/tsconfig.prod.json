@@ -1,0 +1,43 @@
+/* To learn more about this file see: https://angular.io/config/tsconfig. */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/app",
+    "types": [],
+    "paths": {
+      "@env/*": [
+        "src/environments/*"
+      ],
+      "@pucst/shared": [
+        "dist/shared"
+      ],
+      "@pucst/shared/*": [
+        "dist/shared/*"
+      ],
+      "@pucst/inventory": [
+        "dist/inventory"
+      ],
+      "@pucst/inventory/*": [
+        "dist/inventory/*"
+      ],
+      "@pucst/core": [
+        "dist/core"
+      ],
+      "@pucst/core/*": [
+        "dist/core/*"
+      ],
+    },
+  },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.d.ts"
+  ],
+  "exclude": [
+    "**/test.ts",
+    "**/*.spec.ts"
+  ]
+}
