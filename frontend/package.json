@@ -19,6 +19,7 @@
     "@angular/platform-browser": "~13.2.5",
     "@angular/platform-browser-dynamic": "~13.2.5",
     "@angular/router": "~13.2.5",
+    "@microsoft/signalr": "^6.0.3",
     "faker": "^5.5.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",

@@ -28,8 +28,12 @@ namespace ExcelTool.Models.StockAnalysiss
         public string _一级部门 { get; set; }
         [ExcelColumn("期初数量")]
         public decimal _期初数量 { get; set; }
+        [ExcelColumn("期末数量")]
+        public decimal _期末数量 { get; set; }
         [ExcelColumn("期初金额")]
         public decimal _期初金额 { get; set; }
+        [ExcelColumn("期末金额")]
+        public decimal _期末金额 { get; set; }
         [ExcelColumn("入库数量")]
         public decimal _入库数量 { get; set; }
         [ExcelColumn("入库金额")]
