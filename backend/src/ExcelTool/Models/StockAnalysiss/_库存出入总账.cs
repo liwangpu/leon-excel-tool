@@ -44,5 +44,6 @@ namespace ExcelTool.Models.StockAnalysiss
         public decimal _出库金额 { get; set; }
         [ExcelColumn("销售金额")]
         public decimal _销售金额 { get; set; }
+        public bool _退换或弃置 { get; set; }
     }
 }

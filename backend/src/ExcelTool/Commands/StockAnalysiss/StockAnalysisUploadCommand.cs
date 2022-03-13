@@ -8,12 +8,9 @@ namespace ExcelTool.Commands.StockAnalysiss
 {
     public class StockAnalysisUploadCommand : IRequest<List<_库存出入总账>>
     {
-        [FromForm(Name = "files")]
-        public List<IFormFile> Files { get; set; }
-
-        [FromForm(Name = "name")]
-        public string Name { get; set; }
-        //[FromForm(Name = "componentId")]
-        //public string ComponentId { get; set; }
+        [FromForm(Name = "detailFiles")]
+        public List<IFormFile> DetailFiles { get; set; }
+        [FromForm(Name = "skuMappingFiles")]
+        public List<IFormFile> SKUMappingFiles { get; set; }
     }
 }
