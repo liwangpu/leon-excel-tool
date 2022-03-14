@@ -163,7 +163,7 @@ namespace ExcelTool.Commands.Compensations
                 it._部门 = dep != null ? dep._部门 : "未匹配";
                 // 匹配操作
                 it._需要ERP操作 = list退货单需要EPR处理的.Exists(x => x.DetailedDisposition == it._库存属性);
-                it._需要后台操作 = list退货单需要EPR处理的.Exists(x => x.DetailedDisposition == it._库存属性);
+                it._需要后台操作 = list退货单需要后台处理的.Exists(x => x.DetailedDisposition == it._库存属性);
             });
 
             var list赔偿单需要EPR处理的 = list赔偿处理方案.Where(x => x._需要ERP操作).ToList();
@@ -187,31 +187,31 @@ namespace ExcelTool.Commands.Compensations
             var exportFolder = fileSetting.GenerateTemporaryFolder("export");
 
             #region 打印退货单
-            //var exp退货订单Path = Path.Combine(exportFolder, "亚马逊退货订单.xlsx");
+            var exp退货订单Path = Path.Combine(exportFolder, "亚马逊退货订单.xlsx");
 
-            //using (ExcelPackage package = new ExcelPackage(new FileInfo(exp退货订单Path)))
-            //{
-            //    var workbox = package.Workbook;
-            //    list部门.ForEach(dName =>
-            //    {
-            //        var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
-            //        // ERP操作表
-            //        {
-            //            var sheet = workbox.Worksheets.Add($"{dName} ERP");
-            //            var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
-            //            _生成退货订单Sheet(sheet, datas);
-            //        }
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(exp退货订单Path)))
+            {
+                var workbox = package.Workbook;
+                list部门.ForEach(dName =>
+                {
+                    var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
+                    // ERP操作表
+                    {
+                        var sheet = workbox.Worksheets.Add($"{dName} ERP");
+                        var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
+                        _生成退货订单Sheet(sheet, datas);
+                    }
 
-            //        // 后台操作表
-            //        {
-            //            var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
-            //            var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
-            //            _生成退货订单Sheet(sheet, datas);
-            //        }
-            //    });
+                    // 后台操作表
+                    {
+                        var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
+                        var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
+                        _生成退货订单Sheet(sheet, datas);
+                    }
+                });
 
-            //    package.Save();
-            //}
+                package.Save();
+            }
             #endregion
 
             #region 打印赔偿单

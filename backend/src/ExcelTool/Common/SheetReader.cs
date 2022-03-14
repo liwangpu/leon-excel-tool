@@ -12,7 +12,10 @@ namespace ExcelTool.Common
         public static List<T> From(ExcelWorksheet sheet, int headerRow = 1, int dataRow = 2)
         {
             var mappingType = typeof(T);
-
+            if (sheet.Dimension == null)
+            {
+                return new List<T>();
+            }
             var endColumn = sheet.Dimension.End.Column;
             var endRow = sheet.Dimension.End.Row;
 
