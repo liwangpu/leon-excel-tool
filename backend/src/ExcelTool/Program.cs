@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using NLog.Web;
 
 namespace ExcelTool
 {
@@ -19,6 +20,7 @@ namespace ExcelTool
 #if DEBUG
                     webBuilder.UseUrls("http://*:3101");
 #endif
-                });
+                })
+             .UseNLog();
     }
 }

@@ -179,10 +179,6 @@ namespace ExcelTool.Commands.Compensations
             {
                 var dep = list部门匹配.Find(x => x._店铺名 == it._店铺);
                 it._部门 = dep != null ? dep._部门 : "未匹配";
-                if (it._原因 == "Damaged_Warehouse")
-                {
-                    var aaa = 1;
-                }
                 // 匹配操作
                 var a1 = list赔偿单需要EPR处理的.FirstOrDefault(x => x.reason == it._原因);
                 it._需要ERP操作 = a1 != null;

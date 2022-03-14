@@ -43,7 +43,6 @@ namespace ExcelTool.Commands.EmployedStatistics
             }
             var filePaths = request.Files.Select(f =>
             {
-                var a = 1;
                 var fileName = f.FileName;
                 string pattern = @"\d{4}年";
                 var year = "未知";
@@ -119,10 +118,7 @@ namespace ExcelTool.Commands.EmployedStatistics
                                         {
                                             columnMap._外籍常驻人员 = columnIndex;
                                         }
-                                        switch (v)
-                                        {
 
-                                        }
                                         Console.WriteLine(v.ToString());
                                     }
                                 }

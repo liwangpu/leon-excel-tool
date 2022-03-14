@@ -115,7 +115,6 @@ namespace ExcelTool.Commands.StockAnalysiss
             }
             #endregion
 
-            var a = 1;
             var exportFilePath = Path.Combine(fileSetting.TmpFolder, Guid.NewGuid() + ".xlsx");
             using (ExcelPackage package = new ExcelPackage(new FileInfo(exportFilePath)))
             {
