@@ -51,7 +51,7 @@ namespace ExcelTool.Commands.Compensations
                                 var sheetDatas = SheetReader<_退货订单>.From(sheet);
                                 sheetDatas.ForEach(it =>
                                 {
-                                    it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-"));
+                                    it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
                                 });
                                 list退货订单.AddRange(sheetDatas);
                             }
@@ -79,7 +79,7 @@ namespace ExcelTool.Commands.Compensations
                                 var sheetDatas = SheetReader<_赔偿订单>.From(sheet);
                                 sheetDatas.ForEach(it =>
                                 {
-                                    it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-"));
+                                    it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
                                 });
                                 list赔偿订单.AddRange(sheetDatas);
                             }
@@ -224,30 +224,30 @@ namespace ExcelTool.Commands.Compensations
             #endregion
 
             #region 打印赔偿单
-            var exp赔偿订单Path = Path.Combine(exportFolder, "亚马逊赔偿订单.xlsx");
-            using (ExcelPackage package = new ExcelPackage(new FileInfo(exp赔偿订单Path)))
-            {
-                var workbox = package.Workbook;
-                list部门.ForEach(dName =>
-                {
-                    var _list部门赔偿订单 = list赔偿订单.Where(x => x._部门 == dName).ToList();
+            //var exp赔偿订单Path = Path.Combine(exportFolder, "亚马逊赔偿订单.xlsx");
+            //using (ExcelPackage package = new ExcelPackage(new FileInfo(exp赔偿订单Path)))
+            //{
+            //    var workbox = package.Workbook;
+            //    list部门.ForEach(dName =>
+            //    {
+            //        var _list部门赔偿订单 = list赔偿订单.Where(x => x._部门 == dName).ToList();
 
-                    // ERP操作表
-                    {
-                        var sheet = workbox.Worksheets.Add($"{dName} ERP");
-                        var datas = _list部门赔偿订单.Where(x => x._需要ERP操作).ToList();
-                        _生成赔偿订单Sheet(sheet, datas, "ERP");
-                    }
+            //        // ERP操作表
+            //        {
+            //            var sheet = workbox.Worksheets.Add($"{dName} ERP");
+            //            var datas = _list部门赔偿订单.Where(x => x._需要ERP操作).ToList();
+            //            _生成赔偿订单Sheet(sheet, datas, "ERP");
+            //        }
 
-                    // 后台操作表
-                    {
-                        var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
-                        var datas = _list部门赔偿订单.Where(x => x._需要后台操作).ToList();
-                        _生成赔偿订单Sheet(sheet, datas, "亚马逊后台");
-                    }
-                });
-                package.Save();
-            }
+            //        // 后台操作表
+            //        {
+            //            var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
+            //            var datas = _list部门赔偿订单.Where(x => x._需要后台操作).ToList();
+            //            _生成赔偿订单Sheet(sheet, datas, "亚马逊后台");
+            //        }
+            //    });
+            //    package.Save();
+            //}
             #endregion
             //var memoryStream = new MemoryStream();
             //using (var fs = File.OpenRead(exportFilePath))
@@ -325,20 +325,24 @@ namespace ExcelTool.Commands.Compensations
             // 数据透视
             list.ForEach(it =>
             {
-                var key = $"{it._店铺}{it.ASIN}";
-                var dt = list数据透视.FirstOrDefault(d => d._店铺_ASIN == key);
+                var dt = list数据透视.FirstOrDefault(d => d._店铺 == it._店铺);
                 if (dt == null)
                 {
-                    dt = new _退货赔偿订单数据透视();
-                    dt._数量 = it._数量;
-                    dt._店铺 = it._店铺;
-                    dt.ASIN = it.ASIN;
+                    dt = new _退货赔偿订单数据透视() { _店铺 = it._店铺 };
                     list数据透视.Add(dt);
+                }
+                var asinDt = dt.ASIN.FirstOrDefault(d => d.ASIN == it.ASIN);
+                if (asinDt == null)
+                {
+                    asinDt = new ASINInfo() { ASIN = it.ASIN, _数量 = it._数量 };
+                    dt.ASIN.Add(asinDt);
                 }
                 else
                 {
-                    dt._数量 += it._数量;
+                    asinDt._数量 += it._数量;
                 }
+
+                dt._总数量合计 += it._数量;
             });
 
             _生成数据透视信息(sheet, list数据透视);
@@ -407,24 +411,28 @@ namespace ExcelTool.Commands.Compensations
             }
             #endregion
 
-            var list数据透视 = new List<_退货赔偿订单数据透视>();
             // 数据透视
+            var list数据透视 = new List<_退货赔偿订单数据透视>();
             list.ForEach(it =>
             {
-                var key = $"{it._店铺}{it.ASIN}";
-                var dt = list数据透视.FirstOrDefault(d => d._店铺_ASIN == key);
+                var dt = list数据透视.FirstOrDefault(d => d._店铺 == it._店铺);
                 if (dt == null)
                 {
-                    dt = new _退货赔偿订单数据透视();
-                    dt._数量 = it._赔偿数量_总计;
-                    dt._店铺 = it._店铺;
-                    dt.ASIN = it.ASIN;
+                    dt = new _退货赔偿订单数据透视() { _店铺 = it._店铺 };
                     list数据透视.Add(dt);
+                }
+                var asinDt = dt.ASIN.FirstOrDefault(d => d.ASIN == it.ASIN);
+                if (asinDt == null)
+                {
+                    asinDt = new ASINInfo() { ASIN = it.ASIN, _数量 = it._赔偿数量_总计 };
+                    dt.ASIN.Add(asinDt);
                 }
                 else
                 {
-                    dt._数量 += it._赔偿数量_总计;
+                    asinDt._数量 += it._赔偿数量_总计;
                 }
+
+                dt._总数量合计 += it._赔偿数量_总计;
             });
 
             _生成数据透视信息(sheet, list数据透视);
@@ -435,33 +443,45 @@ namespace ExcelTool.Commands.Compensations
             sheet.Cells[1, 24].Value = "店铺";
             sheet.Cells[1, 25].Value = "ANSIN";
             sheet.Cells[1, 26].Value = "数量";
+            sheet.Cells[1, 27].Value = "总数量";
 
-            var list店铺名称 = list.Select(d => d._店铺).Distinct().ToList();
-            for (int idx = 0, rowIndex = 2; idx < list店铺名称.Count; idx++)
+            //var list店铺名称 = list.Select(d => d._店铺).Distinct().ToList();
+
+            for (int idx = 0, rowIndex = 2; idx < list.Count; idx++)
             {
-                var name = list店铺名称[idx];
+                var data = list[idx];
                 var startIndex = rowIndex;
-                var datas = list.Where(d => d._店铺 == name).ToList();
-                datas.ForEach(it =>
+                for (var ssdx = data.ASIN.Count - 1; ssdx >= 0; ssdx--)
                 {
-                    sheet.Cells[rowIndex, 24].Value = it._店铺;
+                    var it = data.ASIN[ssdx];
+                    sheet.Cells[rowIndex, 24].Value = data._店铺;
                     sheet.Cells[rowIndex, 25].Value = it.ASIN;
                     sheet.Cells[rowIndex, 26].Value = it._数量;
-                    rowIndex++;
-                });
-                var endIndex = rowIndex - 1;
-                if (endIndex - startIndex > 1)
-                {
-                    using (var rng = sheet.Cells[startIndex, 24, endIndex, 24])
+                    sheet.Cells[rowIndex, 27].Value = data._总数量合计;
+                    if (ssdx == 0)
                     {
-                        rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
-                        rng.Merge = true;
+                        if (rowIndex - startIndex > 0)
+                        {
+                            using (var rng = sheet.Cells[startIndex, 24, rowIndex, 24])
+                            {
+                                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                                rng.Merge = true;
+                            }
+
+                            using (var rng = sheet.Cells[startIndex, 27, rowIndex, 27])
+                            {
+                                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                                rng.Merge = true;
+                            }
+                        }
                     }
+                    rowIndex++;
+
                 }
 
-                if (idx == list店铺名称.Count - 1)
+                if (idx == list.Count - 1)
                 {
-                    using (var rng = sheet.Cells[1, 24, endIndex, 26])
+                    using (var rng = sheet.Cells[1, 24, rowIndex - 1, 27])
                     {
                         rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                         rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -469,7 +489,7 @@ namespace ExcelTool.Commands.Compensations
                         rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                     }
 
-                    using (var rng = sheet.Cells[1, 24, 1, 26])
+                    using (var rng = sheet.Cells[1, 24, 1, 27])
                     {
                         rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
                         rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
@@ -477,8 +497,9 @@ namespace ExcelTool.Commands.Compensations
                     sheet.Column(24).Width = 30;
                     sheet.Column(25).Width = 22;
                     sheet.Column(26).Width = 10;
-
-
+                    sheet.Column(27).Width = 10;
+                    sheet.Column(26).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    sheet.Column(27).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 }
             }
         }
@@ -487,8 +508,13 @@ namespace ExcelTool.Commands.Compensations
     class _退货赔偿订单数据透视
     {
         public string _店铺 { get; set; }
+        public List<ASINInfo> ASIN { get; set; } = new List<ASINInfo>();
+        public decimal _总数量合计 { get; set; }
+    }
+
+    class ASINInfo
+    {
         public string ASIN { get; set; }
-        public string _店铺_ASIN { get { return $"{_店铺}{ASIN}"; } }
         public decimal _数量 { get; set; }
     }
 }
