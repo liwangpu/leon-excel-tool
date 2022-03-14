@@ -14,7 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove=".dockerignore" />
     <None Remove=".gitignore" />
+    <None Remove="Dockerfile" />
   </ItemGroup>
 
   <ItemGroup>

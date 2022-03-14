@@ -324,27 +324,27 @@ namespace ExcelTool.Commands.Compensations
 
             var list数据透视 = new List<_退货赔偿订单数据透视>();
             // 数据透视
-            list.ForEach(it =>
-            {
-                var dt = list数据透视.FirstOrDefault(d => d._店铺 == it._店铺);
-                if (dt == null)
-                {
-                    dt = new _退货赔偿订单数据透视() { _店铺 = it._店铺 };
-                    list数据透视.Add(dt);
-                }
-                var asinDt = dt.Items.FirstOrDefault(d => d.Key == it.MSKU);
-                if (asinDt == null)
-                {
-                    asinDt = new ASINInfo() { Key = it.MSKU, _数量 = it._数量 };
-                    dt.Items.Add(asinDt);
-                }
-                else
-                {
-                    asinDt._数量 += it._数量;
-                }
+            //list.ForEach(it =>
+            //{
+            //    var dt = list数据透视.FirstOrDefault(d => d._店铺 == it._店铺);
+            //    if (dt == null)
+            //    {
+            //        dt = new _退货赔偿订单数据透视() { _店铺 = it._店铺 };
+            //        list数据透视.Add(dt);
+            //    }
+            //    var asinDt = dt.Items.FirstOrDefault(d => d.Key == it.MSKU);
+            //    if (asinDt == null)
+            //    {
+            //        asinDt = new ASINInfo() { Key = it.MSKU, _数量 = it._数量 };
+            //        dt.Items.Add(asinDt);
+            //    }
+            //    else
+            //    {
+            //        asinDt._数量 += it._数量;
+            //    }
 
-                dt._总数量合计 += it._数量;
-            });
+            //    dt._总数量合计 += it._数量;
+            //});
 
             _生成数据透视信息(sheet, list数据透视);
         }
@@ -422,24 +422,19 @@ namespace ExcelTool.Commands.Compensations
                     dt = new _退货赔偿订单数据透视() { _店铺 = it._店铺 };
                     list数据透视.Add(dt);
                 }
-                var asinDt = dt.Items.FirstOrDefault(d => d.Key == it.MSKU);
+                var asinDt = dt.Items.FirstOrDefault(d => d.MSKU == it.MSKU);
                 if (asinDt == null)
                 {
-                    asinDt = new ASINInfo() { Key = it.MSKU, _数量 = it._赔偿数量_总计, _金额 = it._总金额 };
+                    asinDt = new StatItem() { MSKU = it.MSKU };
                     dt.Items.Add(asinDt);
                 }
-                else
+
+                var noDt = asinDt._赔偿编号.FirstOrDefault(x => x == it._赔偿编号);
+                if (noDt == null)
                 {
+                    asinDt._赔偿编号.Add(it._赔偿编号);
                     asinDt._数量 += it._赔偿数量_总计;
                     asinDt._金额 += it._总金额;
-                }
-
-                dt._总数量合计 += it._赔偿数量_总计;
-                dt._总金额合计 += it._总金额;
-
-                if (dt._总金额合计 != dt.Items.Select(x => x._金额).Sum())
-                {
-                    var bbb = 1;
                 }
             });
 
@@ -450,27 +445,30 @@ namespace ExcelTool.Commands.Compensations
         {
             sheet.Cells[1, 24].Value = "店铺";
             sheet.Cells[1, 25].Value = "MSKU";
-            sheet.Cells[1, 26].Value = "数量";
-            sheet.Cells[1, 27].Value = "金额";
+            sheet.Cells[1, 26].Value = "赔偿编号";
+            sheet.Cells[1, 27].Value = "数量";
+            //sheet.Cells[1, 28].Value = "金额";
             sheet.Cells[1, 28].Value = "总数量";
-            sheet.Cells[1, 29].Value = "总金额";
+            //sheet.Cells[1, 30].Value = "总金额";
 
             for (int idx = 0, rowIndex = 2; idx < list.Count; idx++)
             {
                 var data = list[idx];
                 var startIndex = rowIndex;
+
                 for (var ssdx = data.Items.Count - 1; ssdx >= 0; ssdx--)
                 {
                     var it = data.Items[ssdx];
 
-                    sheet.Cells[rowIndex, 25].Value = it.Key;
-                    sheet.Cells[rowIndex, 26].Value = it._数量;
-                    sheet.Cells[rowIndex, 27].Value = it._金额;
+                    sheet.Cells[rowIndex, 25].Value = it.MSKU;
+                    sheet.Cells[rowIndex, 26].Value = string.Join(",", it._赔偿编号);
+                    sheet.Cells[rowIndex, 27].Value = it._数量;
+                    //sheet.Cells[rowIndex, 28].Value = it._金额;
                     sheet.Cells[rowIndex, 28].Value = data._总数量合计;
                     if (ssdx == data.Items.Count - 1)
                     {
                         sheet.Cells[rowIndex, 24].Value = data._店铺;
-                        sheet.Cells[rowIndex, 29].Value = data._总金额合计;
+                        //sheet.Cells[rowIndex, 29].Value = data._总金额合计;
                     }
                     if (ssdx == 0)
                     {
@@ -487,11 +485,11 @@ namespace ExcelTool.Commands.Compensations
                                 rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
                                 rng.Merge = true;
                             }
-                            using (var rng = sheet.Cells[startIndex, 29, rowIndex, 29])
-                            {
-                                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
-                                rng.Merge = true;
-                            }
+                            //using (var rng = sheet.Cells[startIndex, 29, rowIndex, 29])
+                            //{
+                            //    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                            //    rng.Merge = true;
+                            //}
                         }
                     }
                     rowIndex++;
@@ -500,7 +498,7 @@ namespace ExcelTool.Commands.Compensations
 
                 if (idx == list.Count - 1)
                 {
-                    using (var rng = sheet.Cells[1, 24, rowIndex - 1, 29])
+                    using (var rng = sheet.Cells[1, 24, rowIndex - 1, 28])
                     {
                         rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                         rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -508,21 +506,21 @@ namespace ExcelTool.Commands.Compensations
                         rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
                     }
 
-                    using (var rng = sheet.Cells[1, 24, 1, 27])
+                    using (var rng = sheet.Cells[1, 24, 1, 28])
                     {
                         rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
                         rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
                     }
                     sheet.Column(24).Width = 30;
                     sheet.Column(25).Width = 22;
-                    sheet.Column(26).Width = 10;
+                    sheet.Column(26).Width = 30;
                     sheet.Column(27).Width = 10;
                     sheet.Column(28).Width = 10;
-                    sheet.Column(29).Width = 10;
-                    sheet.Column(26).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    //sheet.Column(29).Width = 10;
+                    //sheet.Column(26).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                     sheet.Column(27).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                     sheet.Column(28).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-                    sheet.Column(29).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    //sheet.Column(29).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 }
             }
         }
@@ -531,14 +529,15 @@ namespace ExcelTool.Commands.Compensations
     class _退货赔偿订单数据透视
     {
         public string _店铺 { get; set; }
-        public List<ASINInfo> Items { get; set; } = new List<ASINInfo>();
-        public decimal _总数量合计 { get; set; }
-        public decimal _总金额合计 { get; set; }
+        public List<StatItem> Items { get; set; } = new List<StatItem>();
+        public decimal _总数量合计 { get { return Items.Select(x => x._数量).Sum(); } }
+        public decimal _总金额合计 { get { return Items.Select(x => x._金额).Sum(); } }
     }
 
-    class ASINInfo
+    class StatItem
     {
-        public string Key { get; set; }
+        public string MSKU { get; set; }
+        public List<string> _赔偿编号 { get; set; } = new List<string>();
         public decimal _数量 { get; set; }
         public decimal _金额 { get; set; }
     }
