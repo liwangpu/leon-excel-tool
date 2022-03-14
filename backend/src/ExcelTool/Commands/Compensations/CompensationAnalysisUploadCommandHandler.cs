@@ -161,9 +161,14 @@ namespace ExcelTool.Commands.Compensations
                 // 匹配部门
                 var dep = list部门匹配.Find(x => x._店铺名 == it._店铺);
                 it._部门 = dep != null ? dep._部门 : "未匹配";
+
                 // 匹配操作
-                it._需要ERP操作 = list退货单需要EPR处理的.Exists(x => x.DetailedDisposition == it._库存属性);
-                it._需要后台操作 = list退货单需要后台处理的.Exists(x => x.DetailedDisposition == it._库存属性);
+                var a1 = list退货单需要EPR处理的.FirstOrDefault(x => x.DetailedDisposition == it._库存属性);
+                it._需要ERP操作 = a1 != null;
+                it._对应的ERP操作 = a1 != null ? a1._ERP执行动作 : null;
+                var a2 = list退货单需要后台处理的.FirstOrDefault(x => x.DetailedDisposition == it._库存属性);
+                it._需要后台操作 = a2 != null;
+                it._对应的后台操作 = a2 != null ? a2._后台执行动作 : null;
             });
 
             var list赔偿单需要EPR处理的 = list赔偿处理方案.Where(x => x._需要ERP操作).ToList();
@@ -175,8 +180,12 @@ namespace ExcelTool.Commands.Compensations
                 var dep = list部门匹配.Find(x => x._店铺名 == it._店铺);
                 it._部门 = dep != null ? dep._部门 : "未匹配";
                 // 匹配操作
-                it._需要ERP操作 = list赔偿单需要EPR处理的.Exists(x => x.reason == it._原因);
-                it._需要后台操作 = list赔偿单需要后台处理的.Exists(x => x.reason == it._原因);
+                var a1 = list赔偿单需要EPR处理的.FirstOrDefault(x => x.reason == it._原因);
+                it._需要ERP操作 = a1 != null;
+                it._对应的ERP操作 = a1 != null ? a1._ERP执行动作 : null;
+                var a2 = list赔偿单需要后台处理的.FirstOrDefault(x => x.reason == it._原因);
+                it._需要后台操作 = a2 != null;
+                it._对应的后台操作 = a2 != null ? a2._后台执行动作 : null;
             });
 
             // 添加未匹配部门
@@ -199,14 +208,14 @@ namespace ExcelTool.Commands.Compensations
                     {
                         var sheet = workbox.Worksheets.Add($"{dName} ERP");
                         var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
-                        _生成退货订单Sheet(sheet, datas);
+                        _生成退货订单Sheet(sheet, datas, "ERP");
                     }
 
                     // 后台操作表
                     {
                         var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
                         var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
-                        _生成退货订单Sheet(sheet, datas);
+                        _生成退货订单Sheet(sheet, datas, "亚马逊后台");
                     }
                 });
 
@@ -227,14 +236,14 @@ namespace ExcelTool.Commands.Compensations
                     {
                         var sheet = workbox.Worksheets.Add($"{dName} ERP");
                         var datas = _list部门赔偿订单.Where(x => x._需要ERP操作).ToList();
-                        _生成赔偿订单Sheet(sheet, datas);
+                        _生成赔偿订单Sheet(sheet, datas, "ERP");
                     }
 
                     // 后台操作表
                     {
                         var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
                         var datas = _list部门赔偿订单.Where(x => x._需要后台操作).ToList();
-                        _生成赔偿订单Sheet(sheet, datas);
+                        _生成赔偿订单Sheet(sheet, datas, "亚马逊后台");
                     }
                 });
                 package.Save();
@@ -247,7 +256,7 @@ namespace ExcelTool.Commands.Compensations
             return null;
         }
 
-        private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单> list)
+        private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单> list, string operate)
         {
             #region 标题行
             sheet.Cells[1, 1].Value = "店铺";
@@ -270,10 +279,10 @@ namespace ExcelTool.Commands.Compensations
             sheet.Cells[1, 18].Value = "退货时间";
             sheet.Cells[1, 19].Value = "订购时间";
             sheet.Cells[1, 20].Value = "备注";
+            sheet.Cells[1, 21].Value = "操作";
             #endregion
 
             #region 数据行
-            //var datas = list退货订单.Where(x => x._部门 == dName).ToList();
             for (int idx = 0, rowIndex = 2; idx < list.Count; idx++)
             {
                 var data = list[idx];
@@ -297,6 +306,17 @@ namespace ExcelTool.Commands.Compensations
                 sheet.Cells[rowIndex, 18].Value = data._退货时间;
                 sheet.Cells[rowIndex, 19].Value = data._订购时间;
                 sheet.Cells[rowIndex, 20].Value = data._备注;
+                string action = null;
+                switch (operate)
+                {
+                    case "ERP":
+                        action = data._对应的ERP操作;
+                        break;
+                    default:
+                        action = data._对应的后台操作;
+                        break;
+                }
+                sheet.Cells[rowIndex, 21].Value = action;
                 rowIndex++;
             }
             #endregion
@@ -324,51 +344,65 @@ namespace ExcelTool.Commands.Compensations
             _生成数据透视信息(sheet, list数据透视);
         }
 
-        private static void _生成赔偿订单Sheet(ExcelWorksheet sheet, List<_赔偿订单> list)
+        private static void _生成赔偿订单Sheet(ExcelWorksheet sheet, List<_赔偿订单> list, string operate)
         {
             #region 标题行
-            sheet.Cells[1, 1].Value = "国家";
-            sheet.Cells[1, 2].Value = "时间";
-            sheet.Cells[1, 3].Value = "赔偿编号";
-            sheet.Cells[1, 4].Value = "订单号";
-            sheet.Cells[1, 5].Value = "原因";
-            sheet.Cells[1, 6].Value = "MSKU";
-            sheet.Cells[1, 7].Value = "FNSKU";
-            sheet.Cells[1, 8].Value = "ASIN";
-            sheet.Cells[1, 9].Value = "标题";
-            sheet.Cells[1, 10].Value = "状况";
-            sheet.Cells[1, 11].Value = "币种";
-            sheet.Cells[1, 12].Value = "每件商品赔偿金额";
-            sheet.Cells[1, 13].Value = "总金额";
-            sheet.Cells[1, 14].Value = "赔偿数量（现金）";
-            sheet.Cells[1, 15].Value = "赔偿数量（库存）";
-            sheet.Cells[1, 16].Value = "赔偿数量（总计）";
-            sheet.Cells[1, 17].Value = "原始赔偿编号";
-            sheet.Cells[1, 18].Value = "原始赔偿类型";
+            sheet.Cells[1, 1].Value = "店铺";
+            sheet.Cells[1, 2].Value = "国家";
+            sheet.Cells[1, 3].Value = "时间";
+            sheet.Cells[1, 4].Value = "赔偿编号";
+            sheet.Cells[1, 5].Value = "订单号";
+            sheet.Cells[1, 6].Value = "原因";
+            sheet.Cells[1, 7].Value = "MSKU";
+            sheet.Cells[1, 8].Value = "FNSKU";
+            sheet.Cells[1, 9].Value = "ASIN";
+            sheet.Cells[1, 10].Value = "标题";
+            sheet.Cells[1, 11].Value = "状况";
+            sheet.Cells[1, 12].Value = "币种";
+            sheet.Cells[1, 13].Value = "每件商品赔偿金额";
+            sheet.Cells[1, 14].Value = "总金额";
+            sheet.Cells[1, 15].Value = "赔偿数量（现金）";
+            sheet.Cells[1, 16].Value = "赔偿数量（库存）";
+            sheet.Cells[1, 17].Value = "赔偿数量（总计）";
+            sheet.Cells[1, 18].Value = "原始赔偿编号";
+            sheet.Cells[1, 19].Value = "原始赔偿类型";
+            sheet.Cells[1, 20].Value = "操作";
             #endregion
 
             #region 数据行
             for (int idx = 0, rowIndex = 2; idx < list.Count; idx++)
             {
                 var data = list[idx];
-                sheet.Cells[rowIndex, 1].Value = data._国家;
-                sheet.Cells[rowIndex, 2].Value = data._时间;
-                sheet.Cells[rowIndex, 3].Value = data._赔偿编号;
-                sheet.Cells[rowIndex, 4].Value = data._订单号;
-                sheet.Cells[rowIndex, 5].Value = data._原因;
-                sheet.Cells[rowIndex, 6].Value = data.MSKU;
-                sheet.Cells[rowIndex, 7].Value = data.FNSKU;
-                sheet.Cells[rowIndex, 8].Value = data.ASIN;
-                sheet.Cells[rowIndex, 9].Value = data._标题;
-                sheet.Cells[rowIndex, 10].Value = data._状况;
-                sheet.Cells[rowIndex, 11].Value = data._币种;
-                sheet.Cells[rowIndex, 12].Value = data._每件商品赔偿金额;
-                sheet.Cells[rowIndex, 13].Value = data._总金额;
-                sheet.Cells[rowIndex, 14].Value = data._赔偿数量_现金;
-                sheet.Cells[rowIndex, 15].Value = data._赔偿数量_库存;
-                sheet.Cells[rowIndex, 16].Value = data._赔偿数量_总计;
-                sheet.Cells[rowIndex, 17].Value = data._原始赔偿编号;
-                sheet.Cells[rowIndex, 18].Value = data._原始赔偿类型;
+                sheet.Cells[rowIndex, 1].Value = data._店铺;
+                sheet.Cells[rowIndex, 2].Value = data._国家;
+                sheet.Cells[rowIndex, 3].Value = data._时间;
+                sheet.Cells[rowIndex, 4].Value = data._赔偿编号;
+                sheet.Cells[rowIndex, 5].Value = data._订单号;
+                sheet.Cells[rowIndex, 6].Value = data._原因;
+                sheet.Cells[rowIndex, 7].Value = data.MSKU;
+                sheet.Cells[rowIndex, 8].Value = data.FNSKU;
+                sheet.Cells[rowIndex, 9].Value = data.ASIN;
+                sheet.Cells[rowIndex, 10].Value = data._标题;
+                sheet.Cells[rowIndex, 11].Value = data._状况;
+                sheet.Cells[rowIndex, 12].Value = data._币种;
+                sheet.Cells[rowIndex, 13].Value = data._每件商品赔偿金额;
+                sheet.Cells[rowIndex, 14].Value = data._总金额;
+                sheet.Cells[rowIndex, 15].Value = data._赔偿数量_现金;
+                sheet.Cells[rowIndex, 16].Value = data._赔偿数量_库存;
+                sheet.Cells[rowIndex, 17].Value = data._赔偿数量_总计;
+                sheet.Cells[rowIndex, 18].Value = data._原始赔偿编号;
+                sheet.Cells[rowIndex, 19].Value = data._原始赔偿类型;
+                string action = null;
+                switch (operate)
+                {
+                    case "ERP":
+                        action = data._对应的ERP操作;
+                        break;
+                    default:
+                        action = data._对应的后台操作;
+                        break;
+                }
+                sheet.Cells[rowIndex, 20].Value = action;
                 rowIndex++;
             }
             #endregion

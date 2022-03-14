@@ -48,5 +48,7 @@ namespace ExcelTool.Models.Compensations
         public string _部门 { get; set; }
         public bool _需要ERP操作 { get; set; }
         public bool _需要后台操作 { get; set; }
+        public string _对应的ERP操作 { get; set; }
+        public string _对应的后台操作 { get; set; }
     }
 }
