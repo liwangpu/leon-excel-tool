@@ -7,7 +7,7 @@ import { NZ_I18N } from 'ng-zorro-antd/i18n';
 import { zh_CN } from 'ng-zorro-antd/i18n';
 import { registerLocaleData } from '@angular/common';
 import zh from '@angular/common/locales/zh';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { NzMenuModule } from 'ng-zorro-antd/menu';
 import { HomeComponent } from './components/home/home.component';
@@ -17,6 +17,7 @@ import { MenuFoldOutline, MenuUnfoldOutline } from '@ant-design/icons-angular/ic
 import { NzIconModule } from 'ng-zorro-antd/icon';
 import { EnvStoreService } from './services';
 import { API_GATEWAY, ENV_STORE, IEnvStore } from '@pucst/core';
+import { NzInputModule } from 'ng-zorro-antd/input';
 
 registerLocaleData(zh);
 
@@ -44,9 +45,11 @@ export function appInitializerFn(store: IEnvStore): Function {
         BrowserAnimationsModule,
         AppRoutingModule,
         FormsModule,
+        ReactiveFormsModule,
         HttpClientModule,
         NzMenuModule,
         NzButtonModule,
+        NzInputModule,
         NzIconModule.forRoot(icons),
     ],
     providers: [

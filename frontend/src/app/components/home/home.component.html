@@ -1,0 +1,18 @@
+<div class="content">
+    <form [formGroup]="form">
+        <div class="fitem">
+            <label>消息</label>
+            <textarea rows="4" nz-input formControlName="message"></textarea>
+        </div>
+    </form>
+
+</div>
+<div class="buttons">
+    <nz-button-group class="left">
+        <button nz-button nzType="primary" (click)="connect()" [disabled]="connected">连接</button>
+        <button nz-button nzDanger nzType="primary" (click)="disConnect()" [disabled]="!connected">断开</button>
+    </nz-button-group>
+    <nz-button-group class="right">
+        <button nz-button nzType="primary" (click)="sendMessage()" [disabled]="!connected">发送</button>
+    </nz-button-group>
+</div>

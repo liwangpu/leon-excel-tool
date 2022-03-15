@@ -196,31 +196,31 @@ namespace ExcelTool.Commands.Compensations
             var exportFolder = fileSetting.GenerateTemporaryFolder("export");
 
             #region 打印退货单
-            var exp退货订单Path = Path.Combine(exportFolder, "亚马逊退货订单.xlsx");
+            //var exp退货订单Path = Path.Combine(exportFolder, "亚马逊退货订单.xlsx");
 
-            using (ExcelPackage package = new ExcelPackage(new FileInfo(exp退货订单Path)))
-            {
-                var workbox = package.Workbook;
-                list部门.ForEach(dName =>
-                {
-                    var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
-                    // ERP操作表
-                    {
-                        var sheet = workbox.Worksheets.Add($"{dName} ERP");
-                        var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
-                        _生成退货订单Sheet(sheet, datas, "ERP");
-                    }
+            //using (ExcelPackage package = new ExcelPackage(new FileInfo(exp退货订单Path)))
+            //{
+            //    var workbox = package.Workbook;
+            //    list部门.ForEach(dName =>
+            //    {
+            //        var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
+            //        // ERP操作表
+            //        {
+            //            var sheet = workbox.Worksheets.Add($"{dName} ERP");
+            //            var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
+            //            _生成退货订单Sheet(sheet, datas, "ERP");
+            //        }
 
-                    // 后台操作表
-                    {
-                        var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
-                        var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
-                        _生成退货订单Sheet(sheet, datas, "亚马逊后台");
-                    }
-                });
+            //        // 后台操作表
+            //        {
+            //            var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
+            //            var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
+            //            _生成退货订单Sheet(sheet, datas, "亚马逊后台");
+            //        }
+            //    });
 
-                package.Save();
-            }
+            //    package.Save();
+            //}
             #endregion
 
             #region 打印赔偿单
@@ -318,31 +318,31 @@ namespace ExcelTool.Commands.Compensations
             }
             #endregion
 
-            var list数据透视 = new List<_退货赔偿订单数据透视>();
-            // 数据透视
+            //var list数据透视 = new List<_退货单数据透视>();
+            //// 数据透视
             //list.ForEach(it =>
             //{
             //    var dt = list数据透视.FirstOrDefault(d => d._店铺 == it._店铺);
             //    if (dt == null)
             //    {
-            //        dt = new _退货赔偿订单数据透视() { _店铺 = it._店铺 };
+            //        dt = new _退货单数据透视() { _店铺 = it._店铺 };
             //        list数据透视.Add(dt);
             //    }
-            //    var asinDt = dt.Items.FirstOrDefault(d => d.Key == it.MSKU);
+            //    var asinDt = dt.Items.FirstOrDefault(d => d.MSKU == it.MSKU);
             //    if (asinDt == null)
             //    {
-            //        asinDt = new ASINInfo() { Key = it.MSKU, _数量 = it._数量 };
+            //        asinDt = new _退货单数据统计项() { MSKU = it.MSKU, _数量 = it._数量 };
             //        dt.Items.Add(asinDt);
             //    }
-            //    else
-            //    {
-            //        asinDt._数量 += it._数量;
-            //    }
+            //    //else
+            //    //{
+            //    //    asinDt._数量 += it._数量;
+            //    //}
 
-            //    dt._总数量合计 += it._数量;
+            //    //dt._总数量合计 += it._数量;
             //});
 
-            _生成数据透视信息(sheet, list数据透视);
+            //_生成数据透视信息(sheet, list数据透视);
         }
 
         private static void _生成赔偿订单Sheet(ExcelWorksheet sheet, List<_赔偿订单> list, string operate)
@@ -409,19 +409,19 @@ namespace ExcelTool.Commands.Compensations
             #endregion
 
             // 数据透视
-            var list数据透视 = new List<_退货赔偿订单数据透视>();
+            var list数据透视 = new List<_赔偿订单数据透视>();
             list.ForEach(it =>
             {
                 var dt = list数据透视.FirstOrDefault(d => d._店铺 == it._店铺);
                 if (dt == null)
                 {
-                    dt = new _退货赔偿订单数据透视() { _店铺 = it._店铺 };
+                    dt = new _赔偿订单数据透视() { _店铺 = it._店铺 };
                     list数据透视.Add(dt);
                 }
                 var asinDt = dt.Items.FirstOrDefault(d => d.MSKU == it.MSKU);
                 if (asinDt == null)
                 {
-                    asinDt = new StatItem() { MSKU = it.MSKU };
+                    asinDt = new _赔偿订单统计项() { MSKU = it.MSKU };
                     dt.Items.Add(asinDt);
                 }
 
@@ -434,11 +434,6 @@ namespace ExcelTool.Commands.Compensations
                 }
             });
 
-            _生成数据透视信息(sheet, list数据透视);
-        }
-
-        private static void _生成数据透视信息(ExcelWorksheet sheet, List<_退货赔偿订单数据透视> list)
-        {
             sheet.Cells[1, 24].Value = "店铺";
             sheet.Cells[1, 25].Value = "MSKU";
             sheet.Cells[1, 26].Value = "赔偿编号";
@@ -447,9 +442,9 @@ namespace ExcelTool.Commands.Compensations
             sheet.Cells[1, 28].Value = "总数量";
             //sheet.Cells[1, 30].Value = "总金额";
 
-            for (int idx = 0, rowIndex = 2; idx < list.Count; idx++)
+            for (int idx = 0, rowIndex = 2; idx < list数据透视.Count; idx++)
             {
-                var data = list[idx];
+                var data = list数据透视[idx];
                 var startIndex = rowIndex;
 
                 for (var ssdx = data.Items.Count - 1; ssdx >= 0; ssdx--)
@@ -492,7 +487,7 @@ namespace ExcelTool.Commands.Compensations
 
                 }
 
-                if (idx == list.Count - 1)
+                if (idx == list数据透视.Count - 1)
                 {
                     using (var rng = sheet.Cells[1, 24, rowIndex - 1, 28])
                     {
@@ -522,18 +517,35 @@ namespace ExcelTool.Commands.Compensations
         }
     }
 
-    class _退货赔偿订单数据透视
+    class _赔偿订单数据透视
     {
         public string _店铺 { get; set; }
-        public List<StatItem> Items { get; set; } = new List<StatItem>();
+        public List<_赔偿订单统计项> Items { get; set; } = new List<_赔偿订单统计项>();
         public decimal _总数量合计 { get { return Items.Select(x => x._数量).Sum(); } }
         public decimal _总金额合计 { get { return Items.Select(x => x._金额).Sum(); } }
     }
 
-    class StatItem
+    class _赔偿订单统计项
     {
         public string MSKU { get; set; }
-        public List<string> _赔偿编号 { get; set; } = new List<string>();
+        public string _国家 { get; set; }
+        public string _赔偿编号 { get; set; }
+        //public List<string> _赔偿编号 { get; set; } = new List<string>();
+        public decimal _数量 { get; set; }
+        public decimal _金额 { get; set; }
+    }
+
+    class _退货单数据透视
+    {
+        public string _店铺 { get; set; }
+        public List<_退货单数据统计项> Items { get; set; } = new List<_退货单数据统计项>();
+        public decimal _总数量合计 { get { return Items.Select(x => x._数量).Sum(); } }
+        public decimal _总金额合计 { get { return Items.Select(x => x._金额).Sum(); } }
+    }
+
+    class _退货单数据统计项
+    {
+        public string MSKU { get; set; }
         public decimal _数量 { get; set; }
         public decimal _金额 { get; set; }
     }

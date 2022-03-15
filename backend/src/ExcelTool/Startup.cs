@@ -44,7 +44,7 @@ namespace ExcelTool
             services.AddCors(options =>
             {
                 options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:56788")
+                    builder => builder.WithOrigins("http://localhost:3102")
                     .AllowAnyMethod()
                     .AllowAnyHeader()
                     .AllowCredentials());
@@ -57,6 +57,8 @@ namespace ExcelTool
             {
                 x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+                
             }).AddJwtBearer(x =>
             {
                 x.RequireHttpsMetadata = false;
@@ -71,6 +73,21 @@ namespace ExcelTool
                     ValidateAudience = false,
                     ValidateLifetime = true
                 };
+                //x.Events = new JwtBearerEvents
+                //{
+                //    OnMessageReceived = context =>
+                //    {
+                //        var accessToken = context.Request.Headers["Authorization"];
+                //        Console.WriteLine(accessToken);
+                //        var path = context.HttpContext.Request.Path;
+                //        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
+                //        {
+                //            context.Token = accessToken;
+                //        }
+
+                //        return Task.CompletedTask;
+                //    }
+                //};
             });
             services.Configure<AppConfig>(Configuration);
             services.AddScoped<IUserService, UserService>();
@@ -108,11 +125,11 @@ namespace ExcelTool
             //});
 
             app.UseCors("CorsPolicy");
+            app.UseWebSockets();
             app.UseStaticFiles();
             app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();
-            app.UseWebSockets();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<ChatHub>("/chathub");
