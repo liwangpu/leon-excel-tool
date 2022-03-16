@@ -1,8 +1,0 @@
-<!-- <shared-excel-uploader [multiple]="true" [uploadUrl]="uploadUrl"></shared-excel-uploader> -->
-
-<form [formGroup]="form">
-    <!-- <input type="text" formControlName="name"> -->
-    <input type="file" multiple="true" (change)="onChange($event.target.files)">
-
-    <button (click)="upload()">上传</button>
-</form>

@@ -1,296 +1,221 @@
 {
-  "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
-  "schematics": {
-    "@schematics/angular": {
-      "component": {
-        "changeDetection": "OnPush"
-      }
-    }
-  },
-  "version": 1,
-  "newProjectRoot": "projects",
-  "projects": {
-    "excel-tool": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "inlineTemplate": false,
-          "inlineStyle": false,
-          "style": "scss",
-          "skipTests": true
-        },
-        "@schematics/angular:class": {
-          "skipTests": true
-        },
-        "@schematics/angular:directive": {
-          "skipTests": true
-        },
-        "@schematics/angular:guard": {
-          "skipTests": true
-        },
-        "@schematics/angular:interceptor": {
-          "skipTests": true
-        },
-        "@schematics/angular:pipe": {
-          "skipTests": true
-        },
-        "@schematics/angular:service": {
-          "skipTests": true
+    "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
+    "schematics": {
+        "@schematics/angular": {
+            "component": {
+                "changeDetection": "OnPush"
+            }
         }
-      },
-      "root": "",
-      "sourceRoot": "src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
-            "outputPath": "dist",
-            "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.json",
-            "aot": true,
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              {
-                "glob": "**/*",
-                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
-                "output": "/assets/"
-              }
-            ],
-            "styles": [
-              "src/theme.less",
-              "src/styles.scss"
-            ],
-            "scripts": []
-          },
-          "configurations": {
-            "production": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "tsConfig": "tsconfig.prod.json",
-              "sourceMap": false,
-              "namedChunks": false,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+    },
+    "version": 1,
+    "newProjectRoot": "projects",
+    "projects": {
+        "excel-tool": {
+            "projectType": "application",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "inlineTemplate": false,
+                    "inlineStyle": false,
+                    "style": "scss",
+                    "skipTests": true
                 },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                "@schematics/angular:class": {
+                    "skipTests": true
+                },
+                "@schematics/angular:directive": {
+                    "skipTests": true
+                },
+                "@schematics/angular:guard": {
+                    "skipTests": true
+                },
+                "@schematics/angular:interceptor": {
+                    "skipTests": true
+                },
+                "@schematics/angular:pipe": {
+                    "skipTests": true
+                },
+                "@schematics/angular:service": {
+                    "skipTests": true
                 }
-              ]
-            }
-          }
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "options": {
-            "port": 3102,
-            "browserTarget": "excel-tool:build"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "excel-tool:build:production"
-            }
-          }
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
-          "options": {
-            "browserTarget": "excel-tool:build"
-          }
-        }
-      }
-    },
-    "shared": {
-      "projectType": "library",
-      "root": "projects/shared",
-      "sourceRoot": "projects/shared/src",
-      "prefix": "shared",
-      "schematics": {
-        "@schematics/angular:component": {
-          "inlineTemplate": false,
-          "inlineStyle": false,
-          "style": "scss",
-          "skipTests": true
-        },
-        "@schematics/angular:class": {
-          "skipTests": true
-        },
-        "@schematics/angular:directive": {
-          "skipTests": true
-        },
-        "@schematics/angular:guard": {
-          "skipTests": true
-        },
-        "@schematics/angular:interceptor": {
-          "skipTests": true
-        },
-        "@schematics/angular:pipe": {
-          "skipTests": true
-        },
-        "@schematics/angular:service": {
-          "skipTests": true
-        }
-      },
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "project": "projects/shared/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/shared/tsconfig.lib.prod.json"
             },
-            "development": {
-              "tsConfig": "projects/shared/tsconfig.lib.json"
+            "root": "",
+            "sourceRoot": "src",
+            "prefix": "app",
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:browser",
+                    "options": {
+                        "outputPath": "dist",
+                        "index": "src/index.html",
+                        "main": "src/main.ts",
+                        "polyfills": "src/polyfills.ts",
+                        "tsConfig": "tsconfig.json",
+                        "aot": true,
+                        "assets": [
+                            "src/favicon.ico",
+                            "src/assets",
+                            {
+                                "glob": "**/*",
+                                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                                "output": "/assets/"
+                            }
+                        ],
+                        "styles": [
+                            "src/theme.less",
+                            "src/styles.scss"
+                        ],
+                        "scripts": []
+                    },
+                    "configurations": {
+                        "production": {
+                            "fileReplacements": [
+                                {
+                                    "replace": "src/environments/environment.ts",
+                                    "with": "src/environments/environment.prod.ts"
+                                }
+                            ],
+                            "optimization": true,
+                            "outputHashing": "all",
+                            "tsConfig": "tsconfig.prod.json",
+                            "sourceMap": false,
+                            "namedChunks": false,
+                            "extractLicenses": true,
+                            "vendorChunk": false,
+                            "buildOptimizer": true,
+                            "budgets": [
+                                {
+                                    "type": "initial",
+                                    "maximumWarning": "2mb",
+                                    "maximumError": "5mb"
+                                },
+                                {
+                                    "type": "anyComponentStyle",
+                                    "maximumWarning": "6kb",
+                                    "maximumError": "10kb"
+                                }
+                            ]
+                        }
+                    }
+                },
+                "serve": {
+                    "builder": "@angular-devkit/build-angular:dev-server",
+                    "options": {
+                        "port": 3102,
+                        "browserTarget": "excel-tool:build"
+                    },
+                    "configurations": {
+                        "production": {
+                            "browserTarget": "excel-tool:build:production"
+                        }
+                    }
+                },
+                "extract-i18n": {
+                    "builder": "@angular-devkit/build-angular:extract-i18n",
+                    "options": {
+                        "browserTarget": "excel-tool:build"
+                    }
+                }
             }
-          },
-          "defaultConfiguration": "production"
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/shared/src/test.ts",
-            "tsConfig": "projects/shared/tsconfig.spec.json",
-            "karmaConfig": "projects/shared/karma.conf.js"
-          }
-        }
-      }
-    },
-    "inventory": {
-      "projectType": "library",
-      "root": "projects/inventory",
-      "sourceRoot": "projects/inventory/src",
-      "prefix": "inventory",
-      "schematics": {
-        "@schematics/angular:component": {
-          "inlineTemplate": false,
-          "inlineStyle": false,
-          "style": "scss",
-          "skipTests": true
-        },
-        "@schematics/angular:class": {
-          "skipTests": true
-        },
-        "@schematics/angular:directive": {
-          "skipTests": true
-        },
-        "@schematics/angular:guard": {
-          "skipTests": true
-        },
-        "@schematics/angular:interceptor": {
-          "skipTests": true
-        },
-        "@schematics/angular:pipe": {
-          "skipTests": true
-        },
-        "@schematics/angular:service": {
-          "skipTests": true
-        }
-      },
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "project": "projects/inventory/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/inventory/tsconfig.lib.prod.json"
+        "workstation-core": {
+            "projectType": "library",
+            "root": "projects/workstation-core",
+            "sourceRoot": "projects/workstation-core/src",
+            "prefix": "workstation-core",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "inlineTemplate": false,
+                    "inlineStyle": false,
+                    "style": "scss",
+                    "skipTests": true
+                },
+                "@schematics/angular:class": {
+                    "skipTests": true
+                },
+                "@schematics/angular:guard": {
+                    "skipTests": true
+                },
+                "@schematics/angular:module": {
+                    "skipTests": true
+                }
             },
-            "development": {
-              "tsConfig": "projects/inventory/tsconfig.lib.json"
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "options": {
+                        "project": "projects/workstation-core/ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "projects/workstation-core/tsconfig.lib.prod.json"
+                        },
+                        "development": {
+                            "tsConfig": "projects/workstation-core/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/workstation-core/src/test.ts",
+                        "tsConfig": "projects/workstation-core/tsconfig.spec.json",
+                        "karmaConfig": "projects/workstation-core/karma.conf.js"
+                    }
+                }
             }
-          },
-          "defaultConfiguration": "production"
         },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/inventory/src/test.ts",
-            "tsConfig": "projects/inventory/tsconfig.spec.json",
-            "karmaConfig": "projects/inventory/karma.conf.js"
-          }
-        }
-      }
-    },
-    "core": {
-      "projectType": "library",
-      "root": "projects/core",
-      "sourceRoot": "projects/core/src",
-      "prefix": "core",
-      "schematics": {
-        "@schematics/angular:component": {
-          "inlineTemplate": false,
-          "inlineStyle": false,
-          "style": "scss",
-          "skipTests": true
-        },
-        "@schematics/angular:class": {
-          "skipTests": true
-        },
-        "@schematics/angular:directive": {
-          "skipTests": true
-        },
-        "@schematics/angular:guard": {
-          "skipTests": true
-        },
-        "@schematics/angular:interceptor": {
-          "skipTests": true
-        },
-        "@schematics/angular:pipe": {
-          "skipTests": true
-        },
-        "@schematics/angular:service": {
-          "skipTests": true
-        }
-      },
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:ng-packagr",
-          "options": {
-            "project": "projects/core/ng-package.json"
-          },
-          "configurations": {
-            "production": {
-              "tsConfig": "projects/core/tsconfig.lib.prod.json"
+        "workstation-shared": {
+            "projectType": "library",
+            "root": "projects/workstation-shared",
+            "sourceRoot": "projects/workstation-shared/src",
+            "prefix": "workstation-shared",
+            "schematics": {
+                "@schematics/angular:component": {
+                    "inlineTemplate": false,
+                    "inlineStyle": false,
+                    "style": "scss",
+                    "skipTests": true
+                },
+                "@schematics/angular:class": {
+                    "skipTests": true
+                },
+                "@schematics/angular:guard": {
+                    "skipTests": true
+                },
+                "@schematics/angular:module": {
+                    "skipTests": true
+                }
             },
-            "development": {
-              "tsConfig": "projects/core/tsconfig.lib.json"
+            "architect": {
+                "build": {
+                    "builder": "@angular-devkit/build-angular:ng-packagr",
+                    "options": {
+                        "project": "projects/workstation-shared/ng-package.json"
+                    },
+                    "configurations": {
+                        "production": {
+                            "tsConfig": "projects/workstation-shared/tsconfig.lib.prod.json"
+                        },
+                        "development": {
+                            "tsConfig": "projects/workstation-shared/tsconfig.lib.json"
+                        }
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "@angular-devkit/build-angular:karma",
+                    "options": {
+                        "main": "projects/workstation-shared/src/test.ts",
+                        "tsConfig": "projects/workstation-shared/tsconfig.spec.json",
+                        "karmaConfig": "projects/workstation-shared/karma.conf.js"
+                    }
+                }
             }
-          },
-          "defaultConfiguration": "production"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "projects/core/src/test.ts",
-            "tsConfig": "projects/core/tsconfig.spec.json",
-            "karmaConfig": "projects/core/karma.conf.js"
-          }
         }
-      }
+    },
+    "defaultProject": "excel-tool",
+    "cli": {
+        "analytics": false
     }
-  },
-  "defaultProject": "excel-tool",
-  "cli": {
-    "analytics": false
-  }
 }

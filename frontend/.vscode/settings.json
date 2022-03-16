@@ -7,5 +7,6 @@
     "javascript.implicitProjectConfig.experimentalDecorators": true,
     "editor.detectIndentation": false,
     "editor.wordWrap": "on",
-    "typescript.tsdk": "node_modules\\typescript\\lib"
+    "typescript.tsdk": "node_modules\\typescript\\lib",
+    "angular.enable-strict-mode-prompt": false
 }

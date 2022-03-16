@@ -1,0 +1,21 @@
+{
+    "ngPackage": {
+        "lib": {
+            "entryFile": "index.ts",
+            "umdModuleIds": {
+                "subsink": "subsink",
+                "lodash": "lodash",
+                "workstation-core": "workstation-core",
+                "@ngrx/effects": "@ngrx/effects",
+                "@ngrx/store": "@ngrx/store",
+                "@ngrx/store-devtools": "@ngrx/store-devtools",
+                "ng-zorro-antd/core/config": "ng-zorro-antd/core/config",
+                "ng-zorro-antd/i18n": "ng-zorro-antd/i18n",
+                "query-string": "query-string",
+                "ng-zorro-antd/icon": "ng-zorro-antd/icon",
+                "ng-zorro-antd/button": "ng-zorro-antd/button",
+                "ng-zorro-antd/message": "ng-zorro-antd/message"
+            }
+        }
+    }
+}

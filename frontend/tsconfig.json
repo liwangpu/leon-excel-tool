@@ -1,53 +1,46 @@
 {
-  "compileOnSave": false,
-  "compilerOptions": {
-    "baseUrl": "./",
-    "outDir": "./dist/out-tsc",
-    "sourceMap": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "experimentalDecorators": true,
-    "moduleResolution": "node",
-    "importHelpers": true,
-    "target": "es2015",
-    "paths": {
-      "@env/*": [
-        "src/environments/*"
-      ],
-      "@pucst/shared": [
-        "projects/shared/src/public-api.ts"
-      ],
-      "@pucst/shared/*": [
-        "projects/shared/*"
-      ],
-      "@pucst/inventory": [
-        "projects/shared/src/public-api.ts"
-      ],
-      "@pucst/inventory/*": [
-        "projects/inventory/*"
-      ],
-      "@pucst/core": [
-        "projects/core/src/public-api.ts"
-      ],
-      "@pucst/core/*": [
-        "projects/core/*"
-      ],
+    "compileOnSave": false,
+    "compilerOptions": {
+        "baseUrl": "./",
+        "outDir": "./dist/out-tsc",
+        "sourceMap": true,
+        "declaration": false,
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "moduleResolution": "node",
+        "importHelpers": true,
+        "target": "es2015",
+        "paths": {
+            "@env/*": [
+                "src/environments/*"
+            ],
+            "workstation-core": [
+                "projects/workstation-core/src"
+            ],
+            "workstation-core/*": [
+                "projects/workstation-core/*"
+            ],
+            "workstation-shared": [
+                "projects/workstation-shared/src"
+            ],
+            "workstation-shared/*": [
+                "projects/workstation-shared/*"
+            ]
+        },
+        "module": "es2020",
+        "lib": [
+            "es2018",
+            "dom"
+        ]
     },
-    "module": "es2020",
-    "lib": [
-      "es2018",
-      "dom"
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.d.ts"
+    ],
+    "exclude": [
+        "dist/**",
+        "node_modules/**",
+        "**/test.ts",
+        "**/*.spec.ts"
     ]
-  },
-  "include": [
-    "src/**/*.ts",
-    "src/**/*.d.ts",
-    "projects/inventory/src/inventory-routing.module.ts"
-  ],
-  "exclude": [
-    "dist/**",
-    "node_modules/**",
-    "**/test.ts",
-    "**/*.spec.ts"
-  ]
 }

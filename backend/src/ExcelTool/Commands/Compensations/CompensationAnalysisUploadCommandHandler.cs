@@ -196,31 +196,31 @@ namespace ExcelTool.Commands.Compensations
             var exportFolder = fileSetting.GenerateTemporaryFolder("export");
 
             #region 打印退货单
-            //var exp退货订单Path = Path.Combine(exportFolder, "亚马逊退货订单.xlsx");
+            var exp退货订单Path = Path.Combine(exportFolder, "亚马逊退货订单.xlsx");
 
-            //using (ExcelPackage package = new ExcelPackage(new FileInfo(exp退货订单Path)))
-            //{
-            //    var workbox = package.Workbook;
-            //    list部门.ForEach(dName =>
-            //    {
-            //        var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
-            //        // ERP操作表
-            //        {
-            //            var sheet = workbox.Worksheets.Add($"{dName} ERP");
-            //            var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
-            //            _生成退货订单Sheet(sheet, datas, "ERP");
-            //        }
+            using (ExcelPackage package = new ExcelPackage(new FileInfo(exp退货订单Path)))
+            {
+                var workbox = package.Workbook;
+                list部门.ForEach(dName =>
+                {
+                    var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
+                    // ERP操作表
+                    {
+                        var sheet = workbox.Worksheets.Add($"{dName} ERP");
+                        var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
+                        _生成退货订单Sheet(sheet, datas, "ERP");
+                    }
 
-            //        // 后台操作表
-            //        {
-            //            var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
-            //            var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
-            //            _生成退货订单Sheet(sheet, datas, "亚马逊后台");
-            //        }
-            //    });
+                    // 后台操作表
+                    {
+                        var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
+                        var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
+                        _生成退货订单Sheet(sheet, datas, "亚马逊后台");
+                    }
+                });
 
-            //    package.Save();
-            //}
+                package.Save();
+            }
             #endregion
 
             #region 打印赔偿单
@@ -318,31 +318,97 @@ namespace ExcelTool.Commands.Compensations
             }
             #endregion
 
-            //var list数据透视 = new List<_退货单数据透视>();
-            //// 数据透视
-            //list.ForEach(it =>
-            //{
-            //    var dt = list数据透视.FirstOrDefault(d => d._店铺 == it._店铺);
-            //    if (dt == null)
-            //    {
-            //        dt = new _退货单数据透视() { _店铺 = it._店铺 };
-            //        list数据透视.Add(dt);
-            //    }
-            //    var asinDt = dt.Items.FirstOrDefault(d => d.MSKU == it.MSKU);
-            //    if (asinDt == null)
-            //    {
-            //        asinDt = new _退货单数据统计项() { MSKU = it.MSKU, _数量 = it._数量 };
-            //        dt.Items.Add(asinDt);
-            //    }
-            //    //else
-            //    //{
-            //    //    asinDt._数量 += it._数量;
-            //    //}
+            var list数据透视 = new List<_退货单数据透视>();
+            // 数据透视
+            list.ForEach(it =>
+            {
+                var dt = list数据透视.FirstOrDefault(d => d._店铺 == it._店铺);
+                if (dt == null)
+                {
+                    dt = new _退货单数据透视() { _店铺 = it._店铺 };
+                    list数据透视.Add(dt);
+                }
+                var asinDt = dt.Items.FirstOrDefault(d => d.MSKU == it.MSKU);
+                if (asinDt == null)
+                {
+                    asinDt = new _退货单数据统计项() { MSKU = it.MSKU, _数量 = it._数量 };
+                    dt.Items.Add(asinDt);
+                }
+                else
+                {
+                    asinDt._数量 += it._数量;
+                }
 
-            //    //dt._总数量合计 += it._数量;
-            //});
+                //dt._总数量合计 += it._数量;
+            });
 
-            //_生成数据透视信息(sheet, list数据透视);
+            sheet.Cells[1, 24].Value = "店铺";
+            sheet.Cells[1, 25].Value = "MSKU";
+            sheet.Cells[1, 26].Value = "数量";
+            sheet.Cells[1, 27].Value = "数量合计";
+            for (int idx = 0, rowIndex = 2; idx < list数据透视.Count; idx++)
+            {
+                var data = list数据透视[idx];
+                var startIndex = rowIndex;
+
+                for (var ssdx = data.Items.Count - 1; ssdx >= 0; ssdx--)
+                {
+                    var it = data.Items[ssdx];
+
+                    sheet.Cells[rowIndex, 25].Value = it.MSKU;
+                    //sheet.Cells[rowIndex, 26].Value = string.Join(",", it._赔偿编号);
+                    sheet.Cells[rowIndex, 26].Value = it._数量;
+                    //sheet.Cells[rowIndex, 28].Value = it._金额;
+                    sheet.Cells[rowIndex, 27].Value = data._总数量合计;
+                    if (ssdx == data.Items.Count - 1)
+                    {
+                        sheet.Cells[rowIndex, 24].Value = data._店铺;
+                        //sheet.Cells[rowIndex, 29].Value = data._总金额合计;
+                    }
+                    if (ssdx == 0)
+                    {
+                        if (rowIndex - startIndex > 0)
+                        {
+                            using (var rng = sheet.Cells[startIndex, 24, rowIndex, 24])
+                            {
+                                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                                rng.Merge = true;
+                            }
+
+                            using (var rng = sheet.Cells[startIndex, 27, rowIndex, 27])
+                            {
+                                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                                rng.Merge = true;
+                            }
+                        }
+                    }
+                    rowIndex++;
+
+                }
+
+                if (idx == list数据透视.Count - 1)
+                {
+                    using (var rng = sheet.Cells[1, 24, rowIndex - 1, 27])
+                    {
+                        rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        rng.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    }
+
+                    using (var rng = sheet.Cells[1, 24, 1, 27])
+                    {
+                        rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                        rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
+                    }
+                    sheet.Column(24).Width = 30;
+                    sheet.Column(25).Width = 22;
+                    sheet.Column(26).Width = 10;
+                    sheet.Column(27).Width = 10;
+                    sheet.Column(26).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                    sheet.Column(27).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                }
+            }
         }
 
         private static void _生成赔偿订单Sheet(ExcelWorksheet sheet, List<_赔偿订单> list, string operate)
@@ -418,64 +484,83 @@ namespace ExcelTool.Commands.Compensations
                     dt = new _赔偿订单数据透视() { _店铺 = it._店铺 };
                     list数据透视.Add(dt);
                 }
-                var asinDt = dt.Items.FirstOrDefault(d => d.MSKU == it.MSKU);
-                if (asinDt == null)
+                var item = dt.Items.FirstOrDefault(d => d.MSKU == it.MSKU && d._国家 == it._国家 && d._赔偿编号 == it._赔偿编号);
+                if (item == null)
                 {
-                    asinDt = new _赔偿订单统计项() { MSKU = it.MSKU };
-                    dt.Items.Add(asinDt);
+                    item = new _赔偿订单统计项() { MSKU = it.MSKU, _国家 = it._国家, _赔偿编号 = it._赔偿编号, _数量 = it._赔偿数量_总计 };
+                    dt.Items.Add(item);
+                }
+                else
+                {
+                    item._数量 += it._赔偿数量_总计;
                 }
 
-                var noDt = asinDt._赔偿编号.FirstOrDefault(x => x == it._赔偿编号);
-                if (noDt == null)
-                {
-                    asinDt._赔偿编号.Add(it._赔偿编号);
-                    asinDt._数量 += it._赔偿数量_总计;
-                    asinDt._金额 += it._总金额;
-                }
             });
 
-            sheet.Cells[1, 24].Value = "店铺";
-            sheet.Cells[1, 25].Value = "MSKU";
-            sheet.Cells[1, 26].Value = "赔偿编号";
-            sheet.Cells[1, 27].Value = "数量";
-            //sheet.Cells[1, 28].Value = "金额";
-            sheet.Cells[1, 28].Value = "总数量";
-            //sheet.Cells[1, 30].Value = "总金额";
-
+            // 透视详情
+            sheet.Cells[1, 35].Value = "店铺";
+            sheet.Cells[1, 36].Value = "MSKU";
+            sheet.Cells[1, 37].Value = "国家";
+            sheet.Cells[1, 38].Value = "赔偿编号";
+            sheet.Cells[1, 39].Value = "数量";
             for (int idx = 0, rowIndex = 2; idx < list数据透视.Count; idx++)
             {
                 var data = list数据透视[idx];
                 var startIndex = rowIndex;
-
-                for (var ssdx = data.Items.Count - 1; ssdx >= 0; ssdx--)
+                string lastMSKU = null;
+                for (var ssdx = 0; ssdx < data.Items.Count; ssdx++)
                 {
                     var it = data.Items[ssdx];
-
-                    sheet.Cells[rowIndex, 25].Value = it.MSKU;
-                    sheet.Cells[rowIndex, 26].Value = string.Join(",", it._赔偿编号);
-                    sheet.Cells[rowIndex, 27].Value = it._数量;
-                    //sheet.Cells[rowIndex, 28].Value = it._金额;
-                    sheet.Cells[rowIndex, 28].Value = data._总数量合计;
-                    if (ssdx == data.Items.Count - 1)
-                    {
-                        sheet.Cells[rowIndex, 24].Value = data._店铺;
-                        //sheet.Cells[rowIndex, 29].Value = data._总金额合计;
-                    }
+                    sheet.Cells[rowIndex, 36].Value = it.MSKU;
+                    sheet.Cells[rowIndex, 37].Value = it._国家;
+                    sheet.Cells[rowIndex, 38].Value = it._赔偿编号;
+                    sheet.Cells[rowIndex, 39].Value = it._数量;
                     if (ssdx == 0)
+                    {
+                        sheet.Cells[rowIndex, 35].Value = data._店铺;
+                    }
+                    //if (lastMSKU != it.MSKU)
+                    //{
+
+                    //    var skuStartIndex = data.Items.FindIndex(d => d.MSKU == it.MSKU);
+                    //    var skuEndIndex = data.Items.FindLastIndex(d => d.MSKU == it.MSKU);
+                    //    if (skuStartIndex != skuEndIndex)
+                    //    {
+                    //        try
+                    //        {
+                    //            sheet.Cells[startIndex + skuStartIndex, 40].Value = "0";
+                    //            sheet.Cells[startIndex + skuEndIndex, 40].Value = "1";
+                    //            using (var rng = sheet.Cells[startIndex + skuStartIndex, 41, startIndex + skuEndIndex, 41])
+                    //            {
+                    //                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                    //                rng.Merge = true;
+                    //                rng.Value = it.MSKU;
+                    //            }
+                    //        }
+                    //        catch(Exception err)
+                    //        {
+
+                    //        }
+
+                    //    }
+
+                    //    lastMSKU = it.MSKU;
+                    //}
+                    if (ssdx == data.Items.Count - 1)
                     {
                         if (rowIndex - startIndex > 0)
                         {
-                            using (var rng = sheet.Cells[startIndex, 24, rowIndex, 24])
+                            using (var rng = sheet.Cells[startIndex, 35, rowIndex, 35])
                             {
                                 rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
                                 rng.Merge = true;
                             }
 
-                            using (var rng = sheet.Cells[startIndex, 28, rowIndex, 28])
-                            {
-                                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
-                                rng.Merge = true;
-                            }
+                            //using (var rng = sheet.Cells[startIndex, 28, rowIndex, 28])
+                            //{
+                            //    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                            //    rng.Merge = true;
+                            //}
                             //using (var rng = sheet.Cells[startIndex, 29, rowIndex, 29])
                             //{
                             //    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
@@ -486,6 +571,81 @@ namespace ExcelTool.Commands.Compensations
                     rowIndex++;
 
                 }
+
+                if (idx == list数据透视.Count - 1)
+                {
+                    using (var rng = sheet.Cells[1, 35, rowIndex - 1, 39])
+                    {
+                        rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        rng.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                        rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    }
+
+                    //using (var rng = sheet.Cells[1, 24, 1, 28])
+                    //{
+                    //    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                    //    rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
+                    //}
+                    sheet.Column(35).Width = 30;
+                    sheet.Column(36).Width = 22;
+                    sheet.Column(37).Width = 18;
+                    sheet.Column(38).Width = 20;
+                    sheet.Column(39).Width = 10;
+                    sheet.Column(39).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                }
+            }
+
+            // 透视信息
+            sheet.Cells[1, 24].Value = "店铺";
+            sheet.Cells[1, 25].Value = "MSKU";
+            sheet.Cells[1, 26].Value = "赔偿编号";
+            sheet.Cells[1, 27].Value = "数量";
+            ////sheet.Cells[1, 28].Value = "金额";
+            sheet.Cells[1, 28].Value = "总数量";
+            ////sheet.Cells[1, 30].Value = "总金额";
+            for (int idx = 0, rowIndex = 2; idx < list数据透视.Count; idx++)
+            {
+                var data = list数据透视[idx];
+                var startIndex = rowIndex;
+
+                var skus = data.Items.Select(x => x.MSKU).Distinct().ToList();
+                decimal totalSum = 0;
+                for (var ssdx = 0; ssdx < skus.Count; ssdx++)
+                {
+                    var sku = skus[ssdx];
+                    var ss = data.Items.Where(x => x.MSKU == sku)
+                        .GroupBy(x => x._赔偿编号)
+                         .Select(g => g.First())
+                         .ToList();
+                    sheet.Cells[rowIndex, 25].Value = sku;
+                    sheet.Cells[rowIndex, 26].Value = string.Join(",", ss.Select(x => x._赔偿编号).ToList());
+                    var s = ss.Select(x => x._数量).Sum();
+                    sheet.Cells[rowIndex, 27].Value = s;
+                    totalSum += s;
+                    if (ssdx == skus.Count - 1)
+                    {
+                        sheet.Cells[startIndex, 24].Value = data._店铺;
+                        sheet.Cells[startIndex, 28].Value = totalSum;
+                        if (rowIndex - startIndex > 0)
+                        {
+                            using (var rng = sheet.Cells[startIndex, 24, rowIndex, 24])
+                            {
+                                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                                rng.Merge = true;
+                            }
+                            using (var rng = sheet.Cells[startIndex, 28, rowIndex, 28])
+                            {
+                                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                                rng.Merge = true;
+                            }
+                        }
+
+                    }
+                    rowIndex++;
+
+                }
+
 
                 if (idx == list数据透视.Count - 1)
                 {
@@ -514,6 +674,78 @@ namespace ExcelTool.Commands.Compensations
                     //sheet.Column(29).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 }
             }
+            //for (int idx = 0, rowIndex = 2; idx < list数据透视.Count; idx++)
+            //{
+            //    var data = list数据透视[idx];
+            //    var startIndex = rowIndex;
+
+            //    for (var ssdx = data.Items.Count - 1; ssdx >= 0; ssdx--)
+            //    {
+            //        var it = data.Items[ssdx];
+
+            //        sheet.Cells[rowIndex, 25].Value = it.MSKU;
+            //        sheet.Cells[rowIndex, 26].Value = string.Join(",", it._赔偿编号);
+            //        sheet.Cells[rowIndex, 27].Value = it._数量;
+            //        //sheet.Cells[rowIndex, 28].Value = it._金额;
+            //        sheet.Cells[rowIndex, 28].Value = data._总数量合计;
+            //        if (ssdx == data.Items.Count - 1)
+            //        {
+            //            sheet.Cells[rowIndex, 24].Value = data._店铺;
+            //            //sheet.Cells[rowIndex, 29].Value = data._总金额合计;
+            //        }
+            //        if (ssdx == 0)
+            //        {
+            //            if (rowIndex - startIndex > 0)
+            //            {
+            //                using (var rng = sheet.Cells[startIndex, 24, rowIndex, 24])
+            //                {
+            //                    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+            //                    rng.Merge = true;
+            //                }
+
+            //                using (var rng = sheet.Cells[startIndex, 28, rowIndex, 28])
+            //                {
+            //                    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+            //                    rng.Merge = true;
+            //                }
+            //                //using (var rng = sheet.Cells[startIndex, 29, rowIndex, 29])
+            //                //{
+            //                //    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+            //                //    rng.Merge = true;
+            //                //}
+            //            }
+            //        }
+            //        rowIndex++;
+
+            //    }
+
+            //    if (idx == list数据透视.Count - 1)
+            //    {
+            //        using (var rng = sheet.Cells[1, 24, rowIndex - 1, 28])
+            //        {
+            //            rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+            //            rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+            //            rng.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+            //            rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            //        }
+
+            //        using (var rng = sheet.Cells[1, 24, 1, 28])
+            //        {
+            //            rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+            //            rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
+            //        }
+            //        sheet.Column(24).Width = 30;
+            //        sheet.Column(25).Width = 22;
+            //        sheet.Column(26).Width = 30;
+            //        sheet.Column(27).Width = 10;
+            //        sheet.Column(28).Width = 10;
+            //        //sheet.Column(29).Width = 10;
+            //        //sheet.Column(26).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            //        sheet.Column(27).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            //        sheet.Column(28).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            //        //sheet.Column(29).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+            //    }
+            //}
         }
     }
 
@@ -521,8 +753,8 @@ namespace ExcelTool.Commands.Compensations
     {
         public string _店铺 { get; set; }
         public List<_赔偿订单统计项> Items { get; set; } = new List<_赔偿订单统计项>();
-        public decimal _总数量合计 { get { return Items.Select(x => x._数量).Sum(); } }
-        public decimal _总金额合计 { get { return Items.Select(x => x._金额).Sum(); } }
+        //public decimal _总数量合计 { get { return Items.Select(x => x._数量).Sum(); } }
+        //public decimal _总金额合计 { get { return Items.Select(x => x._金额).Sum(); } }
     }
 
     class _赔偿订单统计项
@@ -530,7 +762,6 @@ namespace ExcelTool.Commands.Compensations
         public string MSKU { get; set; }
         public string _国家 { get; set; }
         public string _赔偿编号 { get; set; }
-        //public List<string> _赔偿编号 { get; set; } = new List<string>();
         public decimal _数量 { get; set; }
         public decimal _金额 { get; set; }
     }
