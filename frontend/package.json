@@ -23,6 +23,7 @@
     "@ngrx/effects": "^13.0.2",
     "@ngrx/store": "^13.0.2",
     "@ngrx/store-devtools": "^13.0.2",
+    "query-string": "^7.1.1",
     "faker": "^5.5.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",

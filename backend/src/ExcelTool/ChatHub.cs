@@ -16,7 +16,9 @@ namespace ExcelTool
         {
             var us = Context.User;
             var us1 = Context.User?.Identity?.Name;
-            Console.WriteLine($"有连接请求:{Context.ConnectionId}");
+
+            //Console.WriteLine($"有连接请求:{Context.ConnectionId}");
+            Console.WriteLine($"有连接请求:{Context.User?.Identity.Name}");
             return base.OnConnectedAsync();
         }
 
