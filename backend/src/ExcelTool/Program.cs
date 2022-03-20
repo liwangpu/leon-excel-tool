@@ -15,7 +15,12 @@ namespace ExcelTool
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup<Startup>()
+                         .UseKestrel(options =>
+                         {
+                             options.Limits.MaxRequestBodySize = long.MaxValue;
+                         })
+                         .UseIISIntegration();
                     webBuilder.UseWebRoot("wwwroot");
 #if DEBUG
                     webBuilder.UseUrls("http://*:3101");

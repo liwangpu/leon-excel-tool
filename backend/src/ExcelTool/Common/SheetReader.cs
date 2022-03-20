@@ -72,10 +72,6 @@ namespace ExcelTool.Common
 
                 for (int idx = endRow; idx >= dataRow; idx--)
                 {
-                    if (idx == 45)
-                    {
-
-                    }
                     var instance = new T();
                     foreach (var item in mapping)
                     {

@@ -6,11 +6,13 @@ using System.Collections.Generic;
 
 namespace ExcelTool.Commands.StockAnalysiss
 {
-    public class StockAnalysisUploadCommand : IRequest<List<_库存出入总账>>
+    public class StockAnalysisUploadCommand : IRequest
     {
         [FromForm(Name = "detailFiles")]
-        public List<IFormFile> DetailFiles { get; set; }
+        public List<IFormFile> _总账明细 { get; set; }
         [FromForm(Name = "skuMappingFiles")]
-        public List<IFormFile> SKUMappingFiles { get; set; }
+        public List<IFormFile> SKU匹配文件 { get; set; }
+        [FromForm(Name = "saleOrderFiles")]
+        public List<IFormFile> _销售流水 { get; set; }
     }
 }

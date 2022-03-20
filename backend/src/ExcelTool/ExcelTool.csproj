@@ -29,6 +29,7 @@
 	  <PackageReference Include="NLog" Version="4.7.14" />
 	  <PackageReference Include="NLog.Web.AspNetCore" Version="4.14.0" />
 	  <PackageReference Include="NPOI" Version="2.5.5" />
+	  <PackageReference Include="Npoi.Mapper" Version="3.5.1" />
   </ItemGroup>
 
 

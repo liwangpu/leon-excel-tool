@@ -10,6 +10,7 @@ using OfficeOpenXml;
 using System.Text.RegularExpressions;
 using ExcelTool.Models.Compensations;
 using OfficeOpenXml.Style;
+using Npoi.Mapper;
 
 namespace ExcelTool.Commands.Compensations
 {
@@ -38,24 +39,31 @@ namespace ExcelTool.Commands.Compensations
             {
                 for (var idx = request._退货订单.Count - 1; idx >= 0; idx--)
                 {
-                    var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString()}.xlsx");
+                    var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString("N")}.xlsx");
                     using (var targetStream = File.Create(filePath))
                     {
                         await request._退货订单[idx].CopyToAsync(targetStream);
                         targetStream.Close();
-                        using (var package = new ExcelPackage(new FileInfo(filePath)))
+                        var mapper = new Mapper(filePath);
+                        var sheetDatas = mapper.Take<_退货订单>().Select(x => x.Value).ToList();
+                        sheetDatas.ForEach(it =>
                         {
-                            for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
-                            {
-                                var sheet = package.Workbook.Worksheets[sdx];
-                                var sheetDatas = SheetReader<_退货订单>.From(sheet);
-                                sheetDatas.ForEach(it =>
-                                {
-                                    it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
-                                });
-                                list退货订单.AddRange(sheetDatas);
-                            }
-                        }
+                            it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
+                        });
+                        list退货订单.AddRange(sheetDatas);
+                        //using (var package = new ExcelPackage(new FileInfo(filePath)))
+                        //{
+                        //    for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
+                        //    {
+                        //        var sheet = package.Workbook.Worksheets[sdx];
+                        //        var sheetDatas = SheetReader<_退货订单>.From(sheet);
+                        //        sheetDatas.ForEach(it =>
+                        //        {
+                        //            it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
+                        //        });
+                        //        list退货订单.AddRange(sheetDatas);
+                        //    }
+                        //}
                     }
                 }
             }
@@ -66,24 +74,32 @@ namespace ExcelTool.Commands.Compensations
             {
                 for (var idx = request._赔偿订单.Count - 1; idx >= 0; idx--)
                 {
-                    var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString()}.xlsx");
+                    var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString("N")}.xlsx");
                     using (var targetStream = File.Create(filePath))
                     {
                         await request._赔偿订单[idx].CopyToAsync(targetStream);
                         targetStream.Close();
-                        using (var package = new ExcelPackage(new FileInfo(filePath)))
-                        {
-                            for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
-                            {
-                                var sheet = package.Workbook.Worksheets[sdx];
-                                var sheetDatas = SheetReader<_赔偿订单>.From(sheet);
-                                sheetDatas.ForEach(it =>
-                                {
-                                    it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
-                                });
-                                list赔偿订单.AddRange(sheetDatas);
-                            }
-                        }
+
+                        var mapper = new Mapper(filePath);
+                        var sheetDatas = mapper.Take<_赔偿订单>().Select(x => x.Value).ToList();
+                        sheetDatas.ForEach(it =>
+                         {
+                             it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
+                         });
+                        list赔偿订单.AddRange(sheetDatas);
+                        //using (var package = new ExcelPackage(new FileInfo(filePath)))
+                        //{
+                        //    for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
+                        //    {
+                        //        var sheet = package.Workbook.Worksheets[sdx];
+                        //        var sheetDatas = SheetReader<_赔偿订单>.From(sheet);
+                        //        sheetDatas.ForEach(it =>
+                        //                                    {
+                        //                                        it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
+                        //                                    });
+                        //        list赔偿订单.AddRange(sheetDatas);
+                        //    }
+                        //}
                     }
                 }
             }
@@ -92,29 +108,37 @@ namespace ExcelTool.Commands.Compensations
             #region 读取处理方案匹配表
             if (request._处理方案 != null)
             {
-                var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString()}.xlsx");
+                var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString("N")}.xlsx");
                 using (var targetStream = File.Create(filePath))
                 {
                     await request._处理方案.CopyToAsync(targetStream);
                     targetStream.Close();
-                    using (var package = new ExcelPackage(new FileInfo(filePath)))
-                    {
-                        for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
-                        {
-                            var sheet = package.Workbook.Worksheets[sdx];
-                            if (sheet.Name == "赔偿处理方案")
-                            {
-                                var sheetDatas = SheetReader<_赔偿处理方案>.From(sheet);
-                                list赔偿处理方案.AddRange(sheetDatas);
-                            }
-                            else if (sheet.Name == "退货处理方案")
-                            {
-                                var sheetDatas = SheetReader<_退货处理方案>.From(sheet);
-                                list退货处理方案.AddRange(sheetDatas);
-                            }
-                            else { }
-                        }
-                    }
+
+                    var mapper = new Mapper(filePath);
+                    var data1 = mapper.Take<_赔偿处理方案>("赔偿处理方案").Select(x => x.Value).ToList();
+                    list赔偿处理方案.AddRange(data1);
+
+
+                    var data2 = mapper.Take<_退货处理方案>("退货处理方案").Select(x => x.Value).ToList();
+                    list退货处理方案.AddRange(data2);
+                    //using (var package = new ExcelPackage(new FileInfo(filePath)))
+                    //{
+                    //    for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
+                    //    {
+                    //        var sheet = package.Workbook.Worksheets[sdx];
+                    //        if (sheet.Name == "赔偿处理方案")
+                    //        {
+                    //            var sheetDatas = SheetReader<_赔偿处理方案>.From(sheet);
+                    //            list赔偿处理方案.AddRange(sheetDatas);
+                    //        }
+                    //        else if (sheet.Name == "退货处理方案")
+                    //        {
+                    //            var sheetDatas = SheetReader<_退货处理方案>.From(sheet);
+                    //            list退货处理方案.AddRange(sheetDatas);
+                    //        }
+                    //        else { }
+                    //    }
+                    //}
                 }
             }
             #endregion
@@ -122,31 +146,46 @@ namespace ExcelTool.Commands.Compensations
             #region 读取部门匹配表
             if (request._部门匹配表 != null)
             {
-                var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString()}.xlsx");
+                var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString("N")}.xlsx");
                 using (var targetStream = File.Create(filePath))
                 {
                     await request._部门匹配表.CopyToAsync(targetStream);
                     targetStream.Close();
-                    using (var package = new ExcelPackage(new FileInfo(filePath)))
+
+                    var mapper = new Mapper(filePath);
+                    var sheetDatas = mapper.Take<_部门匹配>().Select(x => x.Value).ToList();
+                    sheetDatas.ForEach(it =>
                     {
-                        for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
+                        string pattern = @"[一二三四五六七八九十]{1,2}部";
+                        var m = Regex.Match(it._负责人部门, pattern);
+                        if (m.Success)
                         {
-                            var sheet = package.Workbook.Worksheets[sdx];
-                            var sheetDatas = SheetReader<_部门匹配>.From(sheet);
-                            sheetDatas.ForEach(it =>
-                            {
-                                string pattern = @"[一二三四五六七八九十]{1,2}部";
-                                var m = Regex.Match(it._负责人部门, pattern);
-                                if (m.Success)
-                                {
-                                    list部门.Add(m.Value);
-                                    it._部门 = m.Value;
-                                }
-                            });
-                            list部门匹配.AddRange(sheetDatas);
-                            list部门 = list部门.Select(n => n).Distinct().ToList();
+                            list部门.Add(m.Value);
+                            it._部门 = m.Value;
                         }
-                    }
+                    });
+                    list部门匹配.AddRange(sheetDatas);
+                    list部门 = list部门.Select(n => n).Distinct().ToList();
+                    //using (var package = new ExcelPackage(new FileInfo(filePath)))
+                    //{
+                    //    for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
+                    //    {
+                    //        var sheet = package.Workbook.Worksheets[sdx];
+                    //        var sheetDatas = SheetReader<_部门匹配>.From(sheet);
+                    //        sheetDatas.ForEach(it =>
+                    //        {
+                    //            string pattern = @"[一二三四五六七八九十]{1,2}部";
+                    //            var m = Regex.Match(it._负责人部门, pattern);
+                    //            if (m.Success)
+                    //            {
+                    //                list部门.Add(m.Value);
+                    //                it._部门 = m.Value;
+                    //            }
+                    //        });
+                    //        list部门匹配.AddRange(sheetDatas);
+                    //        list部门 = list部门.Select(n => n).Distinct().ToList();
+                    //    }
+                    //}
                 }
             }
             #endregion

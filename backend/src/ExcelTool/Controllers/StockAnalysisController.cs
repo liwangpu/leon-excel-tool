@@ -21,8 +21,8 @@ namespace ExcelTool.Controllers
         [HttpPost("Upload")]
         public async Task<IActionResult> Upload([FromForm] StockAnalysisUploadCommand command)
         {
-            var result = await mediator.Send(command);
-            return Ok(result);
+            await mediator.Send(command);
+            return Ok();
         }
     }
 }
