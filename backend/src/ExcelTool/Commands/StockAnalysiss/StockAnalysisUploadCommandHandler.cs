@@ -154,6 +154,8 @@ namespace ExcelTool.Commands.StockAnalysiss
 
             #region 数据处理
 
+            var aaa = 1;
+
             list数据透视.ForEach(it =>
             {
                 it._计算几个数量金额信息();
@@ -161,61 +163,70 @@ namespace ExcelTool.Commands.StockAnalysiss
                 {
                     var v = dict销售流水[it._仓库店铺SKU];
                     v._计算平均销售金额();
-
                     it._销售金额 = v._销售金额;
                     it._30天销售金额 = v._30天销售金额;
                     it._15天销售金额 = v._15天销售金额;
                     it._5天销售金额 = v._5天销售金额;
                     it._本期平均销售金额 = v._本期平均销售金额;
-
-                    double d呆滞金额 = 0;
-                    // 计算呆滞
-                    switch (it._仓库类型)
-                    {
-                        case enum仓库类型.中转仓:
-                            var day20Items = it.Items.Where(x => x._天数 == 20);
-                            it._20天入库金额 = day20Items.Select(x => x._入库金额).Sum();
-                            it._20天出库金额 = day20Items.Select(x => x._出库金额).Sum();
-                            d呆滞金额 = it._期末金额 - it._20天入库金额 - it._20天出库金额;
-
-                            it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
-
-                            if (it._20天入库金额 == 0)
-                            {
-                                it._本期死库 = it._本期呆滞;
-                            }
-                            break;
-                        case enum仓库类型.虚拟仓海外仓:
-                            d呆滞金额 = it._期末金额 - it._本期平均销售金额 * 3 - it._入库金额;
-                            it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
-
-                            if (it._出库金额 == 0)
-                            {
-                                it._本期死库 = it._本期呆滞;
-                            }
-                            break;
-                        case enum仓库类型.直发仓:
-                            d呆滞金额 = it._期末金额 - it._本期平均销售金额 * 2 - (it._入库金额 < 0 ? 0 : it._入库金额);
-                            it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
-
-                            break;
-                        case enum仓库类型.耗材仓:
-                            var day60Items = it.Items.Where(x => x._天数 == 60);
-                            it._60天入库金额 = day60Items.Select(x => x._入库金额).Sum();
-                            it._60天出库金额 = day60Items.Select(x => x._出库金额).Sum();
-                            d呆滞金额 = it._期末金额 - it._60天入库金额 - it._60天出库金额;
-                            it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
-                            if (it._出库金额 == 0)
-                            {
-                                it._本期死库 = it._本期呆滞;
-                            }
-
-                            break;
-                        default:
-                            break;
-                    }
                 }
-                var a = 1;
+
+                double d呆滞金额 = 0;
+                // 计算呆滞
+                switch (it._仓库类型)
+                {
+                    case enum仓库类型.中转仓:
+                        var day20Items = it.Items.Where(x => x._天数 == 20).ToList();
+                        it._20天入库金额 = day20Items.Select(x => x._入库金额).Sum();
+                        it._20天出库金额 = day20Items.Select(x => x._出库金额).Sum();
+                        d呆滞金额 = it._期末金额 - it._20天入库金额 - it._20天出库金额;
+                        it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
+
+                        if (it._20天入库金额 == 0)
+                        {
+                            it._本期死库 = it._本期呆滞;
+                        }
+                        break;
+                    case enum仓库类型.LAZADA:
+                        var day60Items = it.Items.Where(x => x._天数 == 60).ToList();
+                        it._60天入库金额 = day60Items.Select(x => x._入库金额).Sum();
+                        it._60天出库金额 = day60Items.Select(x => x._出库金额).Sum();
+                        d呆滞金额 = it._期末金额 - it._60天入库金额 - it._60天出库金额;
+                        it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
+
+                        if (it._60天入库金额 == 0)
+                        {
+                            it._本期死库 = it._本期呆滞;
+                        }
+                        break;
+                    case enum仓库类型.虚拟仓海外仓:
+                        d呆滞金额 = it._期末金额 - it._本期平均销售金额 * 3 - it._入库金额;
+                        it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
+                        if (it._出库金额 == 0)
+                        {
+                            it._本期死库 = it._本期呆滞;
+                        }
+                        break;
+                    case enum仓库类型.直发仓:
+                        d呆滞金额 = it._期末金额 - it._本期平均销售金额 * 2 - it._入库金额;
+                        it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
+                        break;
+                    case enum仓库类型.耗材仓:
+                        var day60Items1 = it.Items.Where(x => x._天数 == 60).ToList();
+                        it._60天入库金额 = day60Items1.Select(x => x._入库金额).Sum();
+                        it._60天出库金额 = day60Items1.Select(x => x._出库金额).Sum();
+                        d呆滞金额 = it._期末金额 - it._60天入库金额 - it._60天出库金额;
+                        it._本期呆滞 = d呆滞金额 < 0 ? 0 : d呆滞金额;
+                        if (it._出库金额 == 0)
+                        {
+                            it._本期死库 = it._本期呆滞;
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+
+
             });
             //var list有效总账项 = list总账明细.Where(x => x._退换或弃置 == false).ToList();
             //var skus = list有效总账项.Select(x => x._仓库店铺SKU).Distinct().ToList();

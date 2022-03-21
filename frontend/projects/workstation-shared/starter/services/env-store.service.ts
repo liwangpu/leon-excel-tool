@@ -1,16 +1,11 @@
 import { APP_BASE_HREF } from '@angular/common';
 import { Inject, Injectable, isDevMode } from '@angular/core';
-import * as fromEntry from '@cxist/mirror-workstation-core';
+import * as fromEntry from 'workstation-core';
 
 @Injectable()
 export class EnvStoreService implements fromEntry.IEnvStore {
 
     public envConfig: fromEntry.IEnvConfig;
-    public constructor(
-        @Inject(APP_BASE_HREF)
-        private appBaseHref: string,
-
-    ) { }
 
     public getEnvConfig(): fromEntry.IEnvConfig {
         return this.envConfig;
@@ -20,7 +15,7 @@ export class EnvStoreService implements fromEntry.IEnvStore {
         if (this.envConfig) { return; }
         return new Promise((resolve, reject) => {
             let configFileName: string = isDevMode() ? 'env-config.dev.json' : 'env-config.json';
-            const configFile: string = `${this.appBaseHref}assets/${configFileName}`;
+            const configFile: string = `/assets/${configFileName}`;
             let xhr: XMLHttpRequest = new XMLHttpRequest();
             xhr.addEventListener('readystatechange', () => {
                 if (xhr.readyState === XMLHttpRequest.DONE) {

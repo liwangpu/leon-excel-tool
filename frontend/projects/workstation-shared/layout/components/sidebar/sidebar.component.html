@@ -1,0 +1,32 @@
+<div class="app-info">
+    <p class="title" [class.hidden]="menuCollapsed">{{appName}}</p>
+</div>
+<div class="navs">
+    <ul nz-menu nzMode="inline" class="menus" [nzInlineCollapsed]="menuCollapsed">
+        <ng-template #iconTpl let-icon="icon">
+            <i nz-icon [nzType]="icon" *ngIf="icon"></i>
+            <i nz-icon nzType="appstore" [class.hidden]="!(!icon&&menuCollapsed)" class="collapsed-place-icon"></i>
+        </ng-template>
+
+        <ng-template #menuTpl let-menus>
+            <ng-container *ngFor="let menu of menus">
+                <li *ngIf="!menu.children" nz-menu-item [nzPaddingLeft]="menu.level * 24" [nzDisabled]="menu.disabled"
+                    nz-tooltip nzTooltipPlacement="right" [nzTooltipTitle]="menuCollapsed ? menu.title : ''"
+                    nzMatchRouter>
+                    <ng-container *ngTemplateOutlet='iconTpl;context:{icon:menu.icon}'>
+                    </ng-container>
+                    <a class="menu-link-title" [routerLink]="[menu.url]">{{menu.title}}</a>
+                </li>
+                <li *ngIf="menu.children" nz-submenu [nzTitle]="menu.title"
+                    [nzIcon]="menu.icon?menu.icon:(menuCollapsed ?'appstore':null)" [nzOpen]="menu.open"
+                    [nzDisabled]="menu.disabled" [nzPaddingLeft]="menu.level * 24"  [class.mirror-group-menu]="!menu.url">
+                    <ul>
+                        <ng-container *ngTemplateOutlet="menuTpl; context: { $implicit: menu.children }"></ng-container>
+                    </ul>
+                </li>
+            </ng-container>
+        </ng-template>
+
+        <ng-container *ngTemplateOutlet="menuTpl; context: { $implicit: menus }"></ng-container>
+    </ul>
+</div>

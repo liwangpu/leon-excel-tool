@@ -1,0 +1,71 @@
+:host {
+    $fColor: #606570;;
+    $sColor: #999faa;
+
+    .profile-bar {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        margin: 0 8px;
+        background: #fff;
+        white-space: nowrap;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    p,
+    h4 {
+        color: $fColor;
+        font-family: Source Han Sans CN;
+        font-style: normal;
+        font-weight: normal;
+        font-size: 14px;
+        line-height: 15px;
+    }
+
+    .img {
+        margin-right: 5px;
+
+        div,
+        img {
+            width: 35px;
+            height: 35px;
+            border-radius: 100%;
+        }
+
+        div {
+            text-align: center;
+            font-size: 16px;
+            color: #ffffff;
+            margin: auto;
+            background: var(--mo-color-primary-lightest);
+            color: #ffffff;
+            line-height: 33px;
+        }
+
+        img {
+            margin: auto;
+        }
+    }
+
+    div.user-info {
+        span.name {
+            padding: 0;
+            font-weight: 400;
+            font-size: 14px;
+            color: $fColor;
+            margin-right: 10px;
+        }
+        i {
+            font-size: 10px;
+            color: $fColor;
+        }
+    }
+
+    workstation-shared-layout-profile-panel {
+        border-radius: 6px;
+    }
+}

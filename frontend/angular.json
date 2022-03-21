@@ -134,9 +134,6 @@
                 },
                 "@schematics/angular:guard": {
                     "skipTests": true
-                },
-                "@schematics/angular:module": {
-                    "skipTests": true
                 }
             },
             "architect": {
@@ -181,9 +178,6 @@
                     "skipTests": true
                 },
                 "@schematics/angular:guard": {
-                    "skipTests": true
-                },
-                "@schematics/angular:module": {
                     "skipTests": true
                 }
             },

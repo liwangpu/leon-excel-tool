@@ -1,9 +1,5 @@
 import { Inject, Injectable } from '@angular/core';
-import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
-import { IdentityStore, IDENTITY_STORE, IUserProfile, IUserProfileProvider } from '@cxist/mirror-workstation-core';
-import { Observable } from 'rxjs';
-import { share, tap } from 'rxjs/operators';
-import { IdentityService } from './identity.service';
+import { IdentityStore, IDENTITY_STORE, IUserProfile, IUserProfileProvider } from 'workstation-core';
 
 @Injectable()
 export class UserProfileProviderService implements IUserProfileProvider {

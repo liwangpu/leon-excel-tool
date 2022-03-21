@@ -59,7 +59,7 @@ namespace ExcelTool.Models.StockAnalysiss
             var str店铺名称 = string.IsNullOrEmpty(_店铺) ? null : _店铺.ToLower();
             if (str店铺名称 != null && Regex.IsMatch(str店铺名称, @"lazada"))
             {
-                _仓库类型 = enum仓库类型.耗材仓;
+                _仓库类型 = enum仓库类型.LAZADA;
             }
             else
             {
@@ -100,6 +100,8 @@ namespace ExcelTool.Models.StockAnalysiss
         虚拟仓海外仓,
         直发仓,
         耗材仓,
+        LAZADA,
+        大件直发,
         不明确
     }
 }

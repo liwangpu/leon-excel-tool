@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { IOperationMessage } from '@cxist/mirror-workstation-core';
+import { IOperationMessage } from 'workstation-core';
 import { NzMessageService } from 'ng-zorro-antd/message';
 
 @Injectable()

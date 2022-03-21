@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { API_GATEWAY, IdentityStore, ITokenInfo, ITokenStore, IUserProfile, TOKEN_STORE } from '@cxist/mirror-workstation-core';
+import { API_GATEWAY, IdentityStore, ITokenStore, IUserProfile, TOKEN_STORE } from 'workstation-core';
 import * as queryString from 'query-string';
 import { Observable } from 'rxjs';
 
@@ -16,7 +16,7 @@ export class IdentityService implements IdentityStore {
         private httpClient: HttpClient
     ) { }
 
-    public login(username: string, password: string, captchaCode?: string): Observable<ITokenInfo> {
+    public login(username: string, password: string, captchaCode?: string): Observable<any> {
         let url: string = `${this.uri}/ids/connect/token`;
         const body: FormData = new FormData();
         body.set('grant_type', 'password');
@@ -26,30 +26,16 @@ export class IdentityService implements IdentityStore {
         if (captchaCode) {
             body.set('captchaCode', captchaCode);
         }
-        return this.httpClient.post<ITokenInfo>(url, body);
+        return this.httpClient.post<any>(url, body);
     }
 
     public getProfile(): Observable<IUserProfile> {
-        let url: string = `${this.uri}/ids/Identity/Profile`;
+        let url: string = `${this.uri}/User/Profile`;
         return this.httpClient.get<IUserProfile>(url);
     }
 
     public queryTenantList(queryParam: any): Observable<Array<any>> {
         const queryPart: string = queryString.stringify(queryParam);
         return this.httpClient.get<any>(`${this.uri}/ids/Identity/tenant?${queryPart}`);
-    }
-
-    public refreshToken(tenantId?: string): Observable<ITokenInfo> {
-        const tokenInfo: ITokenInfo = this.tokenStore.getToken();
-        const body: FormData = new FormData();
-        body.set('grant_type', 'refresh_token');
-        body.set('client_id', 'server');
-        body.set('refresh_token', tokenInfo.refresh_token);
-
-        if (tenantId) {
-            body.set('tenantId', tenantId);
-        }
-
-        return this.httpClient.post<ITokenInfo>(`${this.uri}/ids/connect/token`, body);
     }
 }
