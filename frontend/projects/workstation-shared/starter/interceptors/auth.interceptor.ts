@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { ITokenInfo, ITokenStore, TOKEN_STORE } from 'workstation-core';
+import { ITokenStore, TOKEN_STORE } from 'workstation-core';
 import { Observable } from 'rxjs';
 
 @Injectable()
@@ -12,10 +12,10 @@ export class AuthInterceptor implements HttpInterceptor {
     ) { }
 
     public intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        const tokenInfo: ITokenInfo = this.tokenStore.getToken();
-        if (tokenInfo) {
+        const token: string = this.tokenStore.getToken();
+        if (token) {
             let secureHeaders: any = req.headers;
-            secureHeaders = secureHeaders.append('Authorization', `bearer ${tokenInfo.access_token}`);
+            secureHeaders = secureHeaders.append('Authorization', `bearer ${token}`);
             const secureReq: any = req.clone({ headers: secureHeaders });
             return next.handle(secureReq);
         }

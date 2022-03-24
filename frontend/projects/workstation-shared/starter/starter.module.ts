@@ -30,15 +30,14 @@ import { AppMessageOpsatService } from './services/app-message-opsat.service';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MainComponent } from './components/main/main.component';
+import { ProfileResolver } from './resolvers/profile.resolver';
 
 export function apiGatewayFn(configSrv: EnvStoreService): string {
-    // tslint:disable-next-line: prefer-immediate-return
     const apiGateway: string = `${configSrv.getEnvConfig().apiGateway}`;
     return apiGateway;
 }
 
 export function appInitializerFn(store: fromCore.IEnvStore): Function {
-    // tslint:disable-next-line: prefer-immediate-return
     const fn: Function = () => store.loadEnvConfig();
     return fn;
 }
@@ -69,6 +68,7 @@ export function appInitializerFn(store: fromCore.IEnvStore): Function {
         AuthenticationGuard,
         AuthorizationGuard,
         EnvStoreService,
+        ProfileResolver,
         { provide: NZ_I18N, useValue: zh_CN },
         { provide: LOCALE_ID, useValue: 'zh' },
         { provide: fromCore.ENV_STORE, useExisting: EnvStoreService },

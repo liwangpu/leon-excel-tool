@@ -7,6 +7,7 @@ import { MainComponent } from './components/main/main.component';
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { AuthenticationGuard } from './guards/authentication.guard';
+import { ProfileResolver } from './resolvers/profile.resolver';
 
 const icons: Array<IconDefinition> = [];
 
@@ -15,7 +16,10 @@ export const APP_USERPROFILE_ROUTE: Route = { path: 'profile', component: Profil
 export const APP_LAYOUT_ROUTE: Route = {
     path: '',
     component: MainComponent,
-    canActivate: [AuthenticationGuard]
+    canActivate: [AuthenticationGuard],
+    resolve: {
+        profile: ProfileResolver
+    }
 };
 
 export const APP_COMMON_ROUTERS: Routes = [

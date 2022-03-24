@@ -59,12 +59,12 @@ export class ProfilePanelComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     public async ngOnInit(): Promise<void> {
-        this.subs.sink = this.identityStore.queryTenantList({})
-            .subscribe(tenants => {
-                this.tenants = tenants;
-                this.getActiveTenant(this.userInfo);
-                this.cdr.markForCheck();
-            });
+        // this.subs.sink = this.identityStore.queryTenantList({})
+        //     .subscribe(tenants => {
+        //         this.tenants = tenants;
+        //         this.getActiveTenant(this.userInfo);
+        //         this.cdr.markForCheck();
+        //     });
     }
 
     public toSwitch(): void {
@@ -86,15 +86,15 @@ export class ProfilePanelComponent implements OnInit, OnDestroy, OnChanges {
     }
 
     public async changeTenant(id: string): Promise<void> {
-        if (this.changeTenanting) {
-            return;
-        }
-        this.changeTenanting = true;
+        // if (this.changeTenanting) {
+        //     return;
+        // }
+        // this.changeTenanting = true;
 
-        const tokenInfo: fromStationCore.ITokenInfo = await this.identityStore.refreshToken(id).toPromise();
-        await this.tokenStore.setToken(tokenInfo);
-        this.changeTenanting = false;
-        this.reloadApp();
+        // const tokenInfo: fromStationCore.ITokenInfo = await this.identityStore.refreshToken(id).toPromise();
+        // await this.tokenStore.setToken(tokenInfo);
+        // this.changeTenanting = false;
+        // this.reloadApp();
     }
 
 
