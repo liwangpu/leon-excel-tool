@@ -1,31 +1,43 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AuthModule } from '@app/auth';
-import { UserModule } from '@app/user';
+import { AppController } from './controllers/app.controller';
 import { MulterModule } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
+import { AuthController } from './controllers/auth.controller';
+import { ExcelToolController } from './controllers/excel-tool.controller';
+import { UserController } from './controllers/user.controller';
+import { UserModule } from '@app/user';
+import { ExcelToolModule } from '@app/excel-tool';
+import * as fromCommon from '@app/common';
+import { PassportModule } from '@nestjs/passport';
+import { JwtModule } from '@nestjs/jwt';
+import { jwtConstants } from '@app/common';
+import { CqrsModule } from '@nestjs/cqrs';
+import { CommandHandlers } from '@app/commands';
 
 @Module({
     imports: [
-        AuthModule,
-        UserModule,
-        // MulterModule.register({
-        //     dest: './uploads'
-        // })
-        MulterModule.register({
-            storage: diskStorage({
-                //自定义路径
-                destination: `./fileUpload/`,
-                filename: (req, file, cb) => {
-                    // 自定义文件名
-                    // const filename = `${nuid.next()}.${file.mimetype.split('/')[1]}`;
-                    // return cb(null, filename);
-                    return cb(null, file.originalname);
-                },
-            }),
+        CqrsModule,
+        MulterModule.register(),
+        PassportModule,
+        JwtModule.register({
+            secret: jwtConstants.secret,
+            signOptions: { expiresIn: '600s' },
         }),
+        UserModule,
+        ExcelToolModule
     ],
-    controllers: [AppController],
-    providers: [],
+    controllers: [
+        AppController,
+        AuthController,
+        ExcelToolController,
+        UserController
+    ],
+    providers: [
+        ...CommandHandlers,
+        fromCommon.AuthService,
+        fromCommon.LocalStrategy,
+        fromCommon.JwtStrategy,
+        fromCommon.LocalAuthGuard
+    ],
 })
 export class AppModule { }

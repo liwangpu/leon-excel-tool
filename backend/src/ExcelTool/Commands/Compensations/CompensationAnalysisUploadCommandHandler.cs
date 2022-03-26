@@ -258,6 +258,12 @@ namespace ExcelTool.Commands.Compensations
                     }
                 });
 
+                //{
+                //    var sheet = workbox.Worksheets.Add($"{dName} ERP");
+                //    var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
+                //    _生成退货订单Sheet(sheet, datas, "ERP");
+                //}
+
                 package.Save();
             }
             #endregion
@@ -292,7 +298,7 @@ namespace ExcelTool.Commands.Compensations
             return null;
         }
 
-        private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单> list, string operate)
+        private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单> list, string operate, bool summary = false)
         {
             #region 标题行
             sheet.Cells[1, 1].Value = "店铺";
@@ -316,6 +322,10 @@ namespace ExcelTool.Commands.Compensations
             sheet.Cells[1, 19].Value = "订购时间";
             sheet.Cells[1, 20].Value = "备注";
             sheet.Cells[1, 21].Value = "操作";
+            if (summary)
+            {
+                sheet.Cells[1, 22].Value = "部门";
+            }
             #endregion
 
             #region 数据行
@@ -353,9 +363,18 @@ namespace ExcelTool.Commands.Compensations
                         break;
                 }
                 sheet.Cells[rowIndex, 21].Value = action;
+                if (summary)
+                {
+                    sheet.Cells[1, 22].Value = data._部门;
+                }
                 rowIndex++;
             }
             #endregion
+
+            if (summary)
+            {
+                return;
+            }
 
             var list数据透视 = new List<_退货单数据透视>();
             // 数据透视
