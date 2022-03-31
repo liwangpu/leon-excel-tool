@@ -1,1 +1,10 @@
-<p>login works!</p>
+<div class="login">
+    <h1>EXCEL 小工具</h1>
+    <form [formGroup]="form">
+        <input type="text" name="username" placeholder="用户名" required="true" formControlName="username" />
+        <input type="password" name="password" placeholder="密码" required="true" formControlName="password" />
+        <button class="btn btn-primary btn-block btn-large" [class.disabled]="!form.valid" (click)="login()"
+            [disabled]="!form.valid">登录</button>
+        <p class="error-tip" *ngIf="errorMessage">{{errorMessage}}</p>
+    </form>
+</div>

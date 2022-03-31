@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
 import { API_GATEWAY, IdentityStore, ITokenStore, IUserProfile, TOKEN_STORE } from 'workstation-core';
 import * as queryString from 'query-string';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 
 @Injectable()
 export class IdentityService implements IdentityStore {
@@ -16,26 +16,16 @@ export class IdentityService implements IdentityStore {
         private httpClient: HttpClient
     ) { }
 
-    public login(username: string, password: string, captchaCode?: string): Observable<any> {
-        let url: string = `${this.uri}/ids/connect/token`;
-        const body: FormData = new FormData();
-        body.set('grant_type', 'password');
-        body.set('client_id', 'server');
-        body.set('username', username);
-        body.set('password', password);
-        if (captchaCode) {
-            body.set('captchaCode', captchaCode);
-        }
-        return this.httpClient.post<any>(url, body);
+    public login(username: string, password: string): Observable<any> {
+        let url: string = `${this.uri}/auth/login`;
+        return this.httpClient.post<any>(url, { username, password }).pipe(tap(res => {
+            this.tokenStore.setToken(res.access_token);
+        }));
     }
 
     public getProfile(): Observable<IUserProfile> {
-        let url: string = `${this.uri}/User/Profile`;
+        let url: string = `${this.uri}/auth/profile`;
         return this.httpClient.get<IUserProfile>(url);
     }
 
-    public queryTenantList(queryParam: any): Observable<Array<any>> {
-        const queryPart: string = queryString.stringify(queryParam);
-        return this.httpClient.get<any>(`${this.uri}/ids/Identity/tenant?${queryPart}`);
-    }
 }

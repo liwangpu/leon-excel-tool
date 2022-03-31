@@ -24,7 +24,7 @@ namespace ExcelTool.Models.Compensations
         public string MSKU { get; set; }
         [Column("ASIN")]
         public string ASIN { get; set; }
-        [Column("数量")]
+        [Column("退货数量")]
         public int _数量 { get; set; }
         [Column("发货仓库编号")]
         public string _发货仓库编号 { get; set; }

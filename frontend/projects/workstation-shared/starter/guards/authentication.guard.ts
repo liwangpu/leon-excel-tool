@@ -21,17 +21,12 @@ export class AuthenticationGuard implements CanActivate {
     }
 
     public async canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): Promise<boolean> {
-        let tokenInfo = this.tokenStore.getToken();
+        let token = this.tokenStore.getToken();
         let tokenValid = true;
 
-        if (!tokenInfo) {
+        if (!token || this.jwtHelper.isTokenExpired(token)) {
             tokenValid = false;
         }
-
-        // if(this.jwtHelper.isTokenExpired(tokenInfo)){
-
-        // }
-        console.log('token:', tokenInfo);
         return true;
     }
 

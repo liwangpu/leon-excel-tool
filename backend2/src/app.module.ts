@@ -13,15 +13,18 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from '@app/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CommandHandlers } from '@app/commands';
+import { WsStartGateway } from './ws.gateway';
 
 @Module({
     imports: [
         CqrsModule,
-        MulterModule.register(),
+        MulterModule.register({
+            dest: './uploads'
+        }),
         PassportModule,
         JwtModule.register({
             secret: jwtConstants.secret,
-            signOptions: { expiresIn: '600s' },
+            signOptions: { expiresIn: `${60 * 60 * 24}s` },
         }),
         UserModule,
         ExcelToolModule
@@ -34,6 +37,7 @@ import { CommandHandlers } from '@app/commands';
     ],
     providers: [
         ...CommandHandlers,
+        WsStartGateway,
         fromCommon.AuthService,
         fromCommon.LocalStrategy,
         fromCommon.JwtStrategy,

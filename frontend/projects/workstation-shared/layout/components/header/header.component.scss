@@ -1,0 +1,22 @@
+:host {
+    display: flex;
+    width: 100%;
+    padding: 6px 12px;
+    color: #fff;
+
+    div.startup {
+        display: flex;
+        align-items: center;
+
+        .btn {
+            color: #fff;
+        }
+
+        .title {
+            margin: 0 0 0 6px;
+            padding: 0;
+            font-size: 18px;
+            font-weight: 600;
+        }
+    }
+}

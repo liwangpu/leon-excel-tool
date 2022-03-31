@@ -10,16 +10,13 @@ export class TokenStoreService implements fromCore.ITokenStore {
     private token: string;
     public constructor(
     ) {
-        const str: string = localStorage.getItem(tokenStorageKey);
-        if (str) {
-            this.token = JSON.parse(str);
-        }
+        this.token = localStorage.getItem(tokenStorageKey);
     }
+
     public getToken(): string {
         if (this.token) { return this.token; }
         const str: string = localStorage.getItem(tokenStorageKey);
-        if (!str) { return null; }
-        return JSON.parse(str);
+        return str;
     }
 
     public async setToken(token: string): Promise<void> {

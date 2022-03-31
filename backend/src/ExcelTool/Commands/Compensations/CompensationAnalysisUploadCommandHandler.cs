@@ -51,19 +51,6 @@ namespace ExcelTool.Commands.Compensations
                             it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
                         });
                         list退货订单.AddRange(sheetDatas);
-                        //using (var package = new ExcelPackage(new FileInfo(filePath)))
-                        //{
-                        //    for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
-                        //    {
-                        //        var sheet = package.Workbook.Worksheets[sdx];
-                        //        var sheetDatas = SheetReader<_退货订单>.From(sheet);
-                        //        sheetDatas.ForEach(it =>
-                        //        {
-                        //            it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
-                        //        });
-                        //        list退货订单.AddRange(sheetDatas);
-                        //    }
-                        //}
                     }
                 }
             }
@@ -121,24 +108,6 @@ namespace ExcelTool.Commands.Compensations
 
                     var data2 = mapper.Take<_退货处理方案>("退货处理方案").Select(x => x.Value).ToList();
                     list退货处理方案.AddRange(data2);
-                    //using (var package = new ExcelPackage(new FileInfo(filePath)))
-                    //{
-                    //    for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
-                    //    {
-                    //        var sheet = package.Workbook.Worksheets[sdx];
-                    //        if (sheet.Name == "赔偿处理方案")
-                    //        {
-                    //            var sheetDatas = SheetReader<_赔偿处理方案>.From(sheet);
-                    //            list赔偿处理方案.AddRange(sheetDatas);
-                    //        }
-                    //        else if (sheet.Name == "退货处理方案")
-                    //        {
-                    //            var sheetDatas = SheetReader<_退货处理方案>.From(sheet);
-                    //            list退货处理方案.AddRange(sheetDatas);
-                    //        }
-                    //        else { }
-                    //    }
-                    //}
                 }
             }
             #endregion
@@ -163,29 +132,17 @@ namespace ExcelTool.Commands.Compensations
                             list部门.Add(m.Value);
                             it._部门 = m.Value;
                         }
+                        else
+                        {
+                            it._部门 = "未匹配";
+                            list部门.Add("未匹配");
+                        }
                     });
+
                     list部门匹配.AddRange(sheetDatas);
+                    // 添加未匹配部门
+                    list部门.Add("未匹配");
                     list部门 = list部门.Select(n => n).Distinct().ToList();
-                    //using (var package = new ExcelPackage(new FileInfo(filePath)))
-                    //{
-                    //    for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
-                    //    {
-                    //        var sheet = package.Workbook.Worksheets[sdx];
-                    //        var sheetDatas = SheetReader<_部门匹配>.From(sheet);
-                    //        sheetDatas.ForEach(it =>
-                    //        {
-                    //            string pattern = @"[一二三四五六七八九十]{1,2}部";
-                    //            var m = Regex.Match(it._负责人部门, pattern);
-                    //            if (m.Success)
-                    //            {
-                    //                list部门.Add(m.Value);
-                    //                it._部门 = m.Value;
-                    //            }
-                    //        });
-                    //        list部门匹配.AddRange(sheetDatas);
-                    //        list部门 = list部门.Select(n => n).Distinct().ToList();
-                    //    }
-                    //}
                 }
             }
             #endregion
@@ -200,6 +157,7 @@ namespace ExcelTool.Commands.Compensations
                 // 匹配部门
                 var dep = list部门匹配.Find(x => x._店铺名 == it._店铺);
                 it._部门 = dep != null ? dep._部门 : "未匹配";
+
 
                 // 匹配操作
                 var a1 = list退货单需要EPR处理的.FirstOrDefault(x => x.DetailedDisposition == it._库存属性);
@@ -227,8 +185,7 @@ namespace ExcelTool.Commands.Compensations
                 it._对应的后台操作 = a2 != null ? a2._后台执行动作 : null;
             });
 
-            // 添加未匹配部门
-            list部门.Add("未匹配");
+
             #endregion
 
             Directory.Delete(currentTmpFolder, true);
@@ -243,6 +200,12 @@ namespace ExcelTool.Commands.Compensations
                 list部门.ForEach(dName =>
                 {
                     var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
+
+                    if (dName == "未匹配")
+                    {
+                        var sss = _list部门退货订单.FirstOrDefault(d => d._订单号 == "302-5110457-9063529");
+                        var bbb = 1;
+                    }
                     // ERP操作表
                     {
                         var sheet = workbox.Worksheets.Add($"{dName} ERP");
