@@ -74,19 +74,6 @@ namespace ExcelTool.Commands.Compensations
                              it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
                          });
                         list赔偿订单.AddRange(sheetDatas);
-                        //using (var package = new ExcelPackage(new FileInfo(filePath)))
-                        //{
-                        //    for (var sdx = package.Workbook.Worksheets.Count - 1; sdx >= 0; sdx--)
-                        //    {
-                        //        var sheet = package.Workbook.Worksheets[sdx];
-                        //        var sheetDatas = SheetReader<_赔偿订单>.From(sheet);
-                        //        sheetDatas.ForEach(it =>
-                        //                                    {
-                        //                                        it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
-                        //                                    });
-                        //        list赔偿订单.AddRange(sheetDatas);
-                        //    }
-                        //}
                     }
                 }
             }
@@ -201,11 +188,6 @@ namespace ExcelTool.Commands.Compensations
                 {
                     var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
 
-                    if (dName == "未匹配")
-                    {
-                        var sss = _list部门退货订单.FirstOrDefault(d => d._订单号 == "302-5110457-9063529");
-                        var bbb = 1;
-                    }
                     // ERP操作表
                     {
                         var sheet = workbox.Worksheets.Add($"{dName} ERP");
@@ -221,11 +203,20 @@ namespace ExcelTool.Commands.Compensations
                     }
                 });
 
-                //{
-                //    var sheet = workbox.Worksheets.Add($"{dName} ERP");
-                //    var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
-                //    _生成退货订单Sheet(sheet, datas, "ERP");
-                //}
+                var _list汇总订单 = list退货订单.OrderBy(x => x._部门).ToList();
+                // ERP操作表
+                {
+                    var sheet = workbox.Worksheets.Add($"ERP汇总");
+                    var datas = _list汇总订单.Where(x => x._需要ERP操作).ToList();
+                    _生成退货订单Sheet(sheet, datas, "ERP", false);
+                }
+
+                // 后台操作表
+                {
+                    var sheet = workbox.Worksheets.Add($"亚马逊后台汇总");
+                    var datas = _list汇总订单.Where(x => x._需要后台操作).ToList();
+                    _生成退货订单Sheet(sheet, datas, "亚马逊后台", false);
+                }
 
                 package.Save();
             }
@@ -254,6 +245,23 @@ namespace ExcelTool.Commands.Compensations
                         _生成赔偿订单Sheet(sheet, datas, "亚马逊后台");
                     }
                 });
+
+                // 打印汇总表格
+                var _list所有偿订单 = list赔偿订单.OrderBy(x => x._部门).ToList();
+
+                // ERP操作表
+                {
+                    var sheet = workbox.Worksheets.Add($"ERP汇总");
+                    var datas = _list所有偿订单.Where(x => x._需要ERP操作).ToList();
+                    _生成赔偿订单Sheet(sheet, datas, "ERP", false);
+                }
+
+                // 后台操作表
+                {
+                    var sheet = workbox.Worksheets.Add($"亚马逊后台汇总");
+                    var datas = _list所有偿订单.Where(x => x._需要后台操作).ToList();
+                    _生成赔偿订单Sheet(sheet, datas, "亚马逊后台", false);
+                }
                 package.Save();
             }
             #endregion
@@ -261,7 +269,7 @@ namespace ExcelTool.Commands.Compensations
             return null;
         }
 
-        private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单> list, string operate, bool summary = false)
+        private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单> list, string operate, bool showPivot = true)
         {
             #region 标题行
             sheet.Cells[1, 1].Value = "店铺";
@@ -285,7 +293,7 @@ namespace ExcelTool.Commands.Compensations
             sheet.Cells[1, 19].Value = "订购时间";
             sheet.Cells[1, 20].Value = "备注";
             sheet.Cells[1, 21].Value = "操作";
-            if (summary)
+            if (!showPivot)
             {
                 sheet.Cells[1, 22].Value = "部门";
             }
@@ -326,18 +334,15 @@ namespace ExcelTool.Commands.Compensations
                         break;
                 }
                 sheet.Cells[rowIndex, 21].Value = action;
-                if (summary)
+                if (!showPivot)
                 {
-                    sheet.Cells[1, 22].Value = data._部门;
+                    sheet.Cells[rowIndex, 22].Value = data._部门;
                 }
                 rowIndex++;
             }
             #endregion
 
-            if (summary)
-            {
-                return;
-            }
+            if (!showPivot) { return; }
 
             var list数据透视 = new List<_退货单数据透视>();
             // 数据透视
@@ -432,7 +437,7 @@ namespace ExcelTool.Commands.Compensations
             }
         }
 
-        private static void _生成赔偿订单Sheet(ExcelWorksheet sheet, List<_赔偿订单> list, string operate)
+        private static void _生成赔偿订单Sheet(ExcelWorksheet sheet, List<_赔偿订单> list, string operate, bool showPivot = true)
         {
             #region 标题行
             sheet.Cells[1, 1].Value = "店铺";
@@ -455,6 +460,10 @@ namespace ExcelTool.Commands.Compensations
             sheet.Cells[1, 18].Value = "原始赔偿编号";
             sheet.Cells[1, 19].Value = "原始赔偿类型";
             sheet.Cells[1, 20].Value = "操作";
+            if (!showPivot)
+            {
+                sheet.Cells[1, 21].Value = "部门";
+            }
             #endregion
 
             #region 数据行
@@ -491,10 +500,15 @@ namespace ExcelTool.Commands.Compensations
                         break;
                 }
                 sheet.Cells[rowIndex, 20].Value = action;
+                if (!showPivot)
+                {
+                    sheet.Cells[rowIndex, 21].Value = data._部门;
+                }
                 rowIndex++;
             }
             #endregion
 
+            if (!showPivot) { return; }
             // 数据透视
             var list数据透视 = new List<_赔偿订单数据透视>();
             list.ForEach(it =>
@@ -622,9 +636,7 @@ namespace ExcelTool.Commands.Compensations
             sheet.Cells[1, 25].Value = "MSKU";
             sheet.Cells[1, 26].Value = "赔偿编号";
             sheet.Cells[1, 27].Value = "数量";
-            ////sheet.Cells[1, 28].Value = "金额";
             sheet.Cells[1, 28].Value = "总数量";
-            ////sheet.Cells[1, 30].Value = "总金额";
             for (int idx = 0, rowIndex = 2; idx < list数据透视.Count; idx++)
             {
                 var data = list数据透视[idx];
@@ -695,78 +707,6 @@ namespace ExcelTool.Commands.Compensations
                     //sheet.Column(29).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
                 }
             }
-            //for (int idx = 0, rowIndex = 2; idx < list数据透视.Count; idx++)
-            //{
-            //    var data = list数据透视[idx];
-            //    var startIndex = rowIndex;
-
-            //    for (var ssdx = data.Items.Count - 1; ssdx >= 0; ssdx--)
-            //    {
-            //        var it = data.Items[ssdx];
-
-            //        sheet.Cells[rowIndex, 25].Value = it.MSKU;
-            //        sheet.Cells[rowIndex, 26].Value = string.Join(",", it._赔偿编号);
-            //        sheet.Cells[rowIndex, 27].Value = it._数量;
-            //        //sheet.Cells[rowIndex, 28].Value = it._金额;
-            //        sheet.Cells[rowIndex, 28].Value = data._总数量合计;
-            //        if (ssdx == data.Items.Count - 1)
-            //        {
-            //            sheet.Cells[rowIndex, 24].Value = data._店铺;
-            //            //sheet.Cells[rowIndex, 29].Value = data._总金额合计;
-            //        }
-            //        if (ssdx == 0)
-            //        {
-            //            if (rowIndex - startIndex > 0)
-            //            {
-            //                using (var rng = sheet.Cells[startIndex, 24, rowIndex, 24])
-            //                {
-            //                    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
-            //                    rng.Merge = true;
-            //                }
-
-            //                using (var rng = sheet.Cells[startIndex, 28, rowIndex, 28])
-            //                {
-            //                    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
-            //                    rng.Merge = true;
-            //                }
-            //                //using (var rng = sheet.Cells[startIndex, 29, rowIndex, 29])
-            //                //{
-            //                //    rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
-            //                //    rng.Merge = true;
-            //                //}
-            //            }
-            //        }
-            //        rowIndex++;
-
-            //    }
-
-            //    if (idx == list数据透视.Count - 1)
-            //    {
-            //        using (var rng = sheet.Cells[1, 24, rowIndex - 1, 28])
-            //        {
-            //            rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
-            //            rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
-            //            rng.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-            //            rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            //        }
-
-            //        using (var rng = sheet.Cells[1, 24, 1, 28])
-            //        {
-            //            rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
-            //            rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
-            //        }
-            //        sheet.Column(24).Width = 30;
-            //        sheet.Column(25).Width = 22;
-            //        sheet.Column(26).Width = 30;
-            //        sheet.Column(27).Width = 10;
-            //        sheet.Column(28).Width = 10;
-            //        //sheet.Column(29).Width = 10;
-            //        //sheet.Column(26).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            //        sheet.Column(27).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            //        sheet.Column(28).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            //        //sheet.Column(29).Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
-            //    }
-            //}
         }
     }
 
