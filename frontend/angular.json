@@ -63,10 +63,16 @@
                                 "glob": "**/*",
                                 "input": "./projects/workstation-shared/assets/",
                                 "output": "/assets/"
+                            },
+                            {
+                                "glob": "**/*",
+                                "input": "./projects/workstation-shared/assets/",
+                                "output": "/assets/"
                             }
                         ],
                         "styles": [
-                            "src/theme.less",
+                            "projects/workstation-shared/resources/zorror-theme.less",
+                            "projects/workstation-shared/resources/workstation-shared.scss",
                             "src/styles.scss"
                         ],
                         "scripts": []

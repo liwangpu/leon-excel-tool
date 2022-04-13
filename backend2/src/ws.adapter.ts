@@ -5,7 +5,6 @@ import { Observable, fromEvent, EMPTY } from 'rxjs';
 import { mergeMap, filter } from 'rxjs/operators';
 
 
-
 export class WsAdapter implements WebSocketAdapter {
 
     constructor(private app: INestApplicationContext) { }

@@ -10,13 +10,18 @@ import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
 import { LayoutComponent } from './components/layout/layout.component';
 import { HeaderComponent } from './components/header/header.component';
 import { NzButtonModule } from 'ng-zorro-antd/button';
+import { StoreService } from './services/store.service';
+import { SidebarComponent } from './components/sidebar/sidebar.component';
+import { BannerComponent } from './components/banner/banner.component';
 
 const icons: Array<IconDefinition> = [fromIcon.MenuOutline, fromIcon.AppleOutline];
 
 @NgModule({
     declarations: [
         LayoutComponent,
-        HeaderComponent
+        HeaderComponent,
+        SidebarComponent,
+        BannerComponent
     ],
     imports: [
         CommonModule,
@@ -28,6 +33,7 @@ const icons: Array<IconDefinition> = [fromIcon.MenuOutline, fromIcon.AppleOutlin
         RouterModule
     ],
     providers: [
+        StoreService
     ],
     exports: [
         LayoutComponent

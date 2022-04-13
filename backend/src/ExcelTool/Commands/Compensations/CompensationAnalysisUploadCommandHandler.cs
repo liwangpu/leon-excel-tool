@@ -37,21 +37,18 @@ namespace ExcelTool.Commands.Compensations
             #region 读取退货订单
             if (request._退货订单 != null)
             {
-                for (var idx = request._退货订单.Count - 1; idx >= 0; idx--)
+                var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString("N")}.xlsx");
+                using (var targetStream = File.Create(filePath))
                 {
-                    var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString("N")}.xlsx");
-                    using (var targetStream = File.Create(filePath))
+                    await request._退货订单.CopyToAsync(targetStream);
+                    targetStream.Close();
+                    var mapper = new Mapper(filePath);
+                    var sheetDatas = mapper.Take<_退货订单>().Select(x => x.Value).ToList();
+                    sheetDatas.ForEach(it =>
                     {
-                        await request._退货订单[idx].CopyToAsync(targetStream);
-                        targetStream.Close();
-                        var mapper = new Mapper(filePath);
-                        var sheetDatas = mapper.Take<_退货订单>().Select(x => x.Value).ToList();
-                        sheetDatas.ForEach(it =>
-                        {
-                            it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
-                        });
-                        list退货订单.AddRange(sheetDatas);
-                    }
+                        it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
+                    });
+                    list退货订单.AddRange(sheetDatas);
                 }
             }
             #endregion
@@ -59,22 +56,19 @@ namespace ExcelTool.Commands.Compensations
             #region 读取赔偿订单
             if (request._赔偿订单 != null)
             {
-                for (var idx = request._赔偿订单.Count - 1; idx >= 0; idx--)
+                var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString("N")}.xlsx");
+                using (var targetStream = File.Create(filePath))
                 {
-                    var filePath = Path.Combine(currentTmpFolder, $"{Guid.NewGuid().ToString("N")}.xlsx");
-                    using (var targetStream = File.Create(filePath))
-                    {
-                        await request._赔偿订单[idx].CopyToAsync(targetStream);
-                        targetStream.Close();
+                    await request._赔偿订单.CopyToAsync(targetStream);
+                    targetStream.Close();
 
-                        var mapper = new Mapper(filePath);
-                        var sheetDatas = mapper.Take<_赔偿订单>().Select(x => x.Value).ToList();
-                        sheetDatas.ForEach(it =>
-                         {
-                             it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
-                         });
-                        list赔偿订单.AddRange(sheetDatas);
-                    }
+                    var mapper = new Mapper(filePath);
+                    var sheetDatas = mapper.Take<_赔偿订单>().Select(x => x.Value).ToList();
+                    sheetDatas.ForEach(it =>
+                     {
+                         it._店铺 = it._店铺.Substring(0, it._店铺.LastIndexOf("-")).Trim();
+                     });
+                    list赔偿订单.AddRange(sheetDatas);
                 }
             }
             #endregion
@@ -179,90 +173,96 @@ namespace ExcelTool.Commands.Compensations
             var exportFolder = fileSetting.GenerateTemporaryFolder("export");
 
             #region 打印退货单
-            var exp退货订单Path = Path.Combine(exportFolder, "亚马逊退货订单.xlsx");
-
-            using (ExcelPackage package = new ExcelPackage(new FileInfo(exp退货订单Path)))
+            if (request._退货订单 != null)
             {
-                var workbox = package.Workbook;
-                list部门.ForEach(dName =>
-                {
-                    var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
+                var exp退货订单Path = Path.Combine(exportFolder, request._退货订单.FileName);
 
+                using (ExcelPackage package = new ExcelPackage(new FileInfo(exp退货订单Path)))
+                {
+                    var workbox = package.Workbook;
+                    list部门.ForEach(dName =>
+                    {
+                        var _list部门退货订单 = list退货订单.Where(x => x._部门 == dName).ToList();
+
+                        // ERP操作表
+                        {
+                            var sheet = workbox.Worksheets.Add($"{dName} ERP");
+                            var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
+                            _生成退货订单Sheet(sheet, datas, "ERP");
+                        }
+
+                        // 后台操作表
+                        {
+                            var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
+                            var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
+                            _生成退货订单Sheet(sheet, datas, "亚马逊后台");
+                        }
+                    });
+
+                    var _list汇总订单 = list退货订单.OrderBy(x => x._部门).ToList();
                     // ERP操作表
                     {
-                        var sheet = workbox.Worksheets.Add($"{dName} ERP");
-                        var datas = _list部门退货订单.Where(x => x._需要ERP操作).ToList();
-                        _生成退货订单Sheet(sheet, datas, "ERP");
+                        var sheet = workbox.Worksheets.Add($"ERP汇总");
+                        var datas = _list汇总订单.Where(x => x._需要ERP操作).ToList();
+                        _生成退货订单Sheet(sheet, datas, "ERP", false);
                     }
 
                     // 后台操作表
                     {
-                        var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
-                        var datas = _list部门退货订单.Where(x => x._需要后台操作).ToList();
-                        _生成退货订单Sheet(sheet, datas, "亚马逊后台");
+                        var sheet = workbox.Worksheets.Add($"亚马逊后台汇总");
+                        var datas = _list汇总订单.Where(x => x._需要后台操作).ToList();
+                        _生成退货订单Sheet(sheet, datas, "亚马逊后台", false);
                     }
-                });
 
-                var _list汇总订单 = list退货订单.OrderBy(x => x._部门).ToList();
-                // ERP操作表
-                {
-                    var sheet = workbox.Worksheets.Add($"ERP汇总");
-                    var datas = _list汇总订单.Where(x => x._需要ERP操作).ToList();
-                    _生成退货订单Sheet(sheet, datas, "ERP", false);
+                    package.Save();
                 }
-
-                // 后台操作表
-                {
-                    var sheet = workbox.Worksheets.Add($"亚马逊后台汇总");
-                    var datas = _list汇总订单.Where(x => x._需要后台操作).ToList();
-                    _生成退货订单Sheet(sheet, datas, "亚马逊后台", false);
-                }
-
-                package.Save();
             }
             #endregion
 
             #region 打印赔偿单
-            var exp赔偿订单Path = Path.Combine(exportFolder, "亚马逊赔偿订单.xlsx");
-            using (ExcelPackage package = new ExcelPackage(new FileInfo(exp赔偿订单Path)))
+            if (request._赔偿订单 != null)
             {
-                var workbox = package.Workbook;
-                list部门.ForEach(dName =>
+                var exp赔偿订单Path = Path.Combine(exportFolder, request._赔偿订单.FileName);
+                using (ExcelPackage package = new ExcelPackage(new FileInfo(exp赔偿订单Path)))
                 {
-                    var _list部门赔偿订单 = list赔偿订单.Where(x => x._部门 == dName).ToList();
+                    var workbox = package.Workbook;
+                    list部门.ForEach(dName =>
+                    {
+                        var _list部门赔偿订单 = list赔偿订单.Where(x => x._部门 == dName).ToList();
+
+                        // ERP操作表
+                        {
+                            var sheet = workbox.Worksheets.Add($"{dName} ERP");
+                            var datas = _list部门赔偿订单.Where(x => x._需要ERP操作).ToList();
+                            _生成赔偿订单Sheet(sheet, datas, "ERP");
+                        }
+
+                        // 后台操作表
+                        {
+                            var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
+                            var datas = _list部门赔偿订单.Where(x => x._需要后台操作).ToList();
+                            _生成赔偿订单Sheet(sheet, datas, "亚马逊后台");
+                        }
+                    });
+
+                    // 打印汇总表格
+                    var _list所有偿订单 = list赔偿订单.OrderBy(x => x._部门).ToList();
 
                     // ERP操作表
                     {
-                        var sheet = workbox.Worksheets.Add($"{dName} ERP");
-                        var datas = _list部门赔偿订单.Where(x => x._需要ERP操作).ToList();
-                        _生成赔偿订单Sheet(sheet, datas, "ERP");
+                        var sheet = workbox.Worksheets.Add($"ERP汇总");
+                        var datas = _list所有偿订单.Where(x => x._需要ERP操作).ToList();
+                        _生成赔偿订单Sheet(sheet, datas, "ERP", false);
                     }
 
                     // 后台操作表
                     {
-                        var sheet = workbox.Worksheets.Add($"{dName} 亚马逊后台");
-                        var datas = _list部门赔偿订单.Where(x => x._需要后台操作).ToList();
-                        _生成赔偿订单Sheet(sheet, datas, "亚马逊后台");
+                        var sheet = workbox.Worksheets.Add($"亚马逊后台汇总");
+                        var datas = _list所有偿订单.Where(x => x._需要后台操作).ToList();
+                        _生成赔偿订单Sheet(sheet, datas, "亚马逊后台", false);
                     }
-                });
-
-                // 打印汇总表格
-                var _list所有偿订单 = list赔偿订单.OrderBy(x => x._部门).ToList();
-
-                // ERP操作表
-                {
-                    var sheet = workbox.Worksheets.Add($"ERP汇总");
-                    var datas = _list所有偿订单.Where(x => x._需要ERP操作).ToList();
-                    _生成赔偿订单Sheet(sheet, datas, "ERP", false);
+                    package.Save();
                 }
-
-                // 后台操作表
-                {
-                    var sheet = workbox.Worksheets.Add($"亚马逊后台汇总");
-                    var datas = _list所有偿订单.Where(x => x._需要后台操作).ToList();
-                    _生成赔偿订单Sheet(sheet, datas, "亚马逊后台", false);
-                }
-                package.Save();
             }
             #endregion
 

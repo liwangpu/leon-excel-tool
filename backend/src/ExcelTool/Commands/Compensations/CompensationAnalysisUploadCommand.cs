@@ -9,9 +9,9 @@ namespace ExcelTool.Commands.Compensations
     public class CompensationAnalysisUploadCommand : IRequest<MemoryStream>
     {
         [FromForm(Name = "refunds")]
-        public List<IFormFile> _退货订单 { get; set; }
+        public IFormFile _退货订单 { get; set; }
         [FromForm(Name = "compensations")]
-        public List<IFormFile> _赔偿订单 { get; set; }
+        public IFormFile _赔偿订单 { get; set; }
         [FromForm(Name = "solution")]
         public IFormFile _处理方案 { get; set; }
         [FromForm(Name = "departmentMap")]

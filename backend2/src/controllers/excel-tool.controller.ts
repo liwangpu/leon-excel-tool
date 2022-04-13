@@ -3,6 +3,7 @@ import { JwtAuthGuard, StorageAccessory, User } from '@app/common';
 import { Controller, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
+import { ConnectedSocket } from '@nestjs/websockets';
 import { diskStorage } from 'multer';
 
 
@@ -36,7 +37,8 @@ export class ExcelToolController {
         { name: 'compensations' },
         { name: 'refunds' }
     ]))
-    public compensationUpload(@UploadedFiles() files: { compensations?: Array<Express.Multer.File>, refunds?: Array<Express.Multer.File> }) {
+    public compensationUpload(@UploadedFiles() files: { compensations?: Express.Multer.File, refunds?: Express.Multer.File }) {
+        // console.log('1:',client);
         return this.commandBus.execute(new CompensationAnalysisCommand(files));
     }
 

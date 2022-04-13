@@ -1,0 +1,53 @@
+
+// Custom Theming for NG-ZORRO
+// For more information: https://ng.ant.design/docs/customize-theme/en
+@import "~node_modules/ng-zorro-antd/ng-zorro-antd.less";
+
+// Override less variables to here
+// View all variables: https://github.com/NG-ZORRO/ng-zorro-antd/blob/master/components/style/themes/default.less
+
+@primary-color: #5588ee;
+@select-item-active-bg: #F0F2F6;
+
+// tooltip
+@tooltip-max-width: 400px;
+
+.ant-tooltip-inner {
+    white-space: pre-wrap;
+}
+
+// message
+@message-notice-content-padding: 0;
+.ant-message-custom-content {
+    padding: 9px 14px;
+    min-width: 300px;
+    text-align: left;
+}
+@messageColor: {
+    success: #66CC66;
+    info: #0099FF;
+    warning: #FFBB00;
+    error: #FF7777;
+}
+
+@messageBackgroundColor: {
+    success: #F0F9EB;
+    info: #E6F5FF;
+    warning: #FFF8E6;
+    error: #FFEEEE;
+}
+
+each(@messageColor, {
+    .ant-message-@{key} {
+        color: @value
+    }
+})
+each(@messageBackgroundColor, {
+    .ant-message-@{key} {
+        background: @value
+    }
+})
+
+p {
+    margin: 0;
+}

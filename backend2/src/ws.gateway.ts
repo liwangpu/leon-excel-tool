@@ -23,7 +23,8 @@ export class WsStartGateway {
     @SubscribeMessage('hello2')
     hello2(@MessageBody() data: any, @ConnectedSocket() client: WebSocket): any {
 
-        console.log('收到消息 client:', client);
+        // console.log('收到消息 client:', client);
+        console.log('111:',);
 
         client.send(JSON.stringify({ event: 'tmp', data: '这里是个临时信息' }));
         return { event: 'hello2', data: data };

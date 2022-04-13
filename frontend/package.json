@@ -20,7 +20,6 @@
     "@angular/platform-browser-dynamic": "~13.2.5",
     "@angular/router": "~13.2.5",
     "@auth0/angular-jwt": "^5.0.2",
-    "@microsoft/signalr": "^6.0.3",
     "@ngrx/component-store": "^13.0.2",
     "@ngrx/effects": "^13.0.2",
     "@ngrx/store": "^13.0.2",

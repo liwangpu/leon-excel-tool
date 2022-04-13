@@ -1,0 +1,13 @@
+{
+    "$schema": "./node_modules/ng-packagr/package.schema.json",
+    "ngPackage": {
+        "lib": {
+            "entryFile": "index.ts",
+            "umdModuleIds": {
+                "subsink": "subsink",
+                "lodash": "lodash",
+                "workstation-core": "workstation-core"
+            }
+        }
+    }
+}

@@ -1,0 +1,24 @@
+:host {
+    display: inline-block;
+    height: 32px;
+    // width: 100%;
+    width: 180px;
+    background-color: #fff;
+    border: 1px solid #d9d9d9;
+    border-radius: 2px;
+    padding: 4px 11px;
+    color: #BFBFBF;
+    cursor: pointer;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break: break-all;
+    white-space: nowrap;
+
+    &:hover {
+        border-color: #82aefa;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+}
