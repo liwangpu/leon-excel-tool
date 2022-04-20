@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Component, OnInit, ChangeDetectionStrategy, Inject } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import * as fromCore from 'workstation-core';
+import { saveAs } from 'file-saver';
 
 @Component({
     selector: 'app-compensation',
@@ -37,9 +38,11 @@ export class CompensationComponent implements OnInit {
     }
 
     public async upload(): Promise<void> {
-        const formData = fromCore.transferToFormData(this.form, ['compensations', 'refunds']);
-        // this.http.post(`http://localhost:3101/api/Compensation/Upload`, formData).toPromise();
-        this.http.post(`${this.apiGateway}/excel-tool/compensation/upload`, formData).toPromise();
+        const formData = fromCore.transferToFormData(this.form, ['compensations', 'refunds', 'solution', 'departmentMap']);
+        this.http.post(`${this.apiGateway}/api/Compensation/Upload`, formData, { responseType: 'arraybuffer' })
+            .subscribe(buffer => {
+                saveAs(new Blob([buffer]), '处理结果.zip');
+            });
     }
 
 }

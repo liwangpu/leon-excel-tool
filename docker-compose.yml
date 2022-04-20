@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+
+  excel-tool-frontend:
+    container_name: excel-tool-frontend-c
+    image: registry.cn-shanghai.aliyuncs.com/leon-pu/excel-tool-frontend:latest
+    ports:
+      - "3102:80"
+    networks:
+      - devnet
+    restart: always
+
+  excel-tool-backend:
+    container_name: excel-tool-backend-c
+    image: registry.cn-shanghai.aliyuncs.com/leon-pu/excel-tool-backend:latest
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "3101:80"
+    networks:
+      - devnet
+    restart: always
+
+networks: 
+  devnet:

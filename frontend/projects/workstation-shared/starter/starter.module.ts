@@ -1,4 +1,4 @@
-import { APP_INITIALIZER, LOCALE_ID, NgModule, Optional, SkipSelf } from '@angular/core';
+import { APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { LoginComponent } from './components/login/login.component';
 import { EffectsModule } from '@ngrx/effects';
@@ -20,6 +20,7 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 import { AuthInterceptor } from './interceptors/auth.interceptor';
 import { ErrorInterceptor } from './interceptors/error.interceptor';
+import { SocketInterceptor } from './interceptors/socket.interceptor';
 import { AuthenticationGuard } from './guards/authentication.guard';
 import { AuthorizationGuard } from './guards/authorization.guard';
 import { IdentityService } from './services/identity.service';
@@ -31,6 +32,7 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { MainComponent } from './components/main/main.component';
 import { ProfileResolver } from './resolvers/profile.resolver';
+import { SocketClientService } from './services/socket-client.service';
 
 export function apiGatewayFn(configSrv: EnvStoreService): string {
     const apiGateway: string = `${configSrv.getEnvConfig().apiGateway}`;
@@ -75,12 +77,14 @@ export function appInitializerFn(store: fromCore.IEnvStore): Function {
         { provide: fromCore.IDENTITY_STORE, useClass: IdentityService },
         { provide: fromCore.TOKEN_STORE, useClass: TokenStoreService },
         { provide: fromCore.USER_PROFILE_PROVIDER, useClass: UserProfileProviderService },
-        { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-        { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        // { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+        // { provide: HTTP_INTERCEPTORS, useClass: ErrorInterceptor, multi: true },
+        // { provide: HTTP_INTERCEPTORS, useClass: SocketInterceptor, multi: true },
         { provide: APP_INITIALIZER, useFactory: appInitializerFn, multi: true, deps: [fromCore.ENV_STORE] },
         { provide: fromCore.API_GATEWAY, useFactory: apiGatewayFn, deps: [EnvStoreService] },
         { provide: fromCore.OPERATION_MESSAGE, useClass: OperationMessageService },
         { provide: fromCore.APP_MESSAGE_OPSAT, useClass: AppMessageOpsatService },
+        { provide: fromCore.SOCKET_CLIENT, useClass: SocketClientService },
     ],
     exports: [
         BrowserModule,
@@ -103,5 +107,12 @@ export class StarterModule {
         if (parentModule) {
             throw new Error('app模块使用,其他子模块不需要再引用了!');
         }
+    }
+
+    public static forRoot(): ModuleWithProviders<StarterModule> {
+        return {
+            ngModule: StarterModule,
+            // providers: [...alainProvides, ...zorroProvides]
+        };
     }
 }

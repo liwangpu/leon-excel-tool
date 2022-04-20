@@ -23,10 +23,16 @@ namespace ExcelTool.Common
             return tmpFolder;
         }
 
+        //public string GenerateSpecificFolder(string folderName)
+        //{
+        //    //var 
+        //}
+
         public string GenerateTemporaryFolder()
         {
             return GenerateTemporaryFolder(null);
         }
+
     }
 
     public interface IStaticFileSetting
@@ -34,5 +40,6 @@ namespace ExcelTool.Common
         string TmpFolder { get; }
         string GenerateTemporaryFolder(string prefix);
         string GenerateTemporaryFolder();
+        //string GenerateSpecificFolder(string folderName);
     }
 }

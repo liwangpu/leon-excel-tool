@@ -33,62 +33,47 @@ namespace ExcelTool
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddCors(options =>
+            services.AddCors();
+
+            //var jwtSetting = Configuration.GetSection("JWTSetting").Get<JwtSetting>();
+
+            ////JWT认证
+            //services.AddAuthentication(x =>
             //{
-            //    options.AddPolicy("CorsPolicy",
-            //        builder => builder.AllowAnyOrigin()
-            //        .AllowAnyMethod()
-            //        .AllowAnyHeader());
+            //    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+
+
+            //}).AddJwtBearer(x =>
+            //{
+            //    x.RequireHttpsMetadata = false;
+            //    x.SaveToken = true;
+            //    x.TokenValidationParameters = new TokenValidationParameters
+            //    {
+            //        ValidateIssuerSigningKey = true,
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSetting.SecretKey)),
+            //        ValidIssuer = jwtSetting.Issuer,
+            //        ValidAudience = jwtSetting.Audience,
+            //        ValidateIssuer = false,
+            //        ValidateAudience = false,
+            //        ValidateLifetime = true
+            //    };
+            //    //x.Events = new JwtBearerEvents
+            //    //{
+            //    //    OnMessageReceived = context =>
+            //    //    {
+            //    //        var accessToken = context.Request.Headers["Authorization"];
+            //    //        Console.WriteLine(accessToken);
+            //    //        var path = context.HttpContext.Request.Path;
+            //    //        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
+            //    //        {
+            //    //            context.Token = accessToken;
+            //    //        }
+
+            //    //        return Task.CompletedTask;
+            //    //    }
+            //    //};
             //});
-
-            services.AddCors(options =>
-            {
-                options.AddPolicy("CorsPolicy",
-                    builder => builder.WithOrigins("http://localhost:3102")
-                    .AllowAnyMethod()
-                    .AllowAnyHeader()
-                    .AllowCredentials());
-            });
-
-            var jwtSetting = Configuration.GetSection("JWTSetting").Get<JwtSetting>();
-
-            //JWT认证
-            services.AddAuthentication(x =>
-            {
-                x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
-                
-            }).AddJwtBearer(x =>
-            {
-                x.RequireHttpsMetadata = false;
-                x.SaveToken = true;
-                x.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtSetting.SecretKey)),
-                    ValidIssuer = jwtSetting.Issuer,
-                    ValidAudience = jwtSetting.Audience,
-                    ValidateIssuer = false,
-                    ValidateAudience = false,
-                    ValidateLifetime = true
-                };
-                //x.Events = new JwtBearerEvents
-                //{
-                //    OnMessageReceived = context =>
-                //    {
-                //        var accessToken = context.Request.Headers["Authorization"];
-                //        Console.WriteLine(accessToken);
-                //        var path = context.HttpContext.Request.Path;
-                //        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/chathub"))
-                //        {
-                //            context.Token = accessToken;
-                //        }
-
-                //        return Task.CompletedTask;
-                //    }
-                //};
-            });
             services.Configure<AppConfig>(Configuration);
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IAuthenticateService, TokenAuthenticationService>();
@@ -124,7 +109,14 @@ namespace ExcelTool
             //    await next();
             //});
 
-            app.UseCors("CorsPolicy");
+
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
+
             app.UseWebSockets();
             app.UseStaticFiles();
             app.UseAuthentication();
@@ -132,7 +124,7 @@ namespace ExcelTool
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapHub<ChatHub>("/chathub");
+                //endpoints.MapHub<ChatHub>("/chathub");
                 endpoints.MapControllers();
             });
         }

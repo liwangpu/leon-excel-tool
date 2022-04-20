@@ -12,8 +12,8 @@ export class CompensationAnalysisCommandHandler implements ICommandHandler<Compe
 
     public async execute(command: CompensationAnalysisCommand): Promise<any> {
         // return this.authService.issueToken(command.user);
-
-        console.log('title:', command.files);
+        console.log('socketId:', command.socketId);
+        // console.log('title:', command.files);
     }
 
 }

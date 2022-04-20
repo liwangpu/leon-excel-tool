@@ -26,7 +26,16 @@ namespace ExcelTool.Controllers
         public async Task<IActionResult> Upload([FromForm] CompensationAnalysisUploadCommand command)
         {
             var result = await mediator.Send(command);
-            return Ok(result);
+            var commonFileName = "退货赔偿订单处理结果";
+            if (command._退货订单 != null)
+            {
+                commonFileName = command._退货订单.FileName;
+            }
+            if (command._赔偿订单 != null)
+            {
+                commonFileName = command._赔偿订单.FileName;
+            }
+            return File(result.ToArray(), "application/octet-stream", commonFileName + ".zip");
         }
     }
 }

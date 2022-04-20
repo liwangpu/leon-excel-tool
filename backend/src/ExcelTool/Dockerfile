@@ -6,17 +6,16 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["backend/ExcelTool.csproj", "./"]
-RUN dotnet restore "ExcelTool.csproj"
+COPY ["src/ExcelTool/ExcelTool.csproj", "src/ExcelTool/"]
+RUN dotnet restore "src/ExcelTool/ExcelTool.csproj"
 COPY . .
-# WORKDIR "/src/."
-# RUN dotnet build "ExcelTool.csproj" -c Release -o /app/build
+WORKDIR "/src/src/ExcelTool"
+RUN dotnet build "ExcelTool.csproj" -c Release -o /app/build
 
 FROM build AS publish
-WORKDIR /src
-RUN dotnet publish "ExcelTool.csproj" -c Release -o /app
+RUN dotnet publish "ExcelTool.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app .
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "ExcelTool.dll"]

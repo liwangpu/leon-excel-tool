@@ -1,6 +1,7 @@
 import { CompensationAnalysisCommand } from '@app/commands';
 import { JwtAuthGuard, StorageAccessory, User } from '@app/common';
-import { Controller, Post, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
+import { SocketService } from '@app/socket';
+import { Controller, Param, Post, UploadedFiles, UseGuards, UseInterceptors, Headers } from '@nestjs/common';
 import { CommandBus } from '@nestjs/cqrs';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
 import { ConnectedSocket } from '@nestjs/websockets';
@@ -23,7 +24,8 @@ function destinationPath(req, file, cb) {
 export class ExcelToolController {
 
     public constructor(
-        private commandBus: CommandBus
+        private commandBus: CommandBus,
+        private socketSrv: SocketService
     ) { }
 
     /**
@@ -37,9 +39,8 @@ export class ExcelToolController {
         { name: 'compensations' },
         { name: 'refunds' }
     ]))
-    public compensationUpload(@UploadedFiles() files: { compensations?: Express.Multer.File, refunds?: Express.Multer.File }) {
-        // console.log('1:',client);
-        return this.commandBus.execute(new CompensationAnalysisCommand(files));
+    public compensationUpload(@UploadedFiles() files: { compensations?: Express.Multer.File, refunds?: Express.Multer.File }, @Headers('socketId') socketId) {
+        return this.commandBus.execute(new CompensationAnalysisCommand(files, socketId));
     }
 
     @Post('test-upload')
@@ -51,17 +52,17 @@ export class ExcelToolController {
 
     }
 
-    @Post('test-upload2')
-    @UseInterceptors(FileFieldsInterceptor([
-        { name: 'af' }
-    ]))
-    public uploadFile2(@UploadedFiles() files: { af?: Array<Express.Multer.File> }) {
-        console.log('files:', files?.af);
+    @UseGuards(JwtAuthGuard)
+    @Post('message/:clientId')
+    public message(@Param('clientId') clientId) {
+        console.log('clientId:', clientId);
         // const writeStream = fs.createWriteStream(path);
         // writeStream.write(file.buffer);
         // writeStream.end();
         // files?.af?.forEach(f=>{
 
         // });
+        // this.socketSrv.socket.serveClient()
+        this.socketSrv.socket.to(clientId).emit('chat message', '开心就好');
     }
 }

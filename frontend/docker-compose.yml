@@ -1,0 +1,10 @@
+version: '3.4'
+
+services:
+
+  excel-tool-frontend:
+    container_name: excel-tool-frontend-c
+    image: registry.cn-shanghai.aliyuncs.com/leon-pu/excel-tool-frontend:latest
+    build: ./image
+    ports:
+      - "3102:80"

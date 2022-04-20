@@ -13,7 +13,8 @@ import { JwtModule } from '@nestjs/jwt';
 import { jwtConstants } from '@app/common';
 import { CqrsModule } from '@nestjs/cqrs';
 import { CommandHandlers } from '@app/commands';
-import { WsStartGateway } from './ws.gateway';
+import { EventModule } from '@app/event';
+import { SocketModule } from '@app/socket';
 
 @Module({
     imports: [
@@ -26,6 +27,8 @@ import { WsStartGateway } from './ws.gateway';
             secret: jwtConstants.secret,
             signOptions: { expiresIn: `${60 * 60 * 24}s` },
         }),
+        EventModule,
+        SocketModule,
         UserModule,
         ExcelToolModule
     ],
@@ -37,7 +40,6 @@ import { WsStartGateway } from './ws.gateway';
     ],
     providers: [
         ...CommandHandlers,
-        WsStartGateway,
         fromCommon.AuthService,
         fromCommon.LocalStrategy,
         fromCommon.JwtStrategy,

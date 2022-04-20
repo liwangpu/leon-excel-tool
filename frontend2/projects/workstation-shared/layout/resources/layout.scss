@@ -1,0 +1,61 @@
+workstation-shared-layout-sidebar {
+    .ant-menu {
+        background-color: #2A3042;
+        color: #A6B0CF;
+    }
+
+    .ant-menu:not(.ant-menu-horizontal) .ant-menu-item-selected {
+        background: rgba(255, 255, 255, 0.1);
+        color: #fff;
+
+        .menu-link-title {
+            color: #fff !important;
+        }
+    }
+
+    .ant-menu-submenu-expand-icon,
+    .ant-menu-submenu-arrow {
+        color: #A6B0CF;
+    }
+
+    .ant-menu-inline .ant-menu-item {
+        width: 100%;
+    }
+
+    .ant-menu-item:hover {
+        color: #5588ee;
+
+        .menu-link-title {
+            color: #5588ee !important;
+        }
+    }
+
+    .ant-menu-item::after{
+        right: auto !important;
+        left: 0 !important;
+    }
+    
+
+    .ant-menu-inline-collapsed {
+        .menu-link-title {
+            display: block;
+            height: 0;
+            width: 0;
+            overflow: hidden;
+        }
+    }
+
+    .ant-menu-sub.ant-menu-inline {
+        background: none;
+    }
+
+    .mirror-group-menu{
+        color: #A6B0CF;
+    }
+}
+
+.ant-menu-submenu-popup {
+    .collapsed-place-icon {
+        display: none;
+    }
+}

@@ -1,0 +1,19 @@
+{
+    "$schema": "./node_modules/ng-packagr/package.schema.json",
+    "ngPackage": {
+        "lib": {
+            "entryFile": "index.ts",
+            "umdModuleIds": {
+                "subsink": "subsink",
+                "lodash": "lodash",
+                "@ngrx/component-store": "@ngrx/component-store",
+                "workstation-core": "workstation-core",
+                "ng-zorro-antd/tooltip": "ng-zorro-antd/tooltip",
+                "ng-zorro-antd/menu": "ng-zorro-antd/menu",
+                "ng-zorro-antd/icon": "ng-zorro-antd/icon",
+                "ng-zorro-antd/dropdown": "ng-zorro-antd/dropdown",
+                "@ant-design/icons-angular/icons": "@ant-design/icons-angular/icons"
+            }
+        }
+    }
+}

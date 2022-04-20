@@ -4,7 +4,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build workstation-core && ng build workstation-shared && ng build --prod",
     "test": "ng test",
     "lint": "ng lint"
   },
@@ -24,6 +24,8 @@
     "@ngrx/effects": "^13.0.2",
     "@ngrx/store": "^13.0.2",
     "@ngrx/store-devtools": "^13.0.2",
+    "socket.io-client": "^4.4.1",
+    "escape-string-regexp": "^4.0.0",
     "faker": "^5.5.3",
     "file-saver": "^2.0.2",
     "lodash": "^4.17.21",

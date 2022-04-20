@@ -16,10 +16,10 @@ export const APP_USERPROFILE_ROUTE: Route = { path: 'profile', component: Profil
 export const APP_LAYOUT_ROUTE: Route = {
     path: '',
     component: MainComponent,
-    canActivate: [AuthenticationGuard],
-    resolve: {
-        profile: ProfileResolver
-    }
+    // canActivate: [AuthenticationGuard],
+    // resolve: {
+    //     profile: ProfileResolver
+    // }
 };
 
 export const APP_COMMON_ROUTERS: Routes = [

@@ -49,7 +49,8 @@ export class UploaderComponent implements ControlValueAccessor, OnInit {
         this.fileCtl.nativeElement.click();
     }
 
-    public readFiles(files: FileList): void {
+    public readFiles(event: any): void {
+        const files: FileList = event.target.files;
         if (!files.length) return;
         this.fileNames = [];
         this.files = [];

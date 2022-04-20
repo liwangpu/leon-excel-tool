@@ -1,0 +1,51 @@
+{
+  "name": "excel-tool",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "test": "ng test",
+    "lint": "ng lint"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "~13.2.5",
+    "@angular/cdk": "~11.2.13",
+    "@angular/common": "~13.2.5",
+    "@angular/compiler": "~13.2.5",
+    "@angular/core": "~13.2.5",
+    "@angular/forms": "~13.2.5",
+    "@angular/platform-browser": "~13.2.5",
+    "@angular/platform-browser-dynamic": "~13.2.5",
+    "@angular/router": "~13.2.5",
+    "@auth0/angular-jwt": "^5.0.2",
+    "@ngrx/component-store": "^13.0.2",
+    "@ngrx/effects": "^13.0.2",
+    "@ngrx/store": "^13.0.2",
+    "@ngrx/store-devtools": "^13.0.2",
+    "socket.io-client": "^4.4.1",
+    "escape-string-regexp": "^4.0.0",
+    "faker": "^5.5.3",
+    "file-saver": "^2.0.2",
+    "lodash": "^4.17.21",
+    "moment": "^2.29.1",
+    "ng-zorro-antd": "^13.1.1",
+    "query-string": "^7.1.1",
+    "rxjs": "~7.5.0",
+    "subsink": "^1.0.2",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.11.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "~13.2.5",
+    "@angular/cli": "~13.2.5",
+    "@angular/compiler-cli": "~13.2.5",
+    "@types/lodash": "^4.14.157",
+    "@types/faker": "^5.5.6",
+    "ts-node": "~8.3.0",
+    "ng-packagr": "^13.0.0",
+    "@types/node": "^12.11.1",
+    "typescript": "~4.5.2"
+  }
+}

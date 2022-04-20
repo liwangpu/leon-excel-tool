@@ -24,14 +24,8 @@
             "@app/commands": [
                 "src/commands"
             ],
-            "@app/auth": [
-                "src/modules/auth"
-            ],
-            "@app/user": [
-                "src/modules/user"
-            ],
-            "@app/excel-tool": [
-                "src/modules/excel-tool"
+            "@app/*": [
+                "src/modules/*"
             ]
         }
     }

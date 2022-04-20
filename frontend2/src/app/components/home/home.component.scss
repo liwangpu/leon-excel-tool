@@ -1,0 +1,27 @@
+:host {
+    display: block;
+    padding: 20px;
+
+    .content {
+        padding: 0 0 12px;
+
+        form {
+            display: block;
+
+            .fitem {
+                label {
+                    font-size: 16px;
+
+                    &::after {
+                        content: ':';
+                    }
+                }
+            }
+        }
+    }
+
+    .buttons {
+        display: flex;
+        justify-content: space-between;
+    }
+}

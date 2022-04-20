@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using ExcelTool.Models.Compensations;
 using OfficeOpenXml.Style;
 using Npoi.Mapper;
+using System.IO.Compression;
 
 namespace ExcelTool.Commands.Compensations
 {
@@ -33,6 +34,7 @@ namespace ExcelTool.Commands.Compensations
             var list赔偿处理方案 = new List<_赔偿处理方案>();
             var list部门匹配 = new List<_部门匹配>();
             var list部门 = new List<string>();
+            var commonFileName = "退货赔偿订单处理结果";
 
             #region 读取退货订单
             if (request._退货订单 != null)
@@ -266,7 +268,18 @@ namespace ExcelTool.Commands.Compensations
             }
             #endregion
 
-            return null;
+            var zipPath = Path.Combine(fileSetting.TmpFolder, $"{commonFileName}.zip").Replace(".xlsx", "");
+            if (File.Exists(zipPath))
+            {
+                File.Delete(zipPath);
+            }
+            ZipFile.CreateFromDirectory(exportFolder, zipPath);
+
+            var memoryStream = new MemoryStream();
+            using (var fs = File.OpenRead(zipPath))
+                fs.CopyTo(memoryStream);
+            File.Delete(zipPath);
+            return memoryStream;
         }
 
         private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单> list, string operate, bool showPivot = true)

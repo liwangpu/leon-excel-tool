@@ -1,0 +1,36 @@
+<form nz-form nzLayout="inline" [formGroup]="form">
+    <nz-form-item>
+        <nz-form-label nzFor="email">赔偿单</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-uploader accept=".xlsx" formControlName="compensations">
+            </workstation-shared-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label nzFor="email">退货单</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-uploader accept=".xlsx" formControlName="refunds"></workstation-shared-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <!-- <nz-form-item>
+        <nz-form-label nzFor="email">处理方案</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-uploader accept=".xlsx" formControlName="solution"></workstation-shared-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label nzFor="email">部门匹配表</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-uploader accept=".xlsx" formControlName="departmentMap"></workstation-shared-uploader>
+        </nz-form-control>
+    </nz-form-item> -->
+
+    <nz-form-item>
+        <nz-form-control>
+            <button nz-button nzType="primary" (click)="upload()">上传</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>
