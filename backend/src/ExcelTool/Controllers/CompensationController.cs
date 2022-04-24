@@ -1,9 +1,6 @@
 ﻿using ExcelTool.Commands.Compensations;
-using ExcelTool.Commands.EmployedStatistics;
-using ExcelTool.Commands.StockAnalysiss;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace ExcelTool.Controllers

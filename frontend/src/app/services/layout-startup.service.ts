@@ -21,6 +21,17 @@ export class LayoutStartupService implements ILayoutStartup {
                     }
                 ]
             },
+            {
+                key: 'stock',
+                title: '库存分析',
+                children: [
+                    {
+                        key: 'compensation',
+                        title: '库存差异分析',
+                        url: '/stock-difference-analysis',
+                    }
+                ]
+            },
             // {
             //     key: 'test',
             //     title: '测试',

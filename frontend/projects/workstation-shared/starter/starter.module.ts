@@ -1,5 +1,5 @@
 import { APP_INITIALIZER, LOCALE_ID, ModuleWithProviders, NgModule, Optional, SkipSelf } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, registerLocaleData } from '@angular/common';
 import { LoginComponent } from './components/login/login.component';
 import { EffectsModule } from '@ngrx/effects';
 import { StoreModule } from '@ngrx/store';
@@ -33,6 +33,7 @@ import { ProfileComponent } from './components/profile/profile.component';
 import { MainComponent } from './components/main/main.component';
 import { ProfileResolver } from './resolvers/profile.resolver';
 import { SocketClientService } from './services/socket-client.service';
+import zh from '@angular/common/locales/zh';
 
 export function apiGatewayFn(configSrv: EnvStoreService): string {
     const apiGateway: string = `${configSrv.getEnvConfig().apiGateway}`;
@@ -43,6 +44,8 @@ export function appInitializerFn(store: fromCore.IEnvStore): Function {
     const fn: Function = () => store.loadEnvConfig();
     return fn;
 }
+
+registerLocaleData(zh);
 
 @NgModule({
     declarations: [

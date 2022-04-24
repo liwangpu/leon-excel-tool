@@ -1,8 +1,6 @@
-﻿using ExcelTool.Commands.EmployedStatistics;
-using ExcelTool.Commands.StockAnalysiss;
+﻿using ExcelTool.Commands.StockAnalysiss;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Threading.Tasks;
 
 namespace ExcelTool.Controllers
@@ -18,11 +16,11 @@ namespace ExcelTool.Controllers
             this.mediator = mediator;
         }
 
-        [HttpPost("Upload")]
-        public async Task<IActionResult> Upload([FromForm] StockAnalysisUploadCommand command)
+        [HttpPost("DifferenceAnylysis")]
+        public async Task<IActionResult> DifferenceAnylysis([FromForm] StockDifferenceAnalysisCommand command)
         {
-            await mediator.Send(command);
-            return Ok();
+            var result = await mediator.Send(command);
+            return File(result.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsx");
         }
     }
 }

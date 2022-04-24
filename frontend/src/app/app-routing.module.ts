@@ -3,12 +3,14 @@ import { Routes, RouterModule } from '@angular/router';
 import { standardSubAppRouterGenerator } from 'workstation-shared/starter';
 import { CompensationComponent } from './components/compensation/compensation.component';
 import { HomeComponent } from './components/home/home.component';
+import { StockDifferenceAnalysisComponent } from './components/stock-difference-analysis/stock-difference-analysis.component';
 import { TestComponent } from './components/test/test.component';
 
 const routes: Routes = standardSubAppRouterGenerator([
     { path: 'home', component: HomeComponent },
     { path: 'test', component: TestComponent },
     { path: 'compensation', component: CompensationComponent },
+    { path: 'stock-difference-analysis', component: StockDifferenceAnalysisComponent },
     // { path: 'management', loadChildren: () => import('./app-loaders/platform-manangement-loader.module').then(m => m.PlatformManangementLoaderModule) },
     { path: '', pathMatch: 'full', redirectTo: 'home' }
 ]);

@@ -1,17 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Component, ChangeDetectionStrategy, Inject } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as fromCore from 'workstation-core';
 import { saveAs } from 'file-saver';
+import * as moment from 'moment';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 @Component({
-    selector: 'app-compensation',
-    templateUrl: './compensation.component.html',
-    styleUrls: ['./compensation.component.scss'],
+    selector: 'app-stock-difference-analysis',
+    templateUrl: './stock-difference-analysis.component.html',
+    styleUrls: ['./stock-difference-analysis.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CompensationComponent {
+export class StockDifferenceAnalysisComponent {
 
     public readonly form: FormGroup;
     public constructor(
@@ -22,19 +23,19 @@ export class CompensationComponent {
         private notification: NzNotificationService
     ) {
         this.form = this.fb.group({
-            compensations: [],
-            refunds: [],
-            solution: [],
-            departmentMap: []
+            detailFile: [null, [Validators.required]],
+            statisticalTime: [new Date(), [Validators.required]]
         });
     }
 
     public async upload(): Promise<void> {
-        const formData = fromCore.transferToFormData(this.form, ['compensations', 'refunds', 'solution', 'departmentMap']);
+        const formData = fromCore.transferToFormData(this.form, ['detailFile']);
+        const statisticalTime = moment(this.form.value.statisticalTime).format('YYYY-MM-DD');
+        formData.set('statisticalTime', statisticalTime);
         this.notification.info('温馨提示', '数据已经上传，结果待会会自己下载，请耐心等候');
-        this.http.post(`${this.apiGateway}/api/Compensation/Upload`, formData, { responseType: 'arraybuffer' })
+        this.http.post(`${this.apiGateway}/api/StockAnalysis/DifferenceAnylysis`, formData, { responseType: 'arraybuffer' })
             .subscribe(buffer => {
-                saveAs(new Blob([buffer]), '退货赔偿订单-处理结果.zip');
+                saveAs(new Blob([buffer]), '库存差异分析-处理结果.xlsx');
             });
     }
 

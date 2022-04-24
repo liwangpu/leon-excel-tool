@@ -12,6 +12,9 @@ import { NzFormModule } from 'ng-zorro-antd/form';
 import { NzInputModule } from 'ng-zorro-antd/input';
 import { NzButtonModule } from 'ng-zorro-antd/button';
 import { TestComponent } from './components/test/test.component';
+import { StockDifferenceAnalysisComponent } from './components/stock-difference-analysis/stock-difference-analysis.component';
+import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
+import { NzNotificationModule } from 'ng-zorro-antd/notification';
 
 const icons: Array<IconDefinition> = [];
 
@@ -20,7 +23,8 @@ const icons: Array<IconDefinition> = [];
         AppComponent,
         HomeComponent,
         CompensationComponent,
-        TestComponent
+        TestComponent,
+        StockDifferenceAnalysisComponent
     ],
     imports: [
         StarterModule.forRoot(),
@@ -29,7 +33,9 @@ const icons: Array<IconDefinition> = [];
         NzFormModule,
         NzInputModule,
         UploaderModule,
-        NzButtonModule
+        NzButtonModule,
+        NzDatePickerModule,
+        NzNotificationModule
     ],
     providers: [
         { provide: LAYOUT_STARTUP, useClass: fromService.LayoutStartupService }

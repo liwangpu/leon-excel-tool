@@ -1,0 +1,23 @@
+<form nz-form nzLayout="inline" [formGroup]="form">
+    <nz-form-item>
+        <nz-form-label nzRequired>源数据</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-uploader accept=".xlsx" formControlName="detailFile">
+            </workstation-shared-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label nzRequired>统计时间</nz-form-label>
+        <nz-form-control>
+            <nz-date-picker formControlName="statisticalTime" nzFormat="yyyy/MM/dd"></nz-date-picker>
+        </nz-form-control>
+    </nz-form-item>
+
+
+    <nz-form-item>
+        <nz-form-control>
+            <button nz-button nzType="primary" (click)="upload()" [disabled]="!form.valid">上传</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>
