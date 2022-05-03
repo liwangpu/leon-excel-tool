@@ -1,0 +1,11 @@
+<div class="header">
+    <label>差异分析结果</label>
+    <workstation-shared-uploader [multiple]="true" [ngModel]="files" (ngModelChange)="onFileChange($event)">
+    </workstation-shared-uploader>
+    <button nz-button nzType="primary" [disabled]="!datas?.length" (click)="download()">下载分析</button>
+</div>
+<div class="content">
+    <div class="wrapper" id="stockDifferenceVisual">
+        <ng-container #chartContainer></ng-container>
+    </div>
+</div>

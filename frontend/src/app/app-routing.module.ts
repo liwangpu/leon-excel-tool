@@ -4,6 +4,7 @@ import { standardSubAppRouterGenerator } from 'workstation-shared/starter';
 import { CompensationComponent } from './components/compensation/compensation.component';
 import { HomeComponent } from './components/home/home.component';
 import { StockDifferenceAnalysisComponent } from './components/stock-difference-analysis/stock-difference-analysis.component';
+import { StockDifferenceChartComponent } from './components/stock-difference-chart/stock-difference-chart.component';
 import { TestComponent } from './components/test/test.component';
 
 const routes: Routes = standardSubAppRouterGenerator([
@@ -11,7 +12,7 @@ const routes: Routes = standardSubAppRouterGenerator([
     { path: 'test', component: TestComponent },
     { path: 'compensation', component: CompensationComponent },
     { path: 'stock-difference-analysis', component: StockDifferenceAnalysisComponent },
-    // { path: 'management', loadChildren: () => import('./app-loaders/platform-manangement-loader.module').then(m => m.PlatformManangementLoaderModule) },
+    { path: 'stock-difference-visual', component: StockDifferenceChartComponent },
     { path: '', pathMatch: 'full', redirectTo: 'home' }
 ]);
 

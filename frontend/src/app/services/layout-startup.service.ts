@@ -29,6 +29,11 @@ export class LayoutStartupService implements ILayoutStartup {
                         key: 'compensation',
                         title: '库存差异分析',
                         url: '/stock-difference-analysis',
+                    },
+                    {
+                        key: 'compensation',
+                        title: '库存差异可视化',
+                        url: '/stock-difference-visual',
                     }
                 ]
             },

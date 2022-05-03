@@ -102,17 +102,17 @@ body {
 ::-webkit-scrollbar {
     width: var(--mo-scroll-active-size);
     height: var(--mo-scroll-active-size);
-    display: none;
+    // display: none;
 }
 
-*:hover {
-    &::-webkit-scrollbar {
-        display: block;
-    }
-}
+// *:hover {
+//     &::-webkit-scrollbar {
+//         display: block;
+//     }
+// }
 
 ::-webkit-scrollbar-track {
-    display: none;
+    // display: none;
 }
 
 ::-webkit-scrollbar-thumb:vertical {
@@ -137,28 +137,5 @@ body {
     border-radius: var(--mo-scroll-active-size);
 }
 
-
-body {
-    transition: filter 300ms;
-
-    &.mirror-dark-mode {
-        filter: invert(.9) hue-rotate(180deg);
-
-        img,
-        video,
-        .ant-drawer-mask,
-        ngx-monaco-editor {
-            filter: invert(.9) hue-rotate(180deg);
-        }
-
-        mirror-photo-swipe-panel {
-            filter: invert(.9) hue-rotate(180deg);
-
-            img {
-                filter: none;
-            }
-        }
-    }
-}
 
 @import '../layout/resources/layout.scss';
