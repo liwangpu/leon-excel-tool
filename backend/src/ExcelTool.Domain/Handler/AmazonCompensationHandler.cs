@@ -1,11 +1,12 @@
 ﻿using ExcelTool.Domain.Models.AmazonCompensations;
+using ExcelTool.Domain.Models.Commons;
+using ExcelTool.Domain.Utils;
 using Npoi.Mapper;
 using OfficeOpenXml;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace ExcelTool.Domain.Handler.Compensations
@@ -22,6 +23,7 @@ namespace ExcelTool.Domain.Handler.Compensations
 
         }
         public AmazonCompensationHandler(string p赔偿订单文件, string p店铺更名匹配文件, string f临时文件夹)
+                  : this()
         {
             path赔偿订单文件 = p赔偿订单文件;
             path店铺更名匹配文件 = p店铺更名匹配文件;
@@ -36,7 +38,7 @@ namespace ExcelTool.Domain.Handler.Compensations
             var list_统计结果 = new List<_统计结果>();
             var dict唯一值to国家 = new Dictionary<string, string>();
             var dict唯一值to统计项 = new Dictionary<string, _统计结果>();
-            var util店铺更名工具 = new 店铺更名Util();
+            var util店铺更名工具 = new StoreNameHelper();
             //var exportFolder = FolderHelper.GenerateTemporaryFolder(folder临时文件夹);
 
             #region 数据读取
@@ -296,38 +298,4 @@ namespace ExcelTool.Domain.Handler.Compensations
         }
     }
 
-    class 店铺更名Util
-    {
-        //protected List<_站点更名匹配表> List { get; set; }
-        protected Dictionary<string, _站点更名匹配表> Maps = new Dictionary<string, _站点更名匹配表>();
-        public void LoadData(List<_站点更名匹配表> list)
-        {
-            list.ForEach(it =>
-            {
-                Maps.Add(it._国家, it);
-            });
-        }
-
-        public string _标准化店铺名称(string country, string storeName)
-        {
-            // 先移除 - 后面的国家
-            storeName = storeName.LastIndexOf("-") > -1 ? storeName.Substring(0, storeName.LastIndexOf("-")).Trim() : storeName;
-            // 店铺如果结尾没有站的,加上
-            if (storeName[storeName.Length - 1] != '站')
-            {
-                storeName += "站";
-            }
-
-            if (Maps.ContainsKey(country))
-            {
-                var m = Maps[country];
-                if (storeName.IndexOf(m._领星店铺名称) > -1)
-                {
-                    storeName = storeName.Replace(m._领星店铺名称, m._南棠店铺名称);
-                }
-            }
-
-            return storeName;
-        }
-    }
 }

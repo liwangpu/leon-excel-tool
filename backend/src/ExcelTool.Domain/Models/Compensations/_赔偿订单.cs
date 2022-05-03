@@ -2,10 +2,10 @@
 
 namespace ExcelTool.Domain.Models.Compensations
 {
-    public class _赔偿订单
-    { 
+    public class _赔偿订单 : 赔偿退货订单源数据
+    {
         [Column("店铺")]
-        public string _店铺 { get; set; }
+        public override string _领星店铺名称 { get; set; }
         [Column("国家")]
         public string _国家 { get; set; }
         [Column("时间")]
@@ -15,9 +15,9 @@ namespace ExcelTool.Domain.Models.Compensations
         [Column("订单号")]
         public string _订单号 { get; set; }
         [Column("原因")]
-        public string _原因 { get; set; }
+        public override string _原因 { get; set; }
         [Column("MSKU")]
-        public string MSKU { get; set; }
+        public override string MSKU { get; set; }
         [Column("ASIN")]
         public string ASIN { get; set; }
         [Column("FNSKU")]
@@ -36,20 +36,17 @@ namespace ExcelTool.Domain.Models.Compensations
         [Column("赔偿数量（现金）")]
         public decimal _赔偿数量_现金 { get; set; }
         [Column("赔偿数量（库存）")]
-        public decimal _赔偿数量_库存 { get; set; }
+        public int _赔偿数量_库存 { get; set; }
         [Column("赔偿数量（总计）")]
-        public decimal _赔偿数量_总计 { get; set; }
+        public int _赔偿数量_总计 { get; set; }
 
         [Column("原始赔偿编号")]
         public string _原始赔偿编号 { get; set; }
         [Column("原始赔偿类型")]
         public string _原始赔偿类型 { get; set; }
-        public string _部门 { get; set; }
-        public bool _需要ERP操作 { get; set; }
-        public bool _需要后台操作 { get; set; }
-
-        public string _对应的ERP操作 { get; set; }
-
-        public string _对应的后台操作 { get; set; }
+        public override void _数据处理()
+        {
+            Key = $"{_南棠店铺名称}{_赔偿编号}{MSKU}";
+        }
     }
 }

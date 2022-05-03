@@ -1,7 +1,7 @@
 ﻿using Npoi.Mapper.Attributes;
 
 
-namespace ExcelTool.Domain.Models.AmazonCompensations
+namespace ExcelTool.Domain.Models.Commons
 {
     public class _站点更名匹配表
     {

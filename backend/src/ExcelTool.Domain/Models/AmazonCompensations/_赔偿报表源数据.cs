@@ -51,7 +51,6 @@ namespace ExcelTool.Domain.Models.AmazonCompensations
         public string _店铺 { get; set; }
         public void _数据处理()
         {
-            //_店铺 = _店铺.LastIndexOf("-") > -1 ? _店铺.Substring(0, _店铺.LastIndexOf("-")).Trim() : _店铺;
             Key = $"{_店铺}{_赔偿编号}{MSKU}";
         }
     }

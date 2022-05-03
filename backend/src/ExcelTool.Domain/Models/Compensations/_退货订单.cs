@@ -2,10 +2,10 @@
 
 namespace ExcelTool.Domain.Models.Compensations
 {
-    public class _退货订单
+    public class _退货订单 : 赔偿退货订单源数据
     {
         [Column("店铺")]
-        public string _店铺 { get; set; }
+        public override string _领星店铺名称 { get; set; }
         [Column("国家")]
         public string _国家 { get; set; }
         [Column("品名")]
@@ -21,7 +21,7 @@ namespace ExcelTool.Domain.Models.Compensations
         [Column("商品名称")]
         public string _商品名称 { get; set; }
         [Column("MSKU")]
-        public string MSKU { get; set; }
+        public override string MSKU { get; set; }
         [Column("ASIN")]
         public string ASIN { get; set; }
         [Column("退货数量")]
@@ -29,7 +29,7 @@ namespace ExcelTool.Domain.Models.Compensations
         [Column("发货仓库编号")]
         public string _发货仓库编号 { get; set; }
         [Column("库存属性")]
-        public string _库存属性 { get; set; }
+        public override string _原因 { get; set; }
         [Column("退货原因")]
         public string _退货原因 { get; set; }
         [Column("状态")]
@@ -45,10 +45,9 @@ namespace ExcelTool.Domain.Models.Compensations
         [Column("备注")]
         public string _备注 { get; set; }
 
-        public string _部门 { get; set; }
-        public bool _需要ERP操作 { get; set; }
-        public bool _需要后台操作 { get; set; }
-        public string _对应的ERP操作 { get; set; }
-        public string _对应的后台操作 { get; set; }
+        public override void _数据处理()
+        {
+            Key = $"{_南棠店铺名称}{MSKU}";
+        }
     }
 }

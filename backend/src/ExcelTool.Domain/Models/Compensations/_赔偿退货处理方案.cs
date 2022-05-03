@@ -2,7 +2,7 @@
 
 namespace ExcelTool.Domain.Models.Compensations
 {
-    public class _赔偿处理方案
+    public class _赔偿退货处理方案
     {
         [Column("reason")]
         public string reason { get; set; }
