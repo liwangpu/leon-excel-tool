@@ -28,7 +28,9 @@ namespace ToolTest
             var p处理方案 = $"{_退货赔偿订单文件夹}/处理方案匹配表.xlsx";
             var p部门映射 = $"{_退货赔偿订单文件夹}/店铺-运营配置表.xlsx";
             var p店铺更名匹配 = $"{_退货赔偿订单文件夹}/站点更名匹配表.xlsx";
-            var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, exportFolder);
+            var pMSKU2SKU = $"{_退货赔偿订单文件夹}/MSKU-SKU.xlsx";
+            var pSKU价格匹配 = $"{_退货赔偿订单文件夹}/SKU对应采购成本价.xlsx";
+            var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, exportFolder);
             var ms = await handler.Handle();
             saveExport(ms, "export.xlsx");
             #endregion

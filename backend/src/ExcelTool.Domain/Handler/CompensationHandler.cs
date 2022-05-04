@@ -20,6 +20,8 @@ namespace ExcelTool.Domain.Handler.Compensations
         protected string path处理方案文件;
         protected string path部门映射文件;
         protected string path店铺更名匹配文件;
+        protected string pathMSKU2SKU映射文件;
+        protected string pathSKU2单价映射文件;
         protected string folder临时文件夹;
 
         #region ctor
@@ -27,7 +29,7 @@ namespace ExcelTool.Domain.Handler.Compensations
         {
 
         }
-        public CompensationHandler(string p赔偿订单文件, string p退货订单文件, string p处理方案文件, string p部门映射文件, string p店铺更名匹配文件, string f临时文件夹)
+        public CompensationHandler(string p赔偿订单文件, string p退货订单文件, string p处理方案文件, string p部门映射文件, string p店铺更名匹配文件, string pMSKU2SKU映射文件, string pSKU2单价映射文件, string f临时文件夹)
             : this()
         {
             path赔偿订单文件 = p赔偿订单文件;
@@ -35,6 +37,8 @@ namespace ExcelTool.Domain.Handler.Compensations
             path处理方案文件 = p处理方案文件;
             path部门映射文件 = p部门映射文件;
             path店铺更名匹配文件 = p店铺更名匹配文件;
+            pathMSKU2SKU映射文件 = pMSKU2SKU映射文件;
+            pathSKU2单价映射文件 = pSKU2单价映射文件;
             folder临时文件夹 = f临时文件夹;
         }
         #endregion
@@ -46,14 +50,18 @@ namespace ExcelTool.Domain.Handler.Compensations
             var list退货处理方案 = new List<_赔偿退货处理方案>();
             var list赔偿处理方案 = new List<_赔偿退货处理方案>();
             var list站点更名匹配 = new List<_站点更名匹配表>();
+            var listSKU匹配 = new List<_SKU匹配>();
+            var list价格匹配 = new List<_价格匹配>();
             var list部门匹配 = new List<_部门匹配>();
             var dict赔偿订单唯一值to国家 = new Dictionary<string, string>();
             var dict赔偿订单统计项映射 = new Dictionary<string, _赔偿订单统计项>();
             var dict退货订单唯一值to国家 = new Dictionary<string, string>();
             var dict退货订单统计项映射 = new Dictionary<string, _退货订单统计项>();
+
             var util店铺更名工具 = new StoreNameHelper();
             var util赔偿处理方案匹配 = new _赔偿退货处理方案匹配Util();
             var util退货处理方案匹配 = new _赔偿退货处理方案匹配Util();
+            var utilSKU成本价匹配 = new _SKU成本单价匹配Util();
             var list赔偿订单统计项 = new List<_赔偿订单统计项>();
             var list退货订单统计项 = new List<_退货订单统计项>();
             var list部门 = new List<string>();
@@ -71,6 +79,20 @@ namespace ExcelTool.Domain.Handler.Compensations
                     }
                 });
                 util店铺更名工具.LoadData(list站点更名匹配);
+            }
+
+            if (!string.IsNullOrEmpty(pathSKU2单价映射文件))
+            {
+                var mapper = new Mapper(pathSKU2单价映射文件);
+                var sheetDatas = mapper.Take<_价格匹配>().Select(x => x.Value).ToList();
+                list价格匹配.AddRange(sheetDatas);
+            }
+
+            if (!string.IsNullOrEmpty(pathMSKU2SKU映射文件))
+            {
+                var mapper = new Mapper(pathMSKU2SKU映射文件);
+                var sheetDatas = mapper.Take<_SKU匹配>().Select(x => x.Value).ToList();
+                listSKU匹配.AddRange(sheetDatas);
             }
 
             if (!string.IsNullOrEmpty(path赔偿订单文件))
@@ -140,6 +162,7 @@ namespace ExcelTool.Domain.Handler.Compensations
 
             util赔偿处理方案匹配.loadData(list赔偿处理方案);
             util退货处理方案匹配.loadData(list退货单需要EPR处理的);
+            utilSKU成本价匹配.loadData(listSKU匹配, list价格匹配);
 
             #region 处理赔偿订单数据
             list赔偿订单.ForEach(it =>
@@ -156,6 +179,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 else
                 {
                     var ditem = _赔偿订单统计项.From(util赔偿处理方案匹配._匹配操作(it), it);
+                    utilSKU成本价匹配.匹配数据(ditem);
                     dict赔偿订单统计项映射[it.Key] = ditem;
                     dict赔偿订单唯一值to国家[it.Key] = it._国家;
                     list赔偿订单统计项.Add(ditem);
@@ -178,6 +202,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 else
                 {
                     var ditem = _退货订单统计项.From(util退货处理方案匹配._匹配操作(it), it);
+                    utilSKU成本价匹配.匹配数据(ditem);
                     dict退货订单统计项映射[it.Key] = ditem;
                     dict退货订单唯一值to国家[it.Key] = it._国家;
                     list退货订单统计项.Add(ditem);
@@ -276,6 +301,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 sheet.Cells[rowIndex, 6].Value = data.SKU;
                 sheet.Cells[rowIndex, 7].Value = data._赔偿编号;
                 sheet.Cells[rowIndex, 8].Value = data._ERP操作数量;
+                sheet.Cells[rowIndex, 9].Value = data._采购成本单价;
                 rowIndex++;
             }
             #endregion
@@ -286,10 +312,10 @@ namespace ExcelTool.Domain.Handler.Compensations
             sheet.Column(3).Width = 30;
             sheet.Column(4).Width = 30;
             sheet.Column(5).Width = 30;
-            sheet.Column(6).Width = 30;
+            sheet.Column(6).Width = 18;
             sheet.Column(7).Width = 16;
             sheet.Column(8).Width = 12;
-            sheet.Column(9).Width = 12;
+            sheet.Column(9).Width = 14;
             sheet.Column(10).Width = 16;
             sheet.Column(11).Width = 16;
             sheet.Column(12).Width = 16;
@@ -354,6 +380,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 sheet.Cells[rowIndex, 5].Value = data.MSKU;
                 sheet.Cells[rowIndex, 6].Value = data.SKU;
                 sheet.Cells[rowIndex, 7].Value = data._ERP操作数量;
+                sheet.Cells[rowIndex, 8].Value = data._采购成本单价;
                 rowIndex++;
             }
             #endregion
@@ -364,9 +391,9 @@ namespace ExcelTool.Domain.Handler.Compensations
             sheet.Column(3).Width = 30;
             sheet.Column(4).Width = 30;
             sheet.Column(5).Width = 30;
-            sheet.Column(6).Width = 30;
+            sheet.Column(6).Width = 18;
             sheet.Column(7).Width = 12;
-            sheet.Column(8).Width = 12;
+            sheet.Column(8).Width = 14;
             sheet.Column(9).Width = 16;
             sheet.Column(10).Width = 16;
             sheet.Column(11).Width = 16;
@@ -714,6 +741,36 @@ namespace ExcelTool.Domain.Handler.Compensations
             if (!Maps.ContainsKey(data._原因))
             { return null; }
             return Maps[data._原因];
+        }
+    }
+
+    class _SKU成本单价匹配Util
+    {
+        protected Dictionary<string, string> dictMSKU2SKU映射 = new Dictionary<string, string>();
+        protected Dictionary<string, decimal> dictSKU成本价映射 = new Dictionary<string, decimal>();
+
+        public void loadData(List<_SKU匹配> listSKU匹配, List<_价格匹配> list价格匹配)
+        {
+            listSKU匹配.ForEach(it =>
+            {
+                dictMSKU2SKU映射[it.MSKU] = it.SKU;
+            });
+            list价格匹配.ForEach(it =>
+            {
+                dictSKU成本价映射[it.SKU] = it._成本单价;
+            });
+        }
+
+        public void 匹配数据(赔偿退货统计项 data)
+        {
+            if (!string.IsNullOrWhiteSpace(data.MSKU) && dictMSKU2SKU映射.ContainsKey(data.MSKU))
+            {
+                data.SKU = dictMSKU2SKU映射[data.MSKU];
+                if (!string.IsNullOrWhiteSpace(data.SKU) && dictSKU成本价映射.ContainsKey(data.SKU))
+                {
+                    data._采购成本单价 = dictSKU成本价映射[data.SKU];
+                }
+            }
         }
     }
 }
