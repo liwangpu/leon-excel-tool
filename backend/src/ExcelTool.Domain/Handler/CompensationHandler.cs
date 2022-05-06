@@ -62,9 +62,10 @@ namespace ExcelTool.Domain.Handler.Compensations
             var util赔偿处理方案匹配 = new _赔偿退货处理方案匹配Util();
             var util退货处理方案匹配 = new _赔偿退货处理方案匹配Util();
             var utilSKU成本价匹配 = new _SKU成本单价匹配Util();
+            var util部门匹配 = new _部门匹配Util();
             var list赔偿订单统计项 = new List<_赔偿订单统计项>();
             var list退货订单统计项 = new List<_退货订单统计项>();
-            var list部门 = new List<string>();
+            //var list部门 = new List<string>();
 
             #region 数据读取
             if (!string.IsNullOrEmpty(path店铺更名匹配文件))
@@ -139,20 +140,21 @@ namespace ExcelTool.Domain.Handler.Compensations
                     var m = Regex.Match(it._负责人部门, pattern);
                     if (m.Success)
                     {
-                        list部门.Add(m.Value);
+                        //list部门.Add(m.Value);
                         it._部门 = m.Value;
                     }
                     else
                     {
                         it._部门 = "未匹配";
-                        list部门.Add("未匹配");
+                        //list部门.Add("未匹配");
                     }
                 });
 
                 list部门匹配.AddRange(sheetDatas);
                 // 添加未匹配部门
-                list部门.Add("未匹配");
-                list部门 = list部门.Select(n => n).Distinct().ToList();
+                //list部门.Add("未匹配");
+                //list部门 = list部门.Select(n => n).Distinct().ToList();
+                util部门匹配.loadData(list部门匹配);
             }
             #endregion
 
@@ -173,12 +175,13 @@ namespace ExcelTool.Domain.Handler.Compensations
                     if (it._国家 == dict赔偿订单唯一值to国家[it.Key])
                     {
                         var ditem = dict赔偿订单统计项映射[it.Key];
-                        ditem._合并汇总(it);
+                        ditem._合并汇总(util赔偿处理方案匹配._匹配操作(it), it);
                     }
                 }
                 else
                 {
                     var ditem = _赔偿订单统计项.From(util赔偿处理方案匹配._匹配操作(it), it);
+                    util部门匹配._匹配部门(ditem);
                     utilSKU成本价匹配.匹配数据(ditem);
                     dict赔偿订单统计项映射[it.Key] = ditem;
                     dict赔偿订单唯一值to国家[it.Key] = it._国家;
@@ -196,12 +199,13 @@ namespace ExcelTool.Domain.Handler.Compensations
                     if (it._国家 == dict退货订单唯一值to国家[it.Key])
                     {
                         var ditem = dict退货订单统计项映射[it.Key];
-                        ditem._合并汇总(it);
+                        ditem._合并汇总(util退货处理方案匹配._匹配操作(it), it);
                     }
                 }
                 else
                 {
                     var ditem = _退货订单统计项.From(util退货处理方案匹配._匹配操作(it), it);
+                    util部门匹配._匹配部门(ditem);
                     utilSKU成本价匹配.匹配数据(ditem);
                     dict退货订单统计项映射[it.Key] = ditem;
                     dict退货订单唯一值to国家[it.Key] = it._国家;
@@ -221,39 +225,54 @@ namespace ExcelTool.Domain.Handler.Compensations
 
                 #region 亚马逊赔偿ERP需要做可售库存弃置处理
                 {
-                    var sheet = workbox.Worksheets.Add($"亚马逊赔偿ERP需要做可售库存弃置处理");
                     var datas = list赔偿订单统计项.Where(x => x._ERP执行动作 == "可售库存弃置").ToList();
-                    _生成赔偿订单Sheet(sheet, datas);
+                    if (datas.Count > 0)
+                    {
+                        var sheet = workbox.Worksheets.Add($"亚马逊赔偿ERP需要做可售库存弃置处理");
+                        _生成赔偿订单Sheet(sheet, datas);
+                    }
                 }
                 #endregion
 
                 #region 亚马逊赔偿ERP需要做可售库存带成本入库处理
                 {
-                    var sheet = workbox.Worksheets.Add($"亚马逊赔偿ERP需要做可售库存带成本入库处理");
                     var datas = list赔偿订单统计项.Where(x => x._ERP执行动作 == "做可售库存带成本入库").ToList();
-                    _生成赔偿订单Sheet(sheet, datas);
+                    if (datas.Count > 0)
+                    {
+                        var sheet = workbox.Worksheets.Add($"亚马逊赔偿ERP需要做可售库存带成本入库处理");
+                        _生成赔偿订单Sheet(sheet, datas);
+                    }
                 }
                 #endregion
 
                 #region 亚马逊退货订单ERP需要做可售库存0成本入库处理
                 {
-                    var sheet = workbox.Worksheets.Add($"亚马逊退货订单ERP需要做可售库存0成本入库处理");
                     var datas = list退货订单统计项.Where(x => x._ERP执行动作 == "0成本入库").ToList();
-                    _生成退货订单Sheet(sheet, datas);
+                    if (datas.Count > 0)
+                    {
+                        var sheet = workbox.Worksheets.Add($"亚马逊退货订单ERP需要做可售库存0成本入库处理");
+                        _生成退货订单Sheet(sheet, datas);
+                    }
                 }
                 #endregion
 
                 #region 赔偿订单统计详情
                 {
-                    var sheet = workbox.Worksheets.Add($"赔偿订单统计详情");
-                    _生成赔偿订单详情Sheet(sheet, list赔偿订单统计项);
+                    if (list赔偿订单统计项.Count > 0)
+                    {
+                        var sheet = workbox.Worksheets.Add($"赔偿订单统计详情");
+                        _生成赔偿订单详情Sheet(sheet, list赔偿订单统计项);
+                    }
                 }
                 #endregion
 
                 #region 退货订单统计详情
                 {
-                    var sheet = workbox.Worksheets.Add($"退货订单统计详情");
-                    _生成退货订单详情Sheet(sheet, list退货订单统计项);
+                    if (list退货订单统计项.Count > 0)
+                    {
+                        var sheet = workbox.Worksheets.Add($"退货订单统计详情");
+                        _生成退货订单详情Sheet(sheet, list退货订单统计项);
+                    }
                 }
                 #endregion
                 package.Save();
@@ -284,6 +303,7 @@ namespace ExcelTool.Domain.Handler.Compensations
             sheet.Cells[2, 10].Value = "弃置单号";
             sheet.Cells[2, 11].Value = "审批单号";
             sheet.Cells[2, 12].Value = "备注";
+            sheet.Cells[2, 13].Value = "部门";
             #endregion
 
             #region 数据列
@@ -302,6 +322,8 @@ namespace ExcelTool.Domain.Handler.Compensations
                 sheet.Cells[rowIndex, 7].Value = data._赔偿编号;
                 sheet.Cells[rowIndex, 8].Value = data._ERP操作数量;
                 sheet.Cells[rowIndex, 9].Value = data._采购成本单价;
+
+                sheet.Cells[rowIndex, 13].Value = data._部门;
                 rowIndex++;
             }
             #endregion
@@ -319,7 +341,88 @@ namespace ExcelTool.Domain.Handler.Compensations
             sheet.Column(10).Width = 16;
             sheet.Column(11).Width = 16;
             sheet.Column(12).Width = 16;
+            sheet.Column(13).Width = 14;
+            sheet.Row(1).Height = 46;
 
+            using (var rng = sheet.Cells[1, 1, 1, 13])
+            {
+                rng.Merge = true;
+                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
+                rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
+                rng.RichText.Add($"{sheet.Name}\r\n");
+                rng.RichText.Add($"领星ERP导出时间:*年*月*号-*年*月*号");
+                rng.Style.WrapText = true;
+                rng.Style.Font.Size = 14;
+            }
+
+            using (var rng = sheet.Cells[1, 1, rowIndex - 1, 13])
+            {
+                rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                rng.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
+            }
+
+            using (var rng = sheet.Cells[2, 1, 2, 13])
+            {
+                var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFFF00");
+                rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
+                rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
+                rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
+            }
+            #endregion
+        }
+
+        private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单统计项> datas)
+        {
+            #region 标题列
+            sheet.Cells[2, 1].Value = "统计编号";
+            sheet.Cells[2, 2].Value = "统计个数";
+            sheet.Cells[2, 3].Value = "领星店铺";
+            sheet.Cells[2, 4].Value = "南棠店铺";
+            sheet.Cells[2, 5].Value = "MSKU";
+            sheet.Cells[2, 6].Value = "SKU";
+            sheet.Cells[2, 7].Value = "数量";
+            sheet.Cells[2, 8].Value = "采购成本单价";
+            sheet.Cells[2, 9].Value = "弃置单号";
+            sheet.Cells[2, 10].Value = "审批单号";
+            sheet.Cells[2, 11].Value = "备注";
+            sheet.Cells[2, 12].Value = "部门";
+            #endregion
+
+            #region 数据列
+            var startRow = 3;
+            var rowIndex = startRow;
+
+            for (int idx = 0; idx < datas.Count; idx++)
+            {
+                var data = datas[idx];
+                sheet.Cells[rowIndex, 1].Value = data.UniqCode;
+                sheet.Cells[rowIndex, 2].Value = data.Items.Count;
+                sheet.Cells[rowIndex, 3].Value = data._领星店铺名称;
+                sheet.Cells[rowIndex, 4].Value = data._南棠店铺名称;
+                sheet.Cells[rowIndex, 5].Value = data.MSKU;
+                sheet.Cells[rowIndex, 6].Value = data.SKU;
+                sheet.Cells[rowIndex, 7].Value = data._ERP操作数量;
+                sheet.Cells[rowIndex, 8].Value = data._采购成本单价;
+                sheet.Cells[rowIndex, 12].Value = data._部门;
+                rowIndex++;
+            }
+            #endregion
+
+            #region 表格整体配置
+            sheet.Column(1).Width = 12;
+            sheet.Column(2).Width = 10;
+            sheet.Column(3).Width = 30;
+            sheet.Column(4).Width = 30;
+            sheet.Column(5).Width = 30;
+            sheet.Column(6).Width = 18;
+            sheet.Column(7).Width = 12;
+            sheet.Column(8).Width = 14;
+            sheet.Column(9).Width = 16;
+            sheet.Column(10).Width = 16;
+            sheet.Column(11).Width = 16;
+            sheet.Column(12).Width = 14;
             sheet.Row(1).Height = 46;
 
             using (var rng = sheet.Cells[1, 1, 1, 12])
@@ -345,84 +448,7 @@ namespace ExcelTool.Domain.Handler.Compensations
             {
                 var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFFF00");
                 rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
-                rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
-            }
-            #endregion
-        }
-
-        private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单统计项> datas)
-        {
-            #region 标题列
-            sheet.Cells[2, 1].Value = "统计编号";
-            sheet.Cells[2, 2].Value = "统计个数";
-            sheet.Cells[2, 3].Value = "领星店铺";
-            sheet.Cells[2, 4].Value = "南棠店铺";
-            sheet.Cells[2, 5].Value = "MSKU";
-            sheet.Cells[2, 6].Value = "SKU";
-            sheet.Cells[2, 7].Value = "数量";
-            sheet.Cells[2, 8].Value = "采购成本单价";
-            sheet.Cells[2, 9].Value = "弃置单号";
-            sheet.Cells[2, 10].Value = "审批单号";
-            sheet.Cells[2, 11].Value = "备注";
-            #endregion
-
-            #region 数据列
-            var startRow = 3;
-            var rowIndex = startRow;
-
-            for (int idx = 0; idx < datas.Count; idx++)
-            {
-                var data = datas[idx];
-                sheet.Cells[rowIndex, 1].Value = data.UniqCode;
-                sheet.Cells[rowIndex, 2].Value = data.Items.Count;
-                sheet.Cells[rowIndex, 3].Value = data._领星店铺名称;
-                sheet.Cells[rowIndex, 4].Value = data._南棠店铺名称;
-                sheet.Cells[rowIndex, 5].Value = data.MSKU;
-                sheet.Cells[rowIndex, 6].Value = data.SKU;
-                sheet.Cells[rowIndex, 7].Value = data._ERP操作数量;
-                sheet.Cells[rowIndex, 8].Value = data._采购成本单价;
-                rowIndex++;
-            }
-            #endregion
-
-            #region 表格整体配置
-            sheet.Column(1).Width = 12;
-            sheet.Column(2).Width = 10;
-            sheet.Column(3).Width = 30;
-            sheet.Column(4).Width = 30;
-            sheet.Column(5).Width = 30;
-            sheet.Column(6).Width = 18;
-            sheet.Column(7).Width = 12;
-            sheet.Column(8).Width = 14;
-            sheet.Column(9).Width = 16;
-            sheet.Column(10).Width = 16;
-            sheet.Column(11).Width = 16;
-
-            sheet.Row(1).Height = 46;
-
-            using (var rng = sheet.Cells[1, 1, 1, 11])
-            {
-                rng.Merge = true;
-                rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
                 rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
-                rng.RichText.Add($"{sheet.Name}\r\n");
-                rng.RichText.Add($"领星ERP导出时间:*年*月*号-*年*月*号");
-                rng.Style.WrapText = true;
-                rng.Style.Font.Size = 14;
-            }
-
-            using (var rng = sheet.Cells[1, 1, rowIndex - 1, 11])
-            {
-                rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
-                rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
-                rng.Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
-                rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
-            }
-
-            using (var rng = sheet.Cells[2, 1, 2, 11])
-            {
-                var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFFF00");
-                rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
                 rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
             }
             #endregion
@@ -451,7 +477,7 @@ namespace ExcelTool.Domain.Handler.Compensations
             sheet.Cells[1, 18].Value = "赔偿数量（总计）";
             sheet.Cells[1, 19].Value = "原始赔偿编号";
             sheet.Cells[1, 20].Value = "原始赔偿类型";
-            //sheet.Cells[1, 21].Value = "操作";
+            sheet.Cells[1, 21].Value = "部门";
             #endregion
 
             #region 数据列
@@ -483,6 +509,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                     sheet.Cells[rowIndex, 18].Value = it._赔偿数量_总计;
                     sheet.Cells[rowIndex, 19].Value = it._原始赔偿编号;
                     sheet.Cells[rowIndex, 20].Value = it._原始赔偿类型;
+                    sheet.Cells[rowIndex, 21].Value = data._部门;
                     rowIndex++;
                 });
 
@@ -514,7 +541,7 @@ namespace ExcelTool.Domain.Handler.Compensations
             sheet.Cells[1, 19].Value = "退货时间";
             sheet.Cells[1, 20].Value = "订购时间";
             sheet.Cells[1, 21].Value = "备注";
-            //sheet.Cells[1, 21].Value = "操作";
+            sheet.Cells[1, 22].Value = "部门";
             #endregion
 
             #region 数据列
@@ -547,6 +574,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                     sheet.Cells[rowIndex, 19].Value = it._退货时间;
                     sheet.Cells[rowIndex, 20].Value = it._订购时间;
                     sheet.Cells[rowIndex, 21].Value = it._备注;
+                    sheet.Cells[rowIndex, 22].Value = data._部门;
                     rowIndex++;
                 });
 
@@ -615,6 +643,7 @@ namespace ExcelTool.Domain.Handler.Compensations
             }
         }
         public string _原因 { get; protected set; }
+        public string _部门 { get; set; }
         public string UniqCode { get; protected set; }
 
         protected 赔偿退货统计项()
@@ -632,10 +661,10 @@ namespace ExcelTool.Domain.Handler.Compensations
             : base()
         { }
 
-        public void _合并汇总(_赔偿订单 data)
+        public void _合并汇总(_赔偿退货处理方案 solution, _赔偿订单 data)
         {
-            _ERP操作数量 += _判断获取数量(_处理方案, data, enum处理平台._ERP);
-            _后台操作数量 += _判断获取数量(_处理方案, data, enum处理平台._后台);
+            _ERP操作数量 += _判断获取数量(solution, data, enum处理平台._ERP);
+            _后台操作数量 += _判断获取数量(solution, data, enum处理平台._后台);
             Items.Add(data);
         }
 
@@ -683,10 +712,10 @@ namespace ExcelTool.Domain.Handler.Compensations
             : base()
         { }
 
-        public void _合并汇总(_退货订单 data)
+        public void _合并汇总(_赔偿退货处理方案 solution, _退货订单 data)
         {
-            _ERP操作数量 += _判断获取数量(_处理方案, data, enum处理平台._ERP);
-            _后台操作数量 += _判断获取数量(_处理方案, data, enum处理平台._后台);
+            _ERP操作数量 += _判断获取数量(solution, data, enum处理平台._ERP);
+            _后台操作数量 += _判断获取数量(solution, data, enum处理平台._后台);
             Items.Add(data);
         }
 
@@ -771,6 +800,29 @@ namespace ExcelTool.Domain.Handler.Compensations
                     data._采购成本单价 = dictSKU成本价映射[data.SKU];
                 }
             }
+        }
+    }
+
+    class _部门匹配Util
+    {
+        protected Dictionary<string, string> Maps = new Dictionary<string, string>();
+
+        public void loadData(List<_部门匹配> list)
+        {
+            list.ForEach(it =>
+            {
+                Maps.Add(it._店铺名, it._部门);
+            });
+        }
+
+        public void _匹配部门(赔偿退货统计项 data)
+        {
+            var dep = "未匹配";
+            if (!string.IsNullOrWhiteSpace(data._南棠店铺名称) && Maps.ContainsKey(data._南棠店铺名称))
+            {
+                dep = Maps[data._南棠店铺名称];
+            }
+            data._部门 = dep;
         }
     }
 }
