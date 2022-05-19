@@ -72,6 +72,10 @@ namespace ExcelTool.Domain.Handler.Compensations
             #region 数据处理
             list赔偿订单.ForEach(it =>
             {
+                //if (it._赔偿编号 == "3936776422")
+                //{
+                //    var aaaaa = 1;
+                //}
                 if (dict唯一值to国家.ContainsKey(it.Key))
                 {
                     // 判断国家是不是一个,不是的话 只取一个国家作为计算

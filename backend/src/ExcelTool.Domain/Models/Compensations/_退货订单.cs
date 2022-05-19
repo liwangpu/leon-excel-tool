@@ -45,9 +45,10 @@ namespace ExcelTool.Domain.Models.Compensations
         [Column("备注")]
         public string _备注 { get; set; }
 
-        public override void _数据处理()
+        public override void _数据处理(_赔偿退货处理方案 solution)
         {
-            Key = $"{_南棠店铺名称}{MSKU}";
+            _处理方案 = solution;
+            Key = $"{_南棠店铺名称}{MSKU}{_原因}";
         }
     }
 }

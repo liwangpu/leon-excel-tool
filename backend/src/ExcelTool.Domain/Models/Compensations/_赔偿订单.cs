@@ -1,4 +1,5 @@
 ﻿using Npoi.Mapper.Attributes;
+using System;
 
 namespace ExcelTool.Domain.Models.Compensations
 {
@@ -9,7 +10,7 @@ namespace ExcelTool.Domain.Models.Compensations
         [Column("国家")]
         public string _国家 { get; set; }
         [Column("时间")]
-        public string _时间 { get; set; }
+        public DateTime _时间 { get; set; }
         [Column("赔偿编号")]
         public string _赔偿编号 { get; set; }
         [Column("订单号")]
@@ -44,9 +45,11 @@ namespace ExcelTool.Domain.Models.Compensations
         public string _原始赔偿编号 { get; set; }
         [Column("原始赔偿类型")]
         public string _原始赔偿类型 { get; set; }
-        public override void _数据处理()
+        public decimal _汇率 { get; set; }
+        public override void _数据处理(_赔偿退货处理方案 solution)
         {
-            Key = $"{_南棠店铺名称}{_赔偿编号}{MSKU}";
+            _处理方案 = solution;
+            Key = $"{_南棠店铺名称}{MSKU}{_原因}";
         }
     }
 }
