@@ -1,0 +1,10 @@
+<div class="uploader" (click)="selectFile()">
+    <span>{{message}}</span>
+    <input class="hidden" type="file" [attr.accept]="accept" (change)="readFiles($event)" #fileCtl>
+</div>
+<div class="downloader">
+    <button nz-button class="btn-download" [disabled]="!hasAttachment||downloading" (click)="downloadAttactment()">
+        <i nz-icon nzType="download" nzTheme="outline" [class.hidden]="downloading"></i>
+        <i nz-icon nzType="loading" [class.hidden]="!downloading"></i>
+    </button>
+</div>

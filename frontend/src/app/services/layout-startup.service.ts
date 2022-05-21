@@ -16,8 +16,13 @@ export class LayoutStartupService implements ILayoutStartup {
                 children: [
                     {
                         key: 'compensation',
-                        title: '退货赔偿订单处理',
+                        title: '退货赔偿订单',
                         url: '/compensation',
+                    },
+                    {
+                        key: 'compensation',
+                        title: '亚马逊索赔',
+                        url: '/amazon-compensation',
                     }
                 ]
             },
@@ -30,11 +35,11 @@ export class LayoutStartupService implements ILayoutStartup {
                         title: '库存差异分析',
                         url: '/stock-difference-analysis',
                     },
-                    {
-                        key: 'compensation',
-                        title: '库存差异可视化',
-                        url: '/stock-difference-visual',
-                    }
+                    // {
+                    //     key: 'compensation',
+                    //     title: '库存差异可视化',
+                    //     url: '/stock-difference-visual',
+                    // }
                 ]
             },
             // {

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { standardSubAppRouterGenerator } from 'workstation-shared/starter';
+import { AmazonCompensationComponent } from './components/amazon-compensation/amazon-compensation.component';
 import { CompensationComponent } from './components/compensation/compensation.component';
 import { HomeComponent } from './components/home/home.component';
 import { StockDifferenceAnalysisComponent } from './components/stock-difference-analysis/stock-difference-analysis.component';
@@ -11,6 +12,7 @@ const routes: Routes = standardSubAppRouterGenerator([
     { path: 'home', component: HomeComponent },
     { path: 'test', component: TestComponent },
     { path: 'compensation', component: CompensationComponent },
+    { path: 'amazon-compensation', component: AmazonCompensationComponent },
     { path: 'stock-difference-analysis', component: StockDifferenceAnalysisComponent },
     { path: 'stock-difference-visual', component: StockDifferenceChartComponent },
     { path: '', pathMatch: 'full', redirectTo: 'home' }

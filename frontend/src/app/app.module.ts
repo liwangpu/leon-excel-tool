@@ -6,6 +6,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HomeComponent } from './components/home/home.component';
 import { StarterModule, AppIconSetting } from "workstation-shared/starter";
 import { UploaderModule } from "workstation-shared/uploader";
+import { AttachmentUploaderModule } from "workstation-shared/attachment-uploader";
 import { LAYOUT_STARTUP } from 'workstation-shared/layout';
 import * as fromService from './services';
 import { CompensationComponent } from './components/compensation/compensation.component';
@@ -18,6 +19,7 @@ import { NzDatePickerModule } from 'ng-zorro-antd/date-picker';
 import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { StockDifferenceChartComponent } from './components/stock-difference-chart/stock-difference-chart.component';
 import { DepartmentChartComponent } from './components/stock-difference-chart/department-chart/department-chart.component';
+import { AmazonCompensationComponent } from './components/amazon-compensation/amazon-compensation.component';
 
 const icons: Array<IconDefinition> = [];
 
@@ -29,7 +31,8 @@ const icons: Array<IconDefinition> = [];
         TestComponent,
         StockDifferenceAnalysisComponent,
         StockDifferenceChartComponent,
-        DepartmentChartComponent
+        DepartmentChartComponent,
+        AmazonCompensationComponent
     ],
     imports: [
         StarterModule.forRoot(),
@@ -40,6 +43,7 @@ const icons: Array<IconDefinition> = [];
         NzFormModule,
         NzInputModule,
         UploaderModule,
+        AttachmentUploaderModule,
         NzButtonModule,
         NzDatePickerModule,
         NzNotificationModule

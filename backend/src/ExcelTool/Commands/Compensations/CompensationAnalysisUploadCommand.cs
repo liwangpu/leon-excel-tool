@@ -15,5 +15,13 @@ namespace ExcelTool.Commands.Compensations
         public IFormFile _处理方案 { get; set; }
         [FromForm(Name = "departmentMap")]
         public IFormFile _部门匹配表 { get; set; }
+        [FromForm(Name = "storeChangeName")]
+        public IFormFile _店铺更名文件 { get; set; }
+        [FromForm(Name = "msku2sku")]
+        public IFormFile MSKU2SKU { get; set; }
+        [FromForm(Name = "sku2Price")]
+        public IFormFile SKU2Price { get; set; }
+        [FromForm(Name = "exchangeRate")]
+        public IFormFile _汇率匹配 { get; set; }
     }
 }

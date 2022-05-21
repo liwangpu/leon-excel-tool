@@ -1,0 +1,24 @@
+<form nz-form nzLayout="inline" [formGroup]="form">
+    <nz-form-item>
+        <nz-form-label nzRequired>赔偿单</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-uploader accept=".xlsx" formControlName="compensations">
+            </workstation-shared-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label>店铺更名文件</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-attachment-uploader accept=".xlsx" formControlName="storeChangeName"
+                fileKey="领星店铺更名为南棠店铺匹配表.xlsx">
+            </workstation-shared-attachment-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-control>
+            <button nz-button nzType="primary" (click)="upload()" [disabled]="!form?.valid">上传</button>
+        </nz-form-control>
+    </nz-form-item>
+</form>

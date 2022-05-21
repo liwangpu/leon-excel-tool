@@ -18,6 +18,9 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
     ports:
       - "3101:80"
+    volumes:
+      - "/var/excel-tool-backend/logs:/app/logs"
+      - "/var/excel-tool-backend/wwwroot:/app/wwwroot"
     networks:
       - devnet
     restart: always

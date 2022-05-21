@@ -1,0 +1,40 @@
+:host {
+    display: flex;
+    align-items: center;
+
+    div.uploader {
+        display: inline-block;
+        height: 32px;
+        width: 180px;
+        background-color: #fff;
+        border: 1px solid #d9d9d9;
+        border-right: none;
+        border-radius: 2px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        padding: 4px 11px;
+        color: #BFBFBF;
+        cursor: pointer;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        word-break: break-all;
+        white-space: nowrap;
+
+        &:hover {
+            border-color: #82aefa;
+        }
+
+    }
+
+    div.downloader{
+        .btn-download{
+            border-top-left-radius: 0 !important;
+            border-bottom-left-radius: 0 !important;
+        }
+    }
+
+
+    .hidden {
+        display: none !important;
+    }
+}

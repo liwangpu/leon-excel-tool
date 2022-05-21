@@ -99,6 +99,11 @@ namespace ExcelTool
             {
                 Directory.CreateDirectory(staticFileSetting.TmpFolder);
             }
+
+            if (!Directory.Exists(staticFileSetting.AttactmentFolder))
+            {
+                Directory.CreateDirectory(staticFileSetting.AttactmentFolder);
+            }
             //app.Use(async (context, next) =>
             //{
             //    var token = context.Session.GetString("Token");

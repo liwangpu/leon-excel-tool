@@ -17,14 +17,54 @@
     <nz-form-item>
         <nz-form-label>处理方案匹配表</nz-form-label>
         <nz-form-control>
-            <workstation-shared-uploader accept=".xlsx" formControlName="solution"></workstation-shared-uploader>
+            <workstation-shared-attachment-uploader accept=".xlsx" formControlName="solution"
+            fileKey="退货赔偿处理方案.xlsx">
+        </workstation-shared-attachment-uploader>
         </nz-form-control>
     </nz-form-item>
 
     <nz-form-item>
         <nz-form-label>店铺运营配表</nz-form-label>
         <nz-form-control>
-            <workstation-shared-uploader accept=".xlsx" formControlName="departmentMap"></workstation-shared-uploader>
+            <workstation-shared-attachment-uploader accept=".xlsx" formControlName="departmentMap"
+                fileKey="店铺运营配置表.xlsx">
+            </workstation-shared-attachment-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label>店铺更名文件</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-attachment-uploader accept=".xlsx" formControlName="storeChangeName"
+                fileKey="领星店铺更名为南棠店铺匹配表.xlsx">
+            </workstation-shared-attachment-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label>MSKU_SKU匹配表</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-attachment-uploader accept=".xlsx" formControlName="msku2sku"
+                fileKey="MSKU_SKU匹配表.xlsx">
+            </workstation-shared-attachment-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label>SKU_价格匹配表</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-attachment-uploader accept=".xlsx" formControlName="sku2Price"
+                fileKey="SKU_价格匹配表.xlsx">
+            </workstation-shared-attachment-uploader>
+        </nz-form-control>
+    </nz-form-item>
+
+    <nz-form-item>
+        <nz-form-label>汇率匹配表</nz-form-label>
+        <nz-form-control>
+            <workstation-shared-attachment-uploader accept=".xlsx" formControlName="exchangeRate"
+                fileKey="汇率匹配表.xlsx">
+            </workstation-shared-attachment-uploader>
         </nz-form-control>
     </nz-form-item>
 

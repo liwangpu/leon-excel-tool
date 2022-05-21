@@ -1,10 +1,13 @@
-import { Component, ChangeDetectionStrategy, forwardRef, Input, ViewChild, HostListener, ElementRef, Injector, ChangeDetectorRef, HostBinding } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Component, OnInit, ChangeDetectionStrategy, forwardRef, Input, ViewChild, HostListener, ElementRef, Injector, ChangeDetectorRef, HostBinding } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import * as fromCore from 'workstation-core';
+import { saveAs } from 'file-saver';
 
 const placeHolder: string = '点击选取文件';
+
 @Component({
-    selector: 'workstation-shared-uploader',
+    selector: 'workstation-shared-attachment-uploader',
     templateUrl: './uploader.component.html',
     styleUrls: ['./uploader.component.scss'],
     changeDetection: ChangeDetectionStrategy.OnPush,
@@ -16,34 +19,57 @@ const placeHolder: string = '点击选取文件';
         }
     ]
 })
-export class UploaderComponent implements ControlValueAccessor {
+export class UploaderComponent implements ControlValueAccessor, OnInit {
 
     @Input()
-    public readonly accept: string;
+    public readonly fileKey: string;
     @Input()
-    public readonly multiple: boolean;
+    public readonly accept: string;
+    public hasAttachment: boolean;
+    public downloading: boolean = false;
     public message: string = placeHolder;
     public fileNames: Array<string>;
     public files: Array<File>;
     @HostBinding('attr.title')
     public title: string;
+    @fromCore.LazyService(fromCore.API_GATEWAY)
+    private apiGateway: string;
     @ViewChild('fileCtl', { read: ElementRef })
     public readonly fileCtl: ElementRef;
     @fromCore.LazyService(ChangeDetectorRef)
     private readonly cdr: ChangeDetectorRef;
+    @fromCore.LazyService(HttpClient)
+    private readonly http: HttpClient;
     private onChangeFn: (val: any) => any;
     private onTouchedFn: () => any;
     public constructor(
         protected injector: Injector
     ) { }
 
+    public async ngOnInit(): Promise<void> {
+        if (this.fileKey) {
+            await this.refreshAttachInfo();
+        }
+    }
+
     public writeValue(obj: any): void {
         //
     }
 
-    @HostListener('click', ['$event'])
-    public onClick(e: Event): void {
+    public selectFile(): void {
         this.fileCtl.nativeElement.click();
+    }
+
+    public downloadAttactment(): void {
+        // console.log('download:',);
+        this.downloading = true;
+        this.cdr.markForCheck();
+        const url = `${this.apiGateway}/api/file/download/${this.fileKey}`;
+        this.http.get(url, { responseType: 'blob' }).subscribe(res => {
+            saveAs(res, this.fileKey);
+            this.downloading = false;
+            this.cdr.markForCheck();
+        });
     }
 
     public readFiles(event: any): void {
@@ -75,5 +101,17 @@ export class UploaderComponent implements ControlValueAccessor {
     public setDisabledState?(isDisabled: boolean): void {
         // 
     }
+
+    public async refreshAttachInfo(): Promise<void> {
+        const url = `${this.apiGateway}/api/file/check/${this.fileKey}`;
+        this.hasAttachment = await this.http.get<boolean>(url).toPromise();
+        if (this.hasAttachment) {
+            this.message = this.fileKey;
+        } else {
+            this.message = placeHolder;
+        }
+        this.cdr.markForCheck();
+    }
+
 
 }

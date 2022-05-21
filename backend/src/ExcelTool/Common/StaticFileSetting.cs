@@ -7,9 +7,11 @@ namespace ExcelTool.Common
     public class StaticFileSetting : IStaticFileSetting
     {
         public string TmpFolder { get; }
+        public string AttactmentFolder { get; }
         public StaticFileSetting(IWebHostEnvironment env)
         {
             TmpFolder = Path.Combine(env.WebRootPath, "Tmp");
+            AttactmentFolder = Path.Combine(env.WebRootPath, "Attactments");
         }
 
         public string GenerateTemporaryFolder(string prefix)
@@ -23,23 +25,17 @@ namespace ExcelTool.Common
             return tmpFolder;
         }
 
-        //public string GenerateSpecificFolder(string folderName)
-        //{
-        //    //var 
-        //}
-
         public string GenerateTemporaryFolder()
         {
             return GenerateTemporaryFolder(null);
         }
-
     }
 
     public interface IStaticFileSetting
     {
         string TmpFolder { get; }
+        string AttactmentFolder { get; }
         string GenerateTemporaryFolder(string prefix);
         string GenerateTemporaryFolder();
-        //string GenerateSpecificFolder(string folderName);
     }
 }

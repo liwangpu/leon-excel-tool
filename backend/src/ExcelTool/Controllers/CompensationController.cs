@@ -32,7 +32,19 @@ namespace ExcelTool.Controllers
             {
                 commonFileName = command._赔偿订单.FileName;
             }
-            return File(result.ToArray(), "application/octet-stream", commonFileName + ".zip");
+            return File(result.ToArray(), "application/octet-stream", commonFileName + ".xlsx");
+        }
+
+        [HttpPost("AmazonUpload")]
+        public async Task<IActionResult> AmazonUpload([FromForm] AmazonCompensationUploadCommand command)
+        {
+            var result = await mediator.Send(command);
+            var commonFileName = "亚马逊索赔处理结果";
+            if (command._赔偿订单 != null)
+            {
+                commonFileName = command._赔偿订单.FileName;
+            }
+            return File(result.ToArray(), "application/octet-stream", commonFileName + ".xlsx");
         }
     }
 }
