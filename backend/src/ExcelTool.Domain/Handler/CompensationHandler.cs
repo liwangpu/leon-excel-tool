@@ -79,6 +79,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 {
                     it._ERP执行动作 = it._ERP执行动作 != null ? it._ERP执行动作.Trim() : null;
                     it._后台执行动作 = it._后台执行动作 != null ? it._后台执行动作.Trim() : null;
+                    it._数据初始化();
                     list赔偿处理方案.Add(it);
                 });
 
@@ -88,6 +89,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 {
                     it._ERP执行动作 = it._ERP执行动作 != null ? it._ERP执行动作.Trim() : null;
                     it._后台执行动作 = it._后台执行动作 != null ? it._后台执行动作.Trim() : null;
+                    it._数据初始化();
                     list退货处理方案.Add(it);
                 });
             }
@@ -162,10 +164,6 @@ namespace ExcelTool.Domain.Handler.Compensations
                 var sheetDatas = mapper.Take<_赔偿订单>().Select(x => x.Value).ToList();
                 sheetDatas.ForEach(it =>
                 {
-                    //if (it.MSKU == "RC-GMYQD-FDQEU")
-                    //{
-                    //    var a21 = 1;
-                    //}
                     util汇率匹配.匹配数据(it);
                     it._南棠店铺名称 = util店铺更名工具._标准化店铺名称(it._国家, it._领星店铺名称);
                     it._数据处理(util赔偿处理方案匹配._匹配操作(it));
@@ -274,7 +272,7 @@ namespace ExcelTool.Domain.Handler.Compensations
 
                 #region 亚马逊退货订单ERP需要做可售库存0成本入库处理
                 {
-                    var datas = list退货订单统计项.Where(x => x._ERP执行动作 == "0成本入库").ToList();
+                    var datas = list退货订单统计项.Where(x => x._ERP执行动作 == "0成本入库" && x.Items.Count > 0).ToList();
                     if (datas.Count > 0)
                     {
                         var sheet = workbox.Worksheets.Add($"亚马逊退货订单ERP需要做可售库存0成本入库处理");
@@ -351,14 +349,15 @@ namespace ExcelTool.Domain.Handler.Compensations
                 sheet.Cells[rowIndex, 6].Value = data.SKU;
                 sheet.Cells[rowIndex, 7].Value = data._赔偿编号;
                 sheet.Cells[rowIndex, 8].Value = data._赔偿编号;
-                sheet.Cells[rowIndex, 8].Value = data._时间;
-                sheet.Cells[rowIndex, 9].Value = data._金额汇总;
-                sheet.Cells[rowIndex, 10].Value = data._金额汇总 * data._汇率;
-                sheet.Cells[rowIndex, 11].Value = data._币种;
-                sheet.Cells[rowIndex, 12].Value = data._汇率;
-                sheet.Cells[rowIndex, 13].Value = data._采购成本单价;
+                sheet.Cells[rowIndex, 8].Value = data._时间.ToString("yyyy-MM-dd");
+                sheet.Cells[rowIndex, 9].Value = data._数量汇总;
+                sheet.Cells[rowIndex, 10].Value = data._金额汇总;
+                sheet.Cells[rowIndex, 11].Value = data._金额汇总 * data._汇率;
+                sheet.Cells[rowIndex, 12].Value = data._币种;
+                sheet.Cells[rowIndex, 13].Value = data._汇率;
+                sheet.Cells[rowIndex, 14].Value = data._采购成本单价;
 
-                sheet.Cells[rowIndex, 17].Value = data._部门;
+                sheet.Cells[rowIndex, 18].Value = data._部门;
                 rowIndex++;
             }
             #endregion
@@ -380,10 +379,11 @@ namespace ExcelTool.Domain.Handler.Compensations
             sheet.Column(14).Width = 16;
             sheet.Column(15).Width = 16;
             sheet.Column(16).Width = 16;
-            sheet.Column(17).Width = 14;
+            sheet.Column(17).Width = 16;
+            sheet.Column(17).Width = 18;
             sheet.Row(1).Height = 46;
 
-            using (var rng = sheet.Cells[1, 1, 1, 17])
+            using (var rng = sheet.Cells[1, 1, 1, 18])
             {
                 rng.Merge = true;
                 rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
@@ -394,7 +394,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 rng.Style.Font.Size = 14;
             }
 
-            using (var rng = sheet.Cells[1, 1, rowIndex - 1, 17])
+            using (var rng = sheet.Cells[1, 1, rowIndex - 1, 18])
             {
                 rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -402,7 +402,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
 
-            using (var rng = sheet.Cells[2, 1, 2, 17])
+            using (var rng = sheet.Cells[2, 1, 2, 18])
             {
                 var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFFF00");
                 rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
@@ -607,7 +607,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                     sheet.Cells[rowIndex, 13].Value = it._发货仓库编号;
                     sheet.Cells[rowIndex, 14].Value = it._原因;
                     sheet.Cells[rowIndex, 15].Value = it._退货原因;
-                    sheet.Cells[rowIndex, 16].Value = it._状态;
+                    sheet.Cells[rowIndex, 16].Value = it._状态_原始;
                     sheet.Cells[rowIndex, 17].Value = it.LPN编号;
                     sheet.Cells[rowIndex, 18].Value = it._买家备注;
                     sheet.Cells[rowIndex, 19].Value = it._退货时间;
@@ -752,7 +752,12 @@ namespace ExcelTool.Domain.Handler.Compensations
 
         public void _合并汇总(_退货订单 data)
         {
-            _数量汇总 += data._数量;
+            var c = _判断获取数量(data);
+            if (c == 0)
+            {
+                return;
+            }
+            _数量汇总 += c;
             Items.Add(data);
         }
 
@@ -763,13 +768,28 @@ namespace ExcelTool.Domain.Handler.Compensations
             item._南棠店铺名称 = data._南棠店铺名称;
             item.MSKU = data.MSKU;
             item._原因 = data._原因;
-            item._数量汇总 += data._数量;
+            var c = _判断获取数量(data);
+            item._数量汇总 += c;
             item._需要ERP操作 = data._需要ERP操作;
             item._需要后台操作 = data._需要后台操作;
             item._后台执行动作 = data._后台执行动作;
             item._ERP执行动作 = data._ERP执行动作;
-            item.Items.Add(data);
+            if (c > 0)
+            {
+                item.Items.Add(data);
+            }
             return item;
+        }
+
+        protected static int _判断获取数量(_退货订单 data)
+        {
+            if (data._处理方案 == null)
+            { return 0; }
+            if (data._处理方案._是否符合二级筛选(data._状态))
+            {
+                return data._数量;
+            }
+            return 0;
         }
     }
 
@@ -794,6 +814,7 @@ namespace ExcelTool.Domain.Handler.Compensations
             return Maps[data._原因];
         }
     }
+
 
     class _SKU成本单价匹配Util
     {

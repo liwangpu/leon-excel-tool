@@ -44,10 +44,12 @@ namespace ExcelTool.Domain.Models.Compensations
         public string _订购时间 { get; set; }
         [Column("备注")]
         public string _备注 { get; set; }
-
+        public string _状态_原始 { get; set; }
         public override void _数据处理(_赔偿退货处理方案 solution)
         {
             _处理方案 = solution;
+            _状态_原始 = _状态;
+            _状态 = string.IsNullOrWhiteSpace(_状态) ? null : _状态.ToUpper();
             Key = $"{_南棠店铺名称}{MSKU}{_原因}";
         }
     }
