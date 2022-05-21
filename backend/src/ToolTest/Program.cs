@@ -1,6 +1,9 @@
 ﻿using ExcelTool.Domain.Handler.Compensations;
+using Flurl.Http;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace ToolTest
@@ -8,11 +11,16 @@ namespace ToolTest
     internal class Program
     {
         public static string exportFolder = @"C:\Users\Leon\Desktop\ExcelToolExport";
+        public static string _基础数据文件夹 = @"C:\Users\Leon\Desktop\ExcelToolBasicFile";
         public static void Main(string[] args)
         {
             if (!Directory.Exists(exportFolder))
             {
                 Directory.CreateDirectory(exportFolder);
+            }
+            if (!Directory.Exists(_基础数据文件夹))
+            {
+                Directory.CreateDirectory(_基础数据文件夹);
             }
             MainAsync(args).GetAwaiter().GetResult();
             Console.WriteLine("执行完毕!");
@@ -21,37 +29,25 @@ namespace ToolTest
 
         public static async Task MainAsync(string[] args)
         {
-
-            //var d =DateTime.Parse("2022-03-01T02:46:46+00:00").ToString("yyyy-MM-dd");
-            //var aaa = 1;
+            //await downloadBasicFiles();
 
             #region 赔偿退货订单报表
-            ////var _退货赔偿订单文件夹 = "C://Users/Leon/Desktop/赔偿退货订单";
-            //var __退货赔偿订单基础数据文件夹 = "D://Favorite/退货赔偿订单基础数据";
-            ////var p赔偿订单 = $"{_退货赔偿订单文件夹}/亚马逊赔偿3.17-3.25.xlsx";
-            ////var p退货订单 = $"{_退货赔偿订单文件夹}/亚马逊退货订单3.17-3.25.xlsx";
-            ////var p退货订单 = @"C:\Users\Leon\Desktop\退货订单3.17-4.30原数据.xlsx";
-            ////var p退货订单 = @"C:\Users\Leon\Desktop\退货订单3.17-4.30原数据(4).xlsx";
-            ////var p赔偿订单 = @"C:\Users\Leon\Desktop\3.17-4.30赔偿订单原数据.xlsx";
-            ////var p赔偿订单 = @"C:\Users\Leon\Desktop\亚马逊赔偿21年5.19-22年5.20.xlsx";
-            //var p退货订单 = @"C:\Users\Leon\Desktop\退货订单3.17-4.30.xlsx";
-            ////var p退货订单 = @"C:\Users\Leon\Desktop\测试.xlsx";
-            //var p汇率匹配 = @"C:\Users\Leon\Desktop\4月汇率(1).xlsx";
-            //var p处理方案 = $"{__退货赔偿订单基础数据文件夹}/处理方案匹配表.xlsx";
-            //var p部门映射 = $"{__退货赔偿订单基础数据文件夹}/店铺-运营配置表.xlsx";
-            //var p店铺更名匹配 = $"{__退货赔偿订单基础数据文件夹}/站点更名匹配表.xlsx";
-            //var pMSKU2SKU = $"{__退货赔偿订单基础数据文件夹}/MSKU-SKU.xlsx";
-            //var pSKU价格匹配 = $"{__退货赔偿订单基础数据文件夹}/SKU对应采购成本价.xlsx";
-            //var handler = new CompensationHandler(null, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, p汇率匹配, exportFolder);
-            //var ms = await handler.Handle();
-            //saveExport(ms, "export.xlsx");
+            var p退货订单 = @"C:\Users\Leon\Desktop\5月份退货订单21号导出排除12号导出.xlsx";
+            var p赔偿订单 = @"C:\Users\Leon\Desktop\5月份亚马逊赔偿21号导出排除12号导出.xlsx";
+            var p汇率匹配 = @"C:\Users\Leon\Desktop\4月汇率(1).xlsx";
+            var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
+            var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
+            var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";
+            var pMSKU2SKU = $"{_基础数据文件夹}/MSKU_SKU匹配表.xlsx";
+            var pSKU价格匹配 = $"{_基础数据文件夹}/SKU_价格匹配表.xlsx";
+            var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, p汇率匹配, exportFolder);
+            var ms = await handler.Handle();
+            saveExport(ms, "export.xlsx");
             #endregion
 
             #region 亚马逊索赔
-            ////var p赔偿订单 = @"C:\Users\Leon\Desktop\模拟\3月份亚马逊赔偿报表.xlsx";
-            //var __亚马逊索赔基础数据文件夹 = "D://Favorite/退货赔偿订单基础数据";
-            //var p店铺更名匹配 = $"{__亚马逊索赔基础数据文件夹}/站点更名匹配表.xlsx";
-            //var p赔偿订单 = @"C:\Users\Leon\Desktop\领星4月份亚马逊赔偿.xlsx";
+            //var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";
+            //var p赔偿订单 = @"C:\Users\Leon\Desktop\3月份索赔(2)(1).xlsx";
             //var handler = new AmazonCompensationHandler(p赔偿订单, p店铺更名匹配, exportFolder);
             //var ms = await handler.Handle();
             //saveExport(ms, "export.xlsx");
@@ -73,6 +69,32 @@ namespace ToolTest
                 }
             }
 
+        }
+
+        public static async Task downloadBasicFiles()
+        {
+            var uri = "http://1.116.37.43:3101/api/file";
+            var fileNames = new List<string>()
+            {
+                 "领星店铺更名为南棠店铺匹配表.xlsx",
+                 "店铺运营配置表.xlsx",
+                 "退货赔偿处理方案.xlsx",
+                 "MSKU_SKU匹配表.xlsx",
+                 "SKU_价格匹配表.xlsx",
+                 "汇率匹配表.xlsx"
+            };
+
+            foreach (var fk in fileNames)
+            {
+                var res = await $"{uri}/Check/{fk}".GetStringAsync();
+                if (res == "true")
+                {
+                    using (var myWebClient = new WebClient())
+                    {
+                        await myWebClient.DownloadFileTaskAsync(new Uri($"{uri}/Download/{fk}"), Path.Combine(_基础数据文件夹, fk));
+                    }
+                }
+            }
         }
     }
 }
