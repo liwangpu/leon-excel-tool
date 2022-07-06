@@ -158,6 +158,8 @@ namespace ExcelTool.Domain.Handler.Compensations
                 listSKU匹配.AddRange(sheetDatas);
             }
 
+            utilSKU成本价匹配.loadData(listSKU匹配, list价格匹配);
+
             if (!string.IsNullOrEmpty(path赔偿订单文件))
             {
                 var mapper = new Mapper(path赔偿订单文件);
@@ -166,6 +168,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 {
                     util汇率匹配.匹配数据(it);
                     it._南棠店铺名称 = util店铺更名工具._标准化店铺名称(it._国家, it._领星店铺名称);
+                    utilSKU成本价匹配.匹配数据(it);
                     it._数据处理(util赔偿处理方案匹配._匹配操作(it));
                     list赔偿订单.Add(it);
                 });
@@ -178,6 +181,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 sheetDatas.ForEach(it =>
                 {
                     it._南棠店铺名称 = util店铺更名工具._标准化店铺名称(it._国家, it._领星店铺名称);
+                    utilSKU成本价匹配.匹配数据(it);
                     it._数据处理(util退货处理方案匹配._匹配操作(it));
                     list退货订单.Add(it);
                 });
@@ -186,7 +190,6 @@ namespace ExcelTool.Domain.Handler.Compensations
 
             #region 数据处理
 
-            utilSKU成本价匹配.loadData(listSKU匹配, list价格匹配);
 
             #region 处理赔偿订单数据
             list赔偿订单.ForEach(it =>
@@ -208,7 +211,6 @@ namespace ExcelTool.Domain.Handler.Compensations
                 {
                     var ditem = _赔偿订单统计项.From(it);
                     util部门匹配._匹配部门(ditem);
-                    utilSKU成本价匹配.匹配数据(ditem);
                     dict赔偿订单统计项映射[it.Key] = ditem;
                     dict赔偿订单唯一值to国家[it.Key] = it._国家;
                     list赔偿订单统计项.Add(ditem);
@@ -232,7 +234,6 @@ namespace ExcelTool.Domain.Handler.Compensations
                 {
                     var ditem = _退货订单统计项.From(it);
                     util部门匹配._匹配部门(ditem);
-                    utilSKU成本价匹配.匹配数据(ditem);
                     dict退货订单统计项映射[it.Key] = ditem;
                     list退货订单统计项.Add(ditem);
                 }
@@ -346,7 +347,10 @@ namespace ExcelTool.Domain.Handler.Compensations
                 sheet.Cells[rowIndex, 3].Value = data._领星店铺名称;
                 sheet.Cells[rowIndex, 4].Value = data._南棠店铺名称;
                 sheet.Cells[rowIndex, 5].Value = data.MSKU;
-                sheet.Cells[rowIndex, 6].Value = data.SKU;
+                if (!data._无匹配SKU)
+                {
+                    sheet.Cells[rowIndex, 6].Value = data.SKU;
+                }
                 sheet.Cells[rowIndex, 7].Value = data._赔偿编号;
                 sheet.Cells[rowIndex, 8].Value = data._赔偿编号;
                 sheet.Cells[rowIndex, 8].Value = data._时间.ToString("yyyy-MM-dd");
@@ -440,7 +444,10 @@ namespace ExcelTool.Domain.Handler.Compensations
                 sheet.Cells[rowIndex, 2].Value = data.Items.Count;
                 sheet.Cells[rowIndex, 3].Value = data._领星店铺名称;
                 sheet.Cells[rowIndex, 4].Value = data._南棠店铺名称;
-                sheet.Cells[rowIndex, 5].Value = data.MSKU;
+                if (!data._无匹配SKU)
+                {
+                    sheet.Cells[rowIndex, 5].Value = data.MSKU;
+                }
                 sheet.Cells[rowIndex, 6].Value = data.SKU;
                 sheet.Cells[rowIndex, 7].Value = data._数量汇总;
                 sheet.Cells[rowIndex, 8].Value = data._采购成本单价;
@@ -641,6 +648,7 @@ namespace ExcelTool.Domain.Handler.Compensations
         public string _南棠店铺名称 { get; set; }
         public string MSKU { get; set; }
         public string SKU { get; set; }
+        public bool _无匹配SKU { get; set; }
         public decimal _采购成本单价 { get; set; }
         public int _数量汇总 { get; set; }
         public string _原因 { get; protected set; }
@@ -689,6 +697,9 @@ namespace ExcelTool.Domain.Handler.Compensations
             item._领星店铺名称 = data._领星店铺名称;
             item._南棠店铺名称 = data._南棠店铺名称;
             item.MSKU = data.MSKU;
+            item.SKU = data.SKU;
+            item._无匹配SKU = data._无匹配SKU;
+            item._采购成本单价 = data._采购成本单价;
             item._原因 = data._原因;
             item._币种 = data._币种;
             item._汇率 = data._汇率;
@@ -767,6 +778,9 @@ namespace ExcelTool.Domain.Handler.Compensations
             item._领星店铺名称 = data._领星店铺名称;
             item._南棠店铺名称 = data._南棠店铺名称;
             item.MSKU = data.MSKU;
+            item.SKU = data.SKU;
+            item._无匹配SKU = data._无匹配SKU;
+            item._采购成本单价 = data._采购成本单价;
             item._原因 = data._原因;
             var c = _判断获取数量(data);
             item._数量汇总 += c;
@@ -833,7 +847,7 @@ namespace ExcelTool.Domain.Handler.Compensations
             });
         }
 
-        public void 匹配数据(赔偿退货统计项 data)
+        public void 匹配数据(赔偿退货订单源数据 data)
         {
             if (!string.IsNullOrWhiteSpace(data.MSKU) && dictMSKU2SKU映射.ContainsKey(data.MSKU))
             {

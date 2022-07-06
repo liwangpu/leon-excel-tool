@@ -49,7 +49,12 @@ namespace ExcelTool.Domain.Models.Compensations
         public override void _数据处理(_赔偿退货处理方案 solution)
         {
             _处理方案 = solution;
-            Key = $"{_南棠店铺名称}{MSKU}{_原因}";
+            _无匹配SKU = string.IsNullOrWhiteSpace(SKU);
+            if (_无匹配SKU)
+            {
+                SKU = Guid.NewGuid().ToString("N").ToUpper();
+            }
+            Key = $"{_南棠店铺名称}{SKU}{_原因}";
         }
     }
 }

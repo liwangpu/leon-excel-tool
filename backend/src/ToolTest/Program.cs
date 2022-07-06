@@ -32,9 +32,9 @@ namespace ToolTest
             //await downloadBasicFiles();
 
             #region 赔偿退货订单报表
-            var p退货订单 = @"C:\Users\Leon\Desktop\5月份退货订单21号导出排除12号导出.xlsx";
-            var p赔偿订单 = @"C:\Users\Leon\Desktop\5月份亚马逊赔偿21号导出排除12号导出.xlsx";
-            var p汇率匹配 = @"C:\Users\Leon\Desktop\4月汇率(1).xlsx";
+            var p退货订单 = @"C:\Users\Leon\Desktop\7-6\5月份退货订单21号导出排除12号导出.xlsx";
+            var p赔偿订单 = @"C:\Users\Leon\Desktop\7-6\5月份亚马逊赔偿21号导出排除12号导出.xlsx";
+            var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
             var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
             var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
             var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";

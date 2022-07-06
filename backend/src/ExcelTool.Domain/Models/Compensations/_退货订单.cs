@@ -1,4 +1,5 @@
 ﻿using Npoi.Mapper.Attributes;
+using System;
 
 namespace ExcelTool.Domain.Models.Compensations
 {
@@ -10,8 +11,6 @@ namespace ExcelTool.Domain.Models.Compensations
         public string _国家 { get; set; }
         [Column("品名")]
         public string _品名 { get; set; }
-        [Column("sku")]
-        public string SKU { get; set; }
         [Column("分类")]
         public string _分类 { get; set; }
         [Column("品牌")]
@@ -50,7 +49,13 @@ namespace ExcelTool.Domain.Models.Compensations
             _处理方案 = solution;
             _状态_原始 = _状态;
             _状态 = string.IsNullOrWhiteSpace(_状态) ? null : _状态.ToUpper();
-            Key = $"{_南棠店铺名称}{MSKU}{_原因}";
+            _无匹配SKU = string.IsNullOrWhiteSpace(SKU);
+            if (_无匹配SKU)
+            {
+                SKU = Guid.NewGuid().ToString("N").ToUpper();
+            }
+            Key = $"{_南棠店铺名称}{SKU}{_原因}";
+
         }
     }
 }

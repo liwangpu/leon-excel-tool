@@ -8,7 +8,10 @@
         public string _南棠店铺名称 { get; set; }
         public string _部门 { get; set; }
         public _赔偿退货处理方案 _处理方案 { get; protected set; }
+        public string SKU { get; set; }
+        public decimal _采购成本单价 { get; set; }
         public string Key { get; protected set; }
+        public bool _无匹配SKU { get; protected set; }
         public string _后台执行动作
         {
             get
