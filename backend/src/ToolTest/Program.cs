@@ -1,4 +1,5 @@
-﻿using ExcelTool.Domain.Handler.Compensations;
+﻿using ExcelTool.Domain.Handler;
+using ExcelTool.Domain.Handler.Compensations;
 using Flurl.Http;
 using System;
 using System.Collections.Generic;
@@ -32,17 +33,17 @@ namespace ToolTest
             //await downloadBasicFiles();
 
             #region 赔偿退货订单报表
-            var p退货订单 = @"C:\Users\Leon\Desktop\7-6\5月份退货订单21号导出排除12号导出.xlsx";
-            var p赔偿订单 = @"C:\Users\Leon\Desktop\7-6\5月份亚马逊赔偿21号导出排除12号导出.xlsx";
-            var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
-            var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
-            var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
-            var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";
-            var pMSKU2SKU = $"{_基础数据文件夹}/MSKU_SKU匹配表.xlsx";
-            var pSKU价格匹配 = $"{_基础数据文件夹}/SKU_价格匹配表.xlsx";
-            var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, p汇率匹配, exportFolder);
-            var ms = await handler.Handle();
-            saveExport(ms, "export.xlsx");
+            //var p退货订单 = @"C:\Users\Leon\Desktop\7-6\5月份退货订单21号导出排除12号导出.xlsx";
+            //var p赔偿订单 = @"C:\Users\Leon\Desktop\7-6\5月份亚马逊赔偿21号导出排除12号导出.xlsx";
+            //var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
+            //var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
+            //var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
+            //var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";
+            //var pMSKU2SKU = $"{_基础数据文件夹}/MSKU_SKU匹配表.xlsx";
+            //var pSKU价格匹配 = $"{_基础数据文件夹}/SKU_价格匹配表.xlsx";
+            //var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, p汇率匹配, exportFolder);
+            //var ms = await handler.Handle();
+            //saveExport(ms, "export.xlsx");
             #endregion
 
             #region 亚马逊索赔
@@ -51,6 +52,14 @@ namespace ToolTest
             //var handler = new AmazonCompensationHandler(p赔偿订单, p店铺更名匹配, exportFolder);
             //var ms = await handler.Handle();
             //saveExport(ms, "export.xlsx");
+            #endregion
+
+            #region 空海运差异报表
+            var p空海运差异表 = @"C:\Users\Leon\Desktop\2022年5月肯亚卡航账单 - 副本 (2).xlsx";
+            //var p空海运差异表 = @"C:\Users\Leon\Desktop\11.xlsx";
+            var handler = new FreightChargeHandler(p空海运差异表, exportFolder);
+            var ms = await handler.Handle();
+            saveExport(ms, "export.xlsx");
             #endregion
         }
 
