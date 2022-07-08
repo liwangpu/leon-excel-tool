@@ -255,7 +255,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                     if (datas.Count > 0)
                     {
                         var sheet = workbox.Worksheets.Add($"亚马逊赔偿ERP需要做可售库存弃置处理");
-                        _生成赔偿订单Sheet(sheet, datas);
+                        _生成赔偿订单Sheet(sheet, datas, 0);
                     }
                 }
                 #endregion
@@ -266,7 +266,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                     if (datas.Count > 0)
                     {
                         var sheet = workbox.Worksheets.Add($"亚马逊赔偿ERP需要做可售库存带成本入库处理");
-                        _生成赔偿订单Sheet(sheet, datas);
+                        _生成赔偿订单Sheet(sheet, datas, 1);
                     }
                 }
                 #endregion
@@ -312,27 +312,26 @@ namespace ExcelTool.Domain.Handler.Compensations
             return memoryStream;
         }
 
-        private static void _生成赔偿订单Sheet(ExcelWorksheet sheet, List<_赔偿订单统计项> datas)
+        private static void _生成赔偿订单Sheet(ExcelWorksheet sheet, List<_赔偿订单统计项> datas, int flag)
         {
             #region 标题列
-            sheet.Cells[2, 1].Value = "统计编号";
-            sheet.Cells[2, 2].Value = "统计个数";
-            sheet.Cells[2, 3].Value = "领星店铺";
-            sheet.Cells[2, 4].Value = "南棠店铺";
-            sheet.Cells[2, 5].Value = "MSKU";
-            sheet.Cells[2, 6].Value = "SKU";
-            sheet.Cells[2, 7].Value = "赔偿编号";
-            sheet.Cells[2, 8].Value = "时间";
-            sheet.Cells[2, 9].Value = "数量";
-            sheet.Cells[2, 10].Value = "店铺总金额";
-            sheet.Cells[2, 11].Value = "总金额(人民币)";
-            sheet.Cells[2, 12].Value = "币种";
-            sheet.Cells[2, 13].Value = "汇率";
-            sheet.Cells[2, 14].Value = "采购成本单价";
-            sheet.Cells[2, 15].Value = "弃置单号";
-            sheet.Cells[2, 16].Value = "审批单号";
-            sheet.Cells[2, 17].Value = "备注";
-            sheet.Cells[2, 18].Value = "部门";
+            sheet.Cells[2, 1].Value = "领星店铺";
+            sheet.Cells[2, 2].Value = "南棠店铺";
+            sheet.Cells[2, 3].Value = "MSKU";
+            sheet.Cells[2, 4].Value = "SKU";
+            sheet.Cells[2, 5].Value = "赔偿编号";
+            sheet.Cells[2, 6].Value = "时间";
+            sheet.Cells[2, 7].Value = "数量";
+            sheet.Cells[2, 8].Value = "店铺总金额";
+            sheet.Cells[2, 9].Value = "总金额(人民币)";
+            sheet.Cells[2, 10].Value = "币种";
+            sheet.Cells[2, 11].Value = "汇率";
+            sheet.Cells[2, 12].Value = "采购成本单价";
+            sheet.Cells[2, 13].Value = "预计弃置金额";
+            sheet.Cells[2, 14].Value = flag == 0 ? "弃置单号" : "盘入单号";
+            sheet.Cells[2, 15].Value = "审批单号";
+            sheet.Cells[2, 16].Value = "备注";
+            sheet.Cells[2, 17].Value = "部门";
             #endregion
 
             #region 数据列
@@ -342,52 +341,46 @@ namespace ExcelTool.Domain.Handler.Compensations
             for (int idx = 0; idx < datas.Count; idx++)
             {
                 var data = datas[idx];
-                sheet.Cells[rowIndex, 1].Value = data.UniqCode;
-                sheet.Cells[rowIndex, 2].Value = data.Items.Count;
-                sheet.Cells[rowIndex, 3].Value = data._领星店铺名称;
-                sheet.Cells[rowIndex, 4].Value = data._南棠店铺名称;
-                sheet.Cells[rowIndex, 5].Value = data.MSKU;
+                sheet.Cells[rowIndex, 1].Value = data._领星店铺名称;
+                sheet.Cells[rowIndex, 2].Value = data._南棠店铺名称;
+                sheet.Cells[rowIndex, 3].Value = data.MSKU;
                 if (!data._无匹配SKU)
                 {
-                    sheet.Cells[rowIndex, 6].Value = data.SKU;
+                    sheet.Cells[rowIndex, 4].Value = data.SKU;
                 }
-                sheet.Cells[rowIndex, 7].Value = data._赔偿编号;
-                sheet.Cells[rowIndex, 8].Value = data._赔偿编号;
-                sheet.Cells[rowIndex, 8].Value = data._时间.ToString("yyyy-MM-dd");
-                sheet.Cells[rowIndex, 9].Value = data._数量汇总;
-                sheet.Cells[rowIndex, 10].Value = data._金额汇总;
-                sheet.Cells[rowIndex, 11].Value = data._金额汇总 * data._汇率;
-                sheet.Cells[rowIndex, 12].Value = data._币种;
-                sheet.Cells[rowIndex, 13].Value = data._汇率;
-                sheet.Cells[rowIndex, 14].Value = data._采购成本单价;
-
-                sheet.Cells[rowIndex, 18].Value = data._部门;
+                sheet.Cells[rowIndex, 5].Value = data._赔偿编号;
+                sheet.Cells[rowIndex, 6].Value = data._时间.ToString("yyyy-MM-dd");
+                sheet.Cells[rowIndex, 7].Value = data._数量汇总;
+                sheet.Cells[rowIndex, 8].Value = data._金额汇总;
+                sheet.Cells[rowIndex, 9].Value = data._金额汇总 * data._汇率;
+                sheet.Cells[rowIndex, 10].Value = data._币种;
+                sheet.Cells[rowIndex, 11].Value = data._汇率;
+                sheet.Cells[rowIndex, 12].Value = data._采购成本单价;
+                sheet.Cells[rowIndex, 13].Value = data._采购成本单价 * data._数量汇总 * 14 / 10;
+                sheet.Cells[rowIndex, 17].Value = data._部门;
                 rowIndex++;
             }
             #endregion
 
             #region 表格整体配置
-            sheet.Column(1).Width = 12;
-            sheet.Column(2).Width = 10;
+            sheet.Column(1).Width = 30;
+            sheet.Column(2).Width = 30;
             sheet.Column(3).Width = 30;
-            sheet.Column(4).Width = 30;
-            sheet.Column(5).Width = 30;
-            sheet.Column(6).Width = 18;
-            sheet.Column(7).Width = 16;
-            sheet.Column(8).Width = 12;
+            sheet.Column(4).Width = 18;
+            sheet.Column(5).Width = 16;
+            sheet.Column(6).Width = 12;
+            sheet.Column(7).Width = 14;
+            sheet.Column(8).Width = 17;
             sheet.Column(9).Width = 14;
-            sheet.Column(10).Width = 17;
-            sheet.Column(11).Width = 14;
-            sheet.Column(12).Width = 14;
+            sheet.Column(10).Width = 14;
+            sheet.Column(11).Width = 16;
+            sheet.Column(12).Width = 16;
             sheet.Column(13).Width = 16;
             sheet.Column(14).Width = 16;
             sheet.Column(15).Width = 16;
-            sheet.Column(16).Width = 16;
-            sheet.Column(17).Width = 16;
-            sheet.Column(17).Width = 18;
             sheet.Row(1).Height = 46;
 
-            using (var rng = sheet.Cells[1, 1, 1, 18])
+            using (var rng = sheet.Cells[1, 1, 1, 17])
             {
                 rng.Merge = true;
                 rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
@@ -398,7 +391,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 rng.Style.Font.Size = 14;
             }
 
-            using (var rng = sheet.Cells[1, 1, rowIndex - 1, 18])
+            using (var rng = sheet.Cells[1, 1, rowIndex - 1, 17])
             {
                 rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -406,7 +399,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
 
-            using (var rng = sheet.Cells[2, 1, 2, 18])
+            using (var rng = sheet.Cells[2, 1, 2, 17])
             {
                 var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFFF00");
                 rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
@@ -416,18 +409,17 @@ namespace ExcelTool.Domain.Handler.Compensations
             #endregion
         }
 
+
         private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单统计项> datas)
         {
             #region 标题列
-            sheet.Cells[2, 1].Value = "统计编号";
-            sheet.Cells[2, 2].Value = "统计个数";
             sheet.Cells[2, 3].Value = "领星店铺";
             sheet.Cells[2, 4].Value = "南棠店铺";
             sheet.Cells[2, 5].Value = "MSKU";
             sheet.Cells[2, 6].Value = "SKU";
             sheet.Cells[2, 7].Value = "数量";
             sheet.Cells[2, 8].Value = "采购成本单价";
-            sheet.Cells[2, 9].Value = "弃置单号";
+            sheet.Cells[2, 9].Value = "盘入单号";
             sheet.Cells[2, 10].Value = "审批单号";
             sheet.Cells[2, 11].Value = "备注";
             sheet.Cells[2, 12].Value = "部门";
@@ -440,8 +432,6 @@ namespace ExcelTool.Domain.Handler.Compensations
             for (int idx = 0; idx < datas.Count; idx++)
             {
                 var data = datas[idx];
-                sheet.Cells[rowIndex, 1].Value = data.UniqCode;
-                sheet.Cells[rowIndex, 2].Value = data.Items.Count;
                 sheet.Cells[rowIndex, 3].Value = data._领星店铺名称;
                 sheet.Cells[rowIndex, 4].Value = data._南棠店铺名称;
                 if (!data._无匹配SKU)
@@ -457,18 +447,16 @@ namespace ExcelTool.Domain.Handler.Compensations
             #endregion
 
             #region 表格整体配置
-            sheet.Column(1).Width = 12;
-            sheet.Column(2).Width = 10;
+            sheet.Column(1).Width = 30;
+            sheet.Column(2).Width = 30;
             sheet.Column(3).Width = 30;
-            sheet.Column(4).Width = 30;
-            sheet.Column(5).Width = 30;
-            sheet.Column(6).Width = 18;
-            sheet.Column(7).Width = 12;
-            sheet.Column(8).Width = 14;
+            sheet.Column(4).Width = 18;
+            sheet.Column(5).Width = 12;
+            sheet.Column(6).Width = 14;
+            sheet.Column(7).Width = 16;
+            sheet.Column(8).Width = 16;
             sheet.Column(9).Width = 16;
-            sheet.Column(10).Width = 16;
-            sheet.Column(11).Width = 16;
-            sheet.Column(12).Width = 14;
+            sheet.Column(10).Width = 14;
             sheet.Row(1).Height = 46;
 
             using (var rng = sheet.Cells[1, 1, 1, 12])
@@ -499,7 +487,6 @@ namespace ExcelTool.Domain.Handler.Compensations
             }
             #endregion
         }
-
         private static void _生成赔偿订单详情Sheet(ExcelWorksheet sheet, List<_赔偿订单统计项> datas)
         {
             #region 标题行

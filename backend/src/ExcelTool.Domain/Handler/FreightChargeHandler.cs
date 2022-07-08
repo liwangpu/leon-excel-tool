@@ -94,7 +94,7 @@ namespace ExcelTool.Domain.Handler
                 }
                 using (var rng = sheet.Cells[1, 1, 2, 2])
                 {
-                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFFF00");
+                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#9BC2E6");
                     rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
                 }
@@ -105,7 +105,7 @@ namespace ExcelTool.Domain.Handler
                 }
                 using (var rng = sheet.Cells[1, 3, 2, 6])
                 {
-                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#92D050");
+                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFE699");
                     rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
                 }
@@ -116,7 +116,7 @@ namespace ExcelTool.Domain.Handler
                 }
                 using (var rng = sheet.Cells[1, 7, 2, 10])
                 {
-                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#00B0F0");
+                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#F8CBAD");
                     rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
                 }

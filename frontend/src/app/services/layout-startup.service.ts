@@ -42,17 +42,17 @@ export class LayoutStartupService implements ILayoutStartup {
                     // }
                 ]
             },
-            // {
-            //     key: 'test',
-            //     title: '测试',
-            //     children: [
-            //         {
-            //             key: 'test1',
-            //             title: 'Websokect测试',
-            //             url: '/test',
-            //         }
-            //     ]
-            // }
+            {
+                key: 'stock',
+                title: '运费处理',
+                children: [
+                    {
+                        key: 'compensation',
+                        title: '空海运差异分析',
+                        url: '/fregith-charge',
+                    }
+                ]
+            },
         ];
     }
 
