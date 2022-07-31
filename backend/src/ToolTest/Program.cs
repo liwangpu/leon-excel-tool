@@ -33,8 +33,8 @@ namespace ToolTest
             //await downloadBasicFiles();
 
             #region 赔偿退货订单报表
-            //var p退货订单 = @"C:\Users\Leon\Desktop\7-6\5月份退货订单21号导出排除12号导出.xlsx";
-            //var p赔偿订单 = @"C:\Users\Leon\Desktop\7-6\5月份亚马逊赔偿21号导出排除12号导出.xlsx";
+            //var p退货订单 = @"C:\Users\User\Desktop\退货5月整月(1).xlsx";
+            //var p赔偿订单 = @"C:\Users\User\Desktop\赔偿5月整月(1).xlsx";
             //var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
             //var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
             //var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
@@ -55,9 +55,17 @@ namespace ToolTest
             #endregion
 
             #region 空海运差异报表
-            var p空海运差异表 = @"C:\Users\Leon\Desktop\2022年5月肯亚卡航账单 - 副本 (2).xlsx";
-            //var p空海运差异表 = @"C:\Users\Leon\Desktop\11.xlsx";
-            var handler = new FreightChargeHandler(p空海运差异表, exportFolder);
+            //var p空海运差异表 = @"C:\Users\Leon\Desktop\6月份空海运差异.xlsx";
+            ////var p空海运差异表 = @"C:\Users\Leon\Desktop\11.xlsx";
+            //var handler = new FreightChargeHandler(p空海运差异表, exportFolder);
+            //var ms = await handler.Handle();
+            //saveExport(ms, "export1.xlsx");
+            #endregion
+
+            #region 亚马逊店铺利润表
+            var p店铺ASIN负责表 = @"C:\Users\Leon\Desktop\源数据表\店铺-ASIN负责人表.xlsx";
+            var p平台费用表 = @"C:\Users\Leon\Desktop\源数据表\6月平台费用(2) - 副本.xlsx";
+            var handler = new AmazonShopProfit(p店铺ASIN负责表, p平台费用表, exportFolder);
             var ms = await handler.Handle();
             saveExport(ms, "export.xlsx");
             #endregion

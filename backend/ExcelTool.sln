@@ -5,11 +5,9 @@ VisualStudioVersion = 17.1.32210.238
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelTool", "src\ExcelTool\ExcelTool.csproj", "{DD220CF2-1DE6-4053-80DC-93376ACE62BD}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{188F6D11-FC58-4736-BC02-77EB6A19B320}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ToolTest", "src\ToolTest\ToolTest.csproj", "{11BBC864-A6A0-46E0-880E-94ADDDFF6373}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToolTest", "src\ToolTest\ToolTest.csproj", "{11BBC864-A6A0-46E0-880E-94ADDDFF6373}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExcelTool.Domain", "src\ExcelTool.Domain\ExcelTool.Domain.csproj", "{628147CD-05C1-4DD5-BD25-76FDC542AA7E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExcelTool.Domain", "src\ExcelTool.Domain\ExcelTool.Domain.csproj", "{628147CD-05C1-4DD5-BD25-76FDC542AA7E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,10 +19,6 @@ Global
 		{DD220CF2-1DE6-4053-80DC-93376ACE62BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DD220CF2-1DE6-4053-80DC-93376ACE62BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DD220CF2-1DE6-4053-80DC-93376ACE62BD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{188F6D11-FC58-4736-BC02-77EB6A19B320}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{188F6D11-FC58-4736-BC02-77EB6A19B320}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{188F6D11-FC58-4736-BC02-77EB6A19B320}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{188F6D11-FC58-4736-BC02-77EB6A19B320}.Release|Any CPU.Build.0 = Release|Any CPU
 		{11BBC864-A6A0-46E0-880E-94ADDDFF6373}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{11BBC864-A6A0-46E0-880E-94ADDDFF6373}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11BBC864-A6A0-46E0-880E-94ADDDFF6373}.Release|Any CPU.ActiveCfg = Release|Any CPU

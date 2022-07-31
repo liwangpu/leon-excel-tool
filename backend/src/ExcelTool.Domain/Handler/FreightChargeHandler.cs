@@ -39,7 +39,7 @@ namespace ExcelTool.Domain.Handler
             if (!string.IsNullOrEmpty(path空海运差异文件))
             {
                 var mapper = new Mapper(path空海运差异文件);
-                var sheetDatas = mapper.Take<_空海运差异数据>("我司卡航").Select(x => x.Value).ToList();
+                var sheetDatas = mapper.Take<_空海运差异数据>("Sheet2").Select(x => x.Value).ToList();
                 string lastGroupKey = "";
                 sheetDatas.ForEach(it =>
                 {
@@ -49,7 +49,7 @@ namespace ExcelTool.Domain.Handler
                         return;
                     }
                     List<_空海运差异数据> group;
-                    if (it._应付 > 0)
+                    if (it._应付 > 0 || (it._预估运费 == 0 && it._应付 == 0))
                     {
                         lastGroupKey = Guid.NewGuid().ToString("N");
                         group = new List<_空海运差异数据>();
@@ -64,6 +64,7 @@ namespace ExcelTool.Domain.Handler
                     list空海运差异数据.Add(it);
                 });
 
+                var aa = 1;
                 groupMap.ForEach(kv =>
                 {
                     var items = kv.Value;
@@ -71,13 +72,19 @@ namespace ExcelTool.Domain.Handler
                     var _实际总运费 = items[0]._应付;
                     items.ForEach(it =>
                     {
-                        it._占比 = Math.Round((it._预估运费 * 10000000) / (_预估总运费 * 10000000), 4);
+                        if (items.Count > 1)
+                        {
+                            it._占比 = _预估总运费 > 0 ? Math.Round((it._预估运费 * 10000000) / (_预估总运费 * 10000000), 4) : 1;
+                        }
+                        else
+                        {
+                            it._占比 = 1;
+                        }
                         it._实际应付 = Math.Round(it._占比 * _实际总运费, 2);
                     });
                 });
             }
 
-            var aa = 1;
             var exportFilePath = Path.Combine(folder临时文件夹, "result.xlsx");
             #region 导出数据
             using (var package = new ExcelPackage(new FileInfo(exportFilePath)))
@@ -94,7 +101,7 @@ namespace ExcelTool.Domain.Handler
                 }
                 using (var rng = sheet.Cells[1, 1, 2, 2])
                 {
-                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFFF00");
+                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#9BC2E6");
                     rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
                 }
@@ -105,7 +112,7 @@ namespace ExcelTool.Domain.Handler
                 }
                 using (var rng = sheet.Cells[1, 3, 2, 6])
                 {
-                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#92D050");
+                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFE699");
                     rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
                 }
@@ -114,13 +121,13 @@ namespace ExcelTool.Domain.Handler
                     rng.Merge = true;
                     rng.Value = "对比";
                 }
-                using (var rng = sheet.Cells[1, 7, 2, 10])
+                using (var rng = sheet.Cells[1, 7, 2, 11])
                 {
-                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#00B0F0");
+                    var colFromHex = System.Drawing.ColorTranslator.FromHtml("#F8CBAD");
                     rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
                     rng.Style.Fill.BackgroundColor.SetColor(colFromHex);
                 }
-                using (var rng = sheet.Cells[1, 1, 2, 10])
+                using (var rng = sheet.Cells[1, 1, 2, 11])
                 {
                     rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
                     rng.Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;//水平居中
@@ -133,9 +140,10 @@ namespace ExcelTool.Domain.Handler
                 sheet.Cells[2, 5].Value = "头程调拨";
                 sheet.Cells[2, 6].Value = "二程调拨";
                 sheet.Cells[2, 7].Value = "应付";
-                sheet.Cells[2, 8].Value = "实际应付";
-                sheet.Cells[2, 9].Value = "预估运费";
+                sheet.Cells[2, 8].Value = "预估运费";
+                sheet.Cells[2, 9].Value = "实际应付";
                 sheet.Cells[2, 10].Value = "占比";
+                sheet.Cells[2, 11].Value = "索赔";
                 #endregion
 
                 var rowIndex = dataStartRowIdex + 1;
@@ -154,9 +162,10 @@ namespace ExcelTool.Domain.Handler
                         sheet.Cells[rowIndex, 5].Value = it._头程调拨;
                         sheet.Cells[rowIndex, 6].Value = it._二程调拨;
                         sheet.Cells[rowIndex, 7].Value = it._应付;
-                        sheet.Cells[rowIndex, 8].Value = it._实际应付;
-                        sheet.Cells[rowIndex, 9].Value = it._预估运费;
+                        sheet.Cells[rowIndex, 8].Value = it._预估运费;
+                        sheet.Cells[rowIndex, 9].Value = it._实际应付;
                         sheet.Cells[rowIndex, 10].Value = it._占比;
+                        sheet.Cells[rowIndex, 11].Value = it._索赔;
                         rowIndex += 1;
                     });
                     if (items.Count > 1)
@@ -195,6 +204,7 @@ namespace ExcelTool.Domain.Handler
                 sheet.Column(8).Width = 12;
                 sheet.Column(9).Width = 12;
                 sheet.Column(10).Width = 12;
+                sheet.Column(11).Width = 12;
                 package.Save();
             }
             #endregion

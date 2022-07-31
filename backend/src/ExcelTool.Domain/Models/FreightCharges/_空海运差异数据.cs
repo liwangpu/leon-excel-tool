@@ -20,6 +20,8 @@ namespace ExcelTool.Domain.Models.FreightCharges
         public decimal _应付 { get; set; }
         [Column("预估运费")]
         public decimal _预估运费 { get; set; }
+        [Column("索赔")]
+        public decimal _索赔 { get; set; }
         public string group { get; set; }
         public decimal _占比 { get; set; }
         public decimal _实际应付 { get; set; }

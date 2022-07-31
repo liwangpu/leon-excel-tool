@@ -20,6 +20,7 @@ import { NzNotificationModule } from 'ng-zorro-antd/notification';
 import { StockDifferenceChartComponent } from './components/stock-difference-chart/stock-difference-chart.component';
 import { DepartmentChartComponent } from './components/stock-difference-chart/department-chart/department-chart.component';
 import { AmazonCompensationComponent } from './components/amazon-compensation/amazon-compensation.component';
+import { FreightChargeComponent } from './components/freight-charge/freight-charge.component';
 
 const icons: Array<IconDefinition> = [];
 
@@ -32,7 +33,8 @@ const icons: Array<IconDefinition> = [];
         StockDifferenceAnalysisComponent,
         StockDifferenceChartComponent,
         DepartmentChartComponent,
-        AmazonCompensationComponent
+        AmazonCompensationComponent,
+        FreightChargeComponent
     ],
     imports: [
         StarterModule.forRoot(),
