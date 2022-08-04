@@ -75,7 +75,7 @@ namespace ExcelTool.Domain.Handler
                 //}
                 //ZipFile.ExtractToDirectory(path店铺流水压缩包, extractPath, Encoding.UTF8, true);
 
-                var extractPath = @"C:\Users\User\Desktop\源数据表\原表\亚马逊流水汇总表(第一张表)";
+                var extractPath = @"C:\Users\User\Desktop\亚马逊数据汇集";
 
                 var countryDir = Directory.EnumerateDirectories(extractPath);
                 var csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
@@ -88,6 +88,7 @@ namespace ExcelTool.Domain.Handler
                 foreach (var subDir in countryDir)
                 {
                     var countryName = subDir.Split(Path.DirectorySeparatorChar).Last();
+                    countryName = countryName.Replace("站", string.Empty);
                     countryNames.Add(countryName);
                     var fnames = Directory.GetFiles(subDir);
                     var columMap = list亚马逊汇总表各站点标题匹配.FirstOrDefault(x => x.Country == countryName);
@@ -101,15 +102,15 @@ namespace ExcelTool.Domain.Handler
                     var ts店铺流水 = new _亚马逊店铺流水().GetType();
                     foreach (var csvFilePath in fnames)
                     {
+                        if (Path.GetExtension(csvFilePath) != ".csv")
+                        {
+                            continue;
+                        }
                         using var streamReader = File.OpenText(csvFilePath);
                         using var csvReader = new CsvReader(streamReader, csvConfig);
                         var _店铺名 = Path.GetFileNameWithoutExtension(csvFilePath);
                         string value;
                         var index = 0;
-                        //if (countryName == "土耳其")
-                        //{
-
-                        //}
                         var headerRowIndex = countryTitleRowIndexMap.ContainsKey(countryName) ? countryTitleRowIndexMap[countryName] : 8;
                         while (csvReader.Read())
                         {
