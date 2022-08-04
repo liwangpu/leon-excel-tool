@@ -9,13 +9,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using System.IO.Compression;
+using System.Text;
+using NPOI.XSSF.UserModel;
+using NPOI.SS.UserModel;
+using CsvHelper.Configuration;
+using System.Globalization;
+using CsvHelper;
 
 namespace ExcelTool.Domain.Handler
 {
     public class AmazonShopProfit
     {
+        public string path店铺流水压缩包;
         public string path店铺ASIN负责表;
         public string path平台费用表;
+        public string path亚马逊汇总表各站点标题匹配表;
         protected string folder临时文件夹;
 
         #region ctor
@@ -23,9 +32,11 @@ namespace ExcelTool.Domain.Handler
         {
 
         }
-        public AmazonShopProfit(string p店铺ASIN负责表, string p平台费用表, string f临时文件夹)
+        public AmazonShopProfit(string p店铺流水压缩包, string p亚马逊汇总表各站点标题匹配表, string p店铺ASIN负责表, string p平台费用表, string f临时文件夹)
                   : this()
         {
+            path店铺流水压缩包 = p店铺流水压缩包;
+            path亚马逊汇总表各站点标题匹配表 = p亚马逊汇总表各站点标题匹配表;
             path店铺ASIN负责表 = p店铺ASIN负责表;
             path平台费用表 = p平台费用表;
             folder临时文件夹 = f临时文件夹;
@@ -34,12 +45,118 @@ namespace ExcelTool.Domain.Handler
 
         public async Task<MemoryStream> Handle()
         {
+            var list店铺流水 = new List<_亚马逊店铺流水>();
             var list店铺ASIN负责人 = new List<_店铺ASIN负责人>();
             var list平台费用 = new List<_平台费用>();
+            var list亚马逊汇总表各站点标题匹配 = new List<_亚马逊汇总表各站点标题匹配>();
+            var list亚马逊店铺流水 = new List<_亚马逊店铺流水>();
             var map店铺负责人匹配数据 = new Dictionary<string, _店铺ASIN负责人匹配数据>();
             var map平台费用匹配数据 = new Dictionary<string, _平台费用>();
+            var countryNames = new List<string>();
 
             #region 数据读取
+            if (!string.IsNullOrEmpty(path亚马逊汇总表各站点标题匹配表))
+            {
+                var mapper = new Mapper(path亚马逊汇总表各站点标题匹配表);
+                var sheetDatas = mapper.Take<_亚马逊汇总表各站点标题匹配>().Select(x => x.Value).ToList();
+                sheetDatas.ForEach(it =>
+                {
+                    list亚马逊汇总表各站点标题匹配.Add(it);
+                });
+            }
+
+            if (!string.IsNullOrEmpty(path店铺流水压缩包))
+            {
+                //var extractPath = Path.Combine(folder临时文件夹, "t1");
+                //string extractPath = @"./extract";
+                //if (!Directory.Exists(extractPath))
+                //{
+                //    Directory.CreateDirectory(extractPath);
+                //}
+                //ZipFile.ExtractToDirectory(path店铺流水压缩包, extractPath, Encoding.UTF8, true);
+
+                var extractPath = @"C:\Users\User\Desktop\源数据表\原表\亚马逊流水汇总表(第一张表)";
+
+                var countryDir = Directory.EnumerateDirectories(extractPath);
+                var csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
+                {
+                    HasHeaderRecord = false
+                };
+                var decimalProperties = new HashSet<string>() { "Total" };
+                var countryTitleRowIndexMap = new Dictionary<string, int>();
+                countryTitleRowIndexMap.Add("土耳其", 7);
+                foreach (var subDir in countryDir)
+                {
+                    var countryName = subDir.Split(Path.DirectorySeparatorChar).Last();
+                    countryNames.Add(countryName);
+                    var fnames = Directory.GetFiles(subDir);
+                    var columMap = list亚马逊汇总表各站点标题匹配.FirstOrDefault(x => x.Country == countryName);
+                    if (columMap == null)
+                    {
+                        continue;
+                    }
+                    var indexPropertyMap = new Dictionary<int, string>();
+                    var ts标题匹配 = columMap.GetType();
+                    var properties = ts标题匹配.GetProperties();
+                    var ts店铺流水 = new _亚马逊店铺流水().GetType();
+                    foreach (var csvFilePath in fnames)
+                    {
+                        using var streamReader = File.OpenText(csvFilePath);
+                        using var csvReader = new CsvReader(streamReader, csvConfig);
+                        var _店铺名 = Path.GetFileNameWithoutExtension(csvFilePath);
+                        string value;
+                        var index = 0;
+                        //if (countryName == "土耳其")
+                        //{
+
+                        //}
+                        var headerRowIndex = countryTitleRowIndexMap.ContainsKey(countryName) ? countryTitleRowIndexMap[countryName] : 8;
+                        while (csvReader.Read())
+                        {
+                            index++;
+                            if (index < headerRowIndex) { continue; }
+                            if (index == headerRowIndex)
+                            {
+                                for (int i = 0; csvReader.TryGetField(i, out value); i++)
+                                {
+                                    foreach (var p in properties)
+                                    {
+                                        var val = ts标题匹配.GetProperty(p.Name).GetValue(columMap);
+                                        if (val != null && val.ToString() == value)
+                                        {
+                                            indexPropertyMap[i] = p.Name;
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                var data = new _亚马逊店铺流水();
+                                data.Country = countryName;
+                                data._店铺 = _店铺名;
+                                for (int i = 0; csvReader.TryGetField(i, out value); i++)
+                                {
+                                    if (indexPropertyMap.ContainsKey(i))
+                                    {
+                                        if (decimalProperties.Contains(indexPropertyMap[i]))
+                                        {
+                                            decimal v = 0;
+                                            decimal.TryParse(value, out v);
+                                            ts店铺流水.GetProperty(indexPropertyMap[i]).SetValue(data, v, null);
+                                        }
+                                        else
+                                        {
+                                            ts店铺流水.GetProperty(indexPropertyMap[i]).SetValue(data, value, null);
+                                        }
+                                    }
+                                }
+                                list亚马逊店铺流水.Add(data);
+                            }
+                        }
+                    }
+                }
+            }
+
             if (!string.IsNullOrEmpty(path平台费用表))
             {
                 var mapper = new Mapper(path平台费用表);
@@ -97,7 +214,9 @@ namespace ExcelTool.Domain.Handler
             using (ExcelPackage package = new ExcelPackage(new FileInfo(exportFilePath)))
             {
                 var workbox = package.Workbook;
+
                 // 打印汇总表
+                if (list店铺ASIN负责人.Count > 0)
                 {
                     var sheet = workbox.Worksheets.Add($"店铺利润表");
 
@@ -191,6 +310,65 @@ namespace ExcelTool.Domain.Handler
                     {
                         sheet.Column(i).Width = 14;
                     }
+                    #endregion
+                }
+
+                // 打印店铺流水
+                if (list亚马逊店铺流水.Count > 0)
+                {
+                    var sheet = workbox.Worksheets.Add($"亚马逊店铺流水");
+                    //date / time   settlement id   type order id sku description total
+
+                    #region 标题行
+                    sheet.Cells[1, 1].Value = "date/time";
+                    sheet.Cells[1, 2].Value = "settlement id ";
+                    sheet.Cells[1, 3].Value = "type";
+                    sheet.Cells[1, 4].Value = "order id";
+                    sheet.Cells[1, 5].Value = "sku";
+                    sheet.Cells[1, 6].Value = "description";
+                    sheet.Cells[1, 7].Value = "total";
+                    sheet.Cells[1, 8].Value = "店铺";
+                    sheet.Cells[1, 9].Value = "国家";
+                    sheet.Cells[1, 10].Value = "交易类型";
+                    sheet.Cells[1, 11].Value = "付款详情";
+                    sheet.Cells[1, 12].Value = "绩效";
+
+
+
+                    #endregion
+
+                    #region 数据行
+                    var startRow = 2;
+                    var rowIndex = startRow;
+                    for (int idx = 0; idx < list亚马逊店铺流水.Count; idx++)
+                    {
+                        var data = list亚马逊店铺流水[idx];
+                        sheet.Cells[rowIndex, 1].Value = data.DTime;
+                        sheet.Cells[rowIndex, 2].Value = data.SettlementId;
+                        sheet.Cells[rowIndex, 3].Value = data.Type;
+                        sheet.Cells[rowIndex, 4].Value = data.OrderId;
+                        sheet.Cells[rowIndex, 5].Value = data.Sku;
+                        sheet.Cells[rowIndex, 6].Value = data.Description;
+                        sheet.Cells[rowIndex, 7].Value = data.Total;
+                        sheet.Cells[rowIndex, 8].Value = data._店铺;
+                        sheet.Cells[rowIndex, 9].Value = data.Country;
+                        rowIndex++;
+                    }
+                    #endregion
+
+                    #region 样式
+                    sheet.Column(1).Width = 26;
+                    sheet.Column(2).Width = 14;
+                    sheet.Column(3).Width = 18;
+                    sheet.Column(4).Width = 21;
+                    sheet.Column(5).Width = 22;
+                    sheet.Column(6).Width = 22;
+                    sheet.Column(7).Width = 10;
+                    sheet.Column(8).Width = 26;
+                    sheet.Column(9).Width = 10;
+                    sheet.Column(10).Width = 10;
+                    sheet.Column(11).Width = 10;
+                    sheet.Column(12).Width = 10;
                     #endregion
                 }
 

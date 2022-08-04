@@ -11,8 +11,9 @@ namespace ToolTest
 {
     internal class Program
     {
-        public static string exportFolder = @"C:\Users\Leon\Desktop\ExcelToolExport";
-        public static string _基础数据文件夹 = @"C:\Users\Leon\Desktop\ExcelToolBasicFile";
+        //public static string exportFolder = @"C:\Users\Leon\Desktop\ExcelToolExport";
+        public static string exportFolder = @"C:\Users\User\Desktop\ExcelToolExport";
+        public static string _基础数据文件夹 = @"C:\Users\User\Desktop\ExcelToolBasicFile";
         public static void Main(string[] args)
         {
             if (!Directory.Exists(exportFolder))
@@ -55,17 +56,20 @@ namespace ToolTest
             #endregion
 
             #region 空海运差异报表
-            //var p空海运差异表 = @"C:\Users\Leon\Desktop\6月份空海运差异.xlsx";
-            ////var p空海运差异表 = @"C:\Users\Leon\Desktop\11.xlsx";
+            //var p空海运差异表 = @"C:\Users\User\Desktop\7月份空海运差异报表.xlsx";
+            //var p空海运差异表 = @"C:\Users\Leon\Desktop\11.xlsx";
             //var handler = new FreightChargeHandler(p空海运差异表, exportFolder);
             //var ms = await handler.Handle();
             //saveExport(ms, "export1.xlsx");
             #endregion
 
             #region 亚马逊店铺利润表
-            var p店铺ASIN负责表 = @"C:\Users\Leon\Desktop\源数据表\店铺-ASIN负责人表.xlsx";
-            var p平台费用表 = @"C:\Users\Leon\Desktop\源数据表\6月平台费用(2) - 副本.xlsx";
-            var handler = new AmazonShopProfit(p店铺ASIN负责表, p平台费用表, exportFolder);
+            //var p店铺流水压缩包 = @"C:\Users\Leon\Desktop\亚马逊流水汇总表(第一张表).zip";
+            var p店铺流水压缩包 = @"C:\Users\User\Desktop\aaa.zip";
+            var p亚马逊汇总表各站点标题匹配表 = @"C:\Users\User\Desktop\aaa.xlsx";
+            //var p店铺ASIN负责表 = @"C:\Users\Leon\Desktop\源数据表\店铺-ASIN负责人表.xlsx";
+            //var p平台费用表 = @"C:\Users\Leon\Desktop\源数据表\6月平台费用(2) - 副本.xlsx";
+            var handler = new AmazonShopProfit(p店铺流水压缩包, p亚马逊汇总表各站点标题匹配表, null, null, exportFolder);
             var ms = await handler.Handle();
             saveExport(ms, "export.xlsx");
             #endregion

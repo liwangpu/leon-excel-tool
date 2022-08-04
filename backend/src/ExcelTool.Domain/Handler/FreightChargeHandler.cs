@@ -39,7 +39,7 @@ namespace ExcelTool.Domain.Handler
             if (!string.IsNullOrEmpty(path空海运差异文件))
             {
                 var mapper = new Mapper(path空海运差异文件);
-                var sheetDatas = mapper.Take<_空海运差异数据>("Sheet2").Select(x => x.Value).ToList();
+                var sheetDatas = mapper.Take<_空海运差异数据>(0).Select(x => x.Value).ToList();
                 string lastGroupKey = "";
                 sheetDatas.ForEach(it =>
                 {
