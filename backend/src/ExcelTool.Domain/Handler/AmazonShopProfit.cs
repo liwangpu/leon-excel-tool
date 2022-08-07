@@ -25,6 +25,7 @@ namespace ExcelTool.Domain.Handler
         public string path店铺ASIN负责表;
         public string path平台费用表;
         public string path亚马逊汇总表各站点标题匹配表;
+        public string path亚马逊店铺汇总表;
         protected string folder临时文件夹;
 
         #region ctor
@@ -32,11 +33,12 @@ namespace ExcelTool.Domain.Handler
         {
 
         }
-        public AmazonShopProfit(string p店铺流水压缩包, string p亚马逊汇总表各站点标题匹配表, string p店铺ASIN负责表, string p平台费用表, string f临时文件夹)
+        public AmazonShopProfit(string p店铺流水压缩包, string p亚马逊汇总表各站点标题匹配表, string p亚马逊店铺汇总表, string p店铺ASIN负责表, string p平台费用表, string f临时文件夹)
                   : this()
         {
             path店铺流水压缩包 = p店铺流水压缩包;
             path亚马逊汇总表各站点标题匹配表 = p亚马逊汇总表各站点标题匹配表;
+            path亚马逊店铺汇总表 = p亚马逊店铺汇总表;
             path店铺ASIN负责表 = p店铺ASIN负责表;
             path平台费用表 = p平台费用表;
             folder临时文件夹 = f临时文件夹;
@@ -49,10 +51,18 @@ namespace ExcelTool.Domain.Handler
             var list店铺ASIN负责人 = new List<_店铺ASIN负责人>();
             var list平台费用 = new List<_平台费用>();
             var list亚马逊汇总表各站点标题匹配 = new List<_亚马逊汇总表各站点标题匹配>();
+            var list店铺汇总表 = new List<_店铺汇总表>();
             var list亚马逊店铺流水 = new List<_亚马逊店铺流水>();
             var map店铺负责人匹配数据 = new Dictionary<string, _店铺ASIN负责人匹配数据>();
             var map平台费用匹配数据 = new Dictionary<string, _平台费用>();
             var countryNames = new List<string>();
+            var list店铺名字 = new HashSet<string>();
+            var dict店铺汇总表Type = new Dictionary<string, _店铺汇总表>();
+            var dict店铺汇总表Des = new Dictionary<string, _店铺汇总表>();
+            var dict店铺汇总表pay = new Dictionary<string, _店铺汇总表>();
+            var set店铺绩效指标 = new HashSet<string>();
+            var list亚马逊店铺流水透视 = new List<_亚马逊店铺流水透视>();
+            var dict亚马逊店铺流水透视 = new Dictionary<string, _亚马逊店铺流水透视>();
 
             #region 数据读取
             if (!string.IsNullOrEmpty(path亚马逊汇总表各站点标题匹配表))
@@ -62,6 +72,35 @@ namespace ExcelTool.Domain.Handler
                 sheetDatas.ForEach(it =>
                 {
                     list亚马逊汇总表各站点标题匹配.Add(it);
+                });
+            }
+
+            if (!string.IsNullOrEmpty(path亚马逊店铺汇总表))
+            {
+                var mapper = new Mapper(path亚马逊店铺汇总表);
+                var sheetDatas = mapper.Take<_店铺汇总表>().Select(x => x.Value).ToList();
+                sheetDatas.ForEach(it =>
+                {
+                    list店铺汇总表.Add(it);
+                    if (!string.IsNullOrWhiteSpace(it._类型) && !dict店铺汇总表Type.ContainsKey(it._类型))
+                    {
+                        dict店铺汇总表Type[it._类型] = it;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(it._描述) && !dict店铺汇总表Des.ContainsKey(it._描述))
+                    {
+                        dict店铺汇总表Des[it._描述] = it;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(it._付款详情) && !dict店铺汇总表pay.ContainsKey(it._付款详情))
+                    {
+                        dict店铺汇总表pay[it._付款详情] = it;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(it._类别))
+                    {
+                        set店铺绩效指标.Add(it._类别);
+                    }
                 });
             }
 
@@ -75,7 +114,8 @@ namespace ExcelTool.Domain.Handler
                 //}
                 //ZipFile.ExtractToDirectory(path店铺流水压缩包, extractPath, Encoding.UTF8, true);
 
-                var extractPath = @"C:\Users\User\Desktop\亚马逊数据汇集";
+                var extractPath = @"C:\Users\Leon\Desktop\亚马逊店铺流水\流水表";
+                //var extractPath = @"C:\Users\亚马逊汇总表各站点标题\Desktop\亚马逊数据汇集";
 
                 var countryDir = Directory.EnumerateDirectories(extractPath);
                 var csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
@@ -135,6 +175,7 @@ namespace ExcelTool.Domain.Handler
                                 var data = new _亚马逊店铺流水();
                                 data.Country = countryName;
                                 data._店铺 = _店铺名;
+                                list店铺名字.Add(_店铺名);
                                 for (int i = 0; csvReader.TryGetField(i, out value); i++)
                                 {
                                     if (indexPropertyMap.ContainsKey(i))
@@ -151,7 +192,66 @@ namespace ExcelTool.Domain.Handler
                                         }
                                     }
                                 }
+
+                                if (string.IsNullOrWhiteSpace(data.Type))
+                                {
+                                    data._交易类型 = "优惠";
+                                }
+                                else
+                                {
+                                    if (dict店铺汇总表Type.ContainsKey(data.Type))
+                                    {
+                                        data._交易类型 = dict店铺汇总表Type[data.Type]._交易类型;
+                                    }
+                                    else
+                                    {
+                                        data._交易类型 = "新类型";
+                                    }
+                                }
+
+                                switch (data._交易类型)
+                                {
+                                    case "新类型":
+                                        data._付款详情 = "新类型";
+                                        break;
+                                    case "订单":
+                                        if (!string.IsNullOrWhiteSpace(data.OrderId) && data.OrderId.Substring(0, 2).ToUpper() == "S0")
+                                        {
+                                            data._付款详情 = "代发运费";
+                                        }
+                                        else
+                                        {
+                                            data._付款详情 = "订单";
+                                        }
+                                        break;
+                                    default:
+                                        if (!string.IsNullOrWhiteSpace(data.Description) && dict店铺汇总表Des.ContainsKey(data.Description))
+                                        {
+                                            data._付款详情 = dict店铺汇总表Des[data.Description]._付款详情;
+                                        }
+                                        break;
+                                }
+                                data._付款详情 = !string.IsNullOrWhiteSpace(data._付款详情) ? data._付款详情 : data._交易类型;
+                                if (!string.IsNullOrWhiteSpace(data._付款详情) && dict店铺汇总表pay.ContainsKey(data._付款详情))
+                                {
+                                    data._绩效 = dict店铺汇总表pay[data._付款详情]._类别;
+                                }
                                 list亚马逊店铺流水.Add(data);
+
+                                var key流水透视 = $"{data._店铺}{data._绩效}";
+                                _亚马逊店铺流水透视 item店铺流水透视 = null;
+                                if (!dict亚马逊店铺流水透视.ContainsKey(key流水透视))
+                                {
+                                    item店铺流水透视 = new _亚马逊店铺流水透视() { _店铺 = data._店铺, _类别 = data._绩效, _汇总 = data.Total };
+                                    dict亚马逊店铺流水透视.Add(key流水透视, item店铺流水透视);
+                                    list亚马逊店铺流水透视.Add(item店铺流水透视);
+                                }
+                                else
+                                {
+                                    item店铺流水透视 = dict亚马逊店铺流水透视[key流水透视];
+                                    item店铺流水透视._汇总 += data.Total;
+                                }
+
                             }
                         }
                     }
@@ -207,6 +307,11 @@ namespace ExcelTool.Domain.Handler
                 var mitem = it.Value;
                 mitem.calcu计算销售额比例相关();
             });
+
+            //list亚马逊店铺流水.ForEach(it =>
+            //{
+
+            //});
             #endregion
 
             var exportFilePath = Path.Combine(folder临时文件夹, "result.xlsx");
@@ -315,10 +420,9 @@ namespace ExcelTool.Domain.Handler
                 }
 
                 // 打印店铺流水
-                if (list亚马逊店铺流水.Count > 0)
+                if (list亚马逊店铺流水.Count < 0)
                 {
                     var sheet = workbox.Worksheets.Add($"亚马逊店铺流水");
-                    //date / time   settlement id   type order id sku description total
 
                     #region 标题行
                     sheet.Cells[1, 1].Value = "date/time";
@@ -333,9 +437,6 @@ namespace ExcelTool.Domain.Handler
                     sheet.Cells[1, 10].Value = "交易类型";
                     sheet.Cells[1, 11].Value = "付款详情";
                     sheet.Cells[1, 12].Value = "绩效";
-
-
-
                     #endregion
 
                     #region 数据行
@@ -353,6 +454,9 @@ namespace ExcelTool.Domain.Handler
                         sheet.Cells[rowIndex, 7].Value = data.Total;
                         sheet.Cells[rowIndex, 8].Value = data._店铺;
                         sheet.Cells[rowIndex, 9].Value = data.Country;
+                        sheet.Cells[rowIndex, 10].Value = data._交易类型;
+                        sheet.Cells[rowIndex, 11].Value = data._付款详情;
+                        sheet.Cells[rowIndex, 12].Value = data._绩效;
                         rowIndex++;
                     }
                     #endregion
@@ -367,12 +471,56 @@ namespace ExcelTool.Domain.Handler
                     sheet.Column(7).Width = 10;
                     sheet.Column(8).Width = 26;
                     sheet.Column(9).Width = 10;
-                    sheet.Column(10).Width = 10;
-                    sheet.Column(11).Width = 10;
-                    sheet.Column(12).Width = 10;
+                    sheet.Column(10).Width = 16;
+                    sheet.Column(11).Width = 16;
+                    sheet.Column(12).Width = 16;
                     #endregion
                 }
 
+                // 打印店铺流水透视
+                if (list亚马逊店铺流水透视.Count > 0)
+                {
+                    var sheet = workbox.Worksheets.Add($"亚马逊店铺流水透视");
+
+
+                    #region 标题与内容与样式
+                    sheet.Cells[1, 1].Value = "店铺";
+                    sheet.Column(1).Width = 24;
+                    var colIdx = 2;
+                    foreach (var k in set店铺绩效指标)
+                    {
+                        sheet.Cells[1, colIdx].Value = k;
+                        sheet.Column(colIdx).Width = 12;
+                        colIdx++;
+                    }
+                    sheet.Cells[1, colIdx].Value = "总计";
+                    sheet.Column(colIdx).Width = 12;
+                    var rowIndex = 2;
+                    foreach (var _店铺名称 in list店铺名字)
+                    {
+                        sheet.Cells[rowIndex, 1].Value = _店铺名称;
+                        colIdx = 2;
+                        decimal total = 0;
+                        foreach (var _指标 in set店铺绩效指标)
+                        {
+                            var key流水透视 = $"{_店铺名称}{_指标}";
+                            if (dict亚马逊店铺流水透视.ContainsKey(key流水透视))
+                            {
+                                var item = dict亚马逊店铺流水透视[key流水透视];
+                                sheet.Cells[rowIndex, colIdx].Value = item._汇总;
+                                total += item._汇总;
+                            }
+                            else
+                            {
+                                sheet.Cells[rowIndex, colIdx].Value = 0;
+                            }
+                            colIdx++;
+                        }
+                        sheet.Cells[rowIndex, colIdx].Value = total;
+                        rowIndex++;
+                    }
+                    #endregion
+                }
                 package.Save();
             }
             #endregion
@@ -406,5 +554,12 @@ namespace ExcelTool.Domain.Handler
             });
         }
 
+    }
+
+    class _亚马逊店铺流水透视
+    {
+        public string _店铺 { get; set; }
+        public string _类别 { get; set; }
+        public decimal _汇总 { get; set; }
     }
 }
