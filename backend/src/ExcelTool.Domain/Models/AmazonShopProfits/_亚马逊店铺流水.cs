@@ -9,7 +9,8 @@
         public string OrderId { get; set; }
         public string Sku { get; set; }
         public string Description { get; set; }
-        public decimal Total { get; set; }
+        //public decimal Total { get; set; }
+        public string Total { get; set; }
         public string _店铺 { get; set; }
         public string _交易类型 { get; set; }
         public string _付款详情 { get; set; }

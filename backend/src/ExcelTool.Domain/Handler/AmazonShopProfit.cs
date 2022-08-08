@@ -25,6 +25,7 @@ namespace ExcelTool.Domain.Handler
         public string path店铺ASIN负责表;
         public string path平台费用表;
         public string path亚马逊汇总表各站点标题匹配表;
+        public string path千分符特殊表;
         public string path亚马逊店铺汇总表;
         protected string folder临时文件夹;
 
@@ -39,6 +40,7 @@ namespace ExcelTool.Domain.Handler
             path店铺流水压缩包 = p店铺流水压缩包;
             path亚马逊汇总表各站点标题匹配表 = p亚马逊汇总表各站点标题匹配表;
             path亚马逊店铺汇总表 = p亚马逊店铺汇总表;
+            //path千分符特殊表 = p亚马逊店铺汇总表;
             path店铺ASIN负责表 = p店铺ASIN负责表;
             path平台费用表 = p平台费用表;
             folder临时文件夹 = f临时文件夹;
@@ -114,15 +116,16 @@ namespace ExcelTool.Domain.Handler
                 //}
                 //ZipFile.ExtractToDirectory(path店铺流水压缩包, extractPath, Encoding.UTF8, true);
 
-                var extractPath = @"C:\Users\Leon\Desktop\亚马逊店铺流水\流水表";
+                var extractPath = @"C:\Users\User\Desktop\亚马逊店铺流水\亚马逊数据汇集";
                 //var extractPath = @"C:\Users\亚马逊汇总表各站点标题\Desktop\亚马逊数据汇集";
 
                 var countryDir = Directory.EnumerateDirectories(extractPath);
                 var csvConfig = new CsvConfiguration(CultureInfo.CurrentCulture)
                 {
-                    HasHeaderRecord = false
+                    HasHeaderRecord = false,
+
                 };
-                var decimalProperties = new HashSet<string>() { "Total" };
+                var decimalProperties = new HashSet<string>() { };
                 var countryTitleRowIndexMap = new Dictionary<string, int>();
                 countryTitleRowIndexMap.Add("土耳其", 7);
                 foreach (var subDir in countryDir)
@@ -130,6 +133,7 @@ namespace ExcelTool.Domain.Handler
                     var countryName = subDir.Split(Path.DirectorySeparatorChar).Last();
                     countryName = countryName.Replace("站", string.Empty);
                     countryNames.Add(countryName);
+
                     var fnames = Directory.GetFiles(subDir);
                     var columMap = list亚马逊汇总表各站点标题匹配.FirstOrDefault(x => x.Country == countryName);
                     if (columMap == null)
@@ -149,6 +153,16 @@ namespace ExcelTool.Domain.Handler
                         using var streamReader = File.OpenText(csvFilePath);
                         using var csvReader = new CsvReader(streamReader, csvConfig);
                         var _店铺名 = Path.GetFileNameWithoutExtension(csvFilePath);
+                        //if (_店铺名 == "亚马逊一良一日本站")
+                        //{
+                        //    var aaa = 1;
+                        //}
+                        if (countryName == "日本")
+                        {
+                            //csvConfig.Encoding = Encoding.Unicode;
+                            string text = System.IO.File.ReadAllText(csvFilePath, Encoding.UTF8);
+                            var aaa = 1;
+                        }
                         string value;
                         var index = 0;
                         var headerRowIndex = countryTitleRowIndexMap.ContainsKey(countryName) ? countryTitleRowIndexMap[countryName] : 8;
@@ -182,13 +196,18 @@ namespace ExcelTool.Domain.Handler
                                     {
                                         if (decimalProperties.Contains(indexPropertyMap[i]))
                                         {
+                                            //if (_店铺名 == "亚马逊博堃墨西哥站")
+                                            //{
+                                            //    var aaa = 1;
+                                            //}
                                             decimal v = 0;
+                                            value = value.Replace(',', '.');
                                             decimal.TryParse(value, out v);
                                             ts店铺流水.GetProperty(indexPropertyMap[i]).SetValue(data, v, null);
                                         }
                                         else
                                         {
-                                            ts店铺流水.GetProperty(indexPropertyMap[i]).SetValue(data, value, null);
+                                            ts店铺流水.GetProperty(indexPropertyMap[i]).SetValue(data, string.IsNullOrWhiteSpace(value) ? value : value.Trim(), null);
                                         }
                                     }
                                 }
@@ -239,18 +258,18 @@ namespace ExcelTool.Domain.Handler
                                 list亚马逊店铺流水.Add(data);
 
                                 var key流水透视 = $"{data._店铺}{data._绩效}";
-                                _亚马逊店铺流水透视 item店铺流水透视 = null;
-                                if (!dict亚马逊店铺流水透视.ContainsKey(key流水透视))
-                                {
-                                    item店铺流水透视 = new _亚马逊店铺流水透视() { _店铺 = data._店铺, _类别 = data._绩效, _汇总 = data.Total };
-                                    dict亚马逊店铺流水透视.Add(key流水透视, item店铺流水透视);
-                                    list亚马逊店铺流水透视.Add(item店铺流水透视);
-                                }
-                                else
-                                {
-                                    item店铺流水透视 = dict亚马逊店铺流水透视[key流水透视];
-                                    item店铺流水透视._汇总 += data.Total;
-                                }
+                                //_亚马逊店铺流水透视 item店铺流水透视 = null;
+                                //if (!dict亚马逊店铺流水透视.ContainsKey(key流水透视))
+                                //{
+                                //    item店铺流水透视 = new _亚马逊店铺流水透视() { _店铺 = data._店铺, _类别 = data._绩效, _汇总 = data.Total };
+                                //    dict亚马逊店铺流水透视.Add(key流水透视, item店铺流水透视);
+                                //    list亚马逊店铺流水透视.Add(item店铺流水透视);
+                                //}
+                                //else
+                                //{
+                                //    item店铺流水透视 = dict亚马逊店铺流水透视[key流水透视];
+                                //    item店铺流水透视._汇总 += data.Total;
+                                //}
 
                             }
                         }
@@ -420,7 +439,7 @@ namespace ExcelTool.Domain.Handler
                 }
 
                 // 打印店铺流水
-                if (list亚马逊店铺流水.Count < 0)
+                if (list亚马逊店铺流水.Count > 0)
                 {
                     var sheet = workbox.Worksheets.Add($"亚马逊店铺流水");
 
@@ -478,7 +497,7 @@ namespace ExcelTool.Domain.Handler
                 }
 
                 // 打印店铺流水透视
-                if (list亚马逊店铺流水透视.Count > 0)
+                if (list亚马逊店铺流水透视.Count < 0)
                 {
                     var sheet = workbox.Worksheets.Add($"亚马逊店铺流水透视");
 
