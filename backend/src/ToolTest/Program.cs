@@ -12,8 +12,8 @@ namespace ToolTest
     internal class Program
     {
         //public static string exportFolder = @"C:\Users\Leon\Desktop\ExcelToolExport";
-        public static string exportFolder = @"C:\Users\Leon\Desktop\ExcelToolExport";
-        public static string _基础数据文件夹 = @"C:\Users\Leon\Desktop\ExcelToolBasicFile";
+        public static string exportFolder = @"C:\Users\hp\Desktop\ExcelToolExport";
+        public static string _基础数据文件夹 = @"C:\Users\hp\Desktop\ExcelToolBasicFile";
         public static void Main(string[] args)
         {
             if (!Directory.Exists(exportFolder))
@@ -31,23 +31,20 @@ namespace ToolTest
 
         public static async Task MainAsync(string[] args)
         {
-            //await downloadBasicFiles();
-            //object str = null;
-            //var aaa = $"{str}";
-            //var a1 = 1;
+            await downloadBasicFiles();
 
             #region 赔偿退货订单报表
-            //var p退货订单 = @"C:\Users\User\Desktop\退货5月整月(1).xlsx";
-            //var p赔偿订单 = @"C:\Users\User\Desktop\赔偿5月整月(1).xlsx";
-            //var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
-            //var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
-            //var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
-            //var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";
-            //var pMSKU2SKU = $"{_基础数据文件夹}/MSKU_SKU匹配表.xlsx";
-            //var pSKU价格匹配 = $"{_基础数据文件夹}/SKU_价格匹配表.xlsx";
-            //var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, p汇率匹配, exportFolder);
-            //var ms = await handler.Handle();
-            //saveExport(ms, "export.xlsx");
+            var p退货订单 = @"C:\Users\hp\Desktop\退货9.7.xlsx";
+            var p赔偿订单 = @"C:\Users\hp\Desktop\赔偿9.7.xlsx";
+            var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
+            var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
+            var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
+            var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";
+            var pMSKU2SKU = $"{_基础数据文件夹}/MSKU_SKU匹配表.xlsx";
+            var pSKU价格匹配 = $"{_基础数据文件夹}/SKU_价格匹配表.xlsx";
+            var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, p汇率匹配, exportFolder);
+            var ms = await handler.Handle();
+            saveExport(ms, "export.xlsx");
             #endregion
 
             #region 亚马逊索赔
@@ -59,7 +56,7 @@ namespace ToolTest
             #endregion
 
             #region 空海运差异报表
-            //var p空海运差异表 = @"C:\Users\User\Desktop\7月份空海运差异报表.xlsx";
+            //var p空海运差异表 = @"C:\Users\hp\Desktop\7月份空海运差异报表.xlsx";
             //var p空海运差异表 = @"C:\Users\Leon\Desktop\11.xlsx";
             //var handler = new FreightChargeHandler(p空海运差异表, exportFolder);
             //var ms = await handler.Handle();
@@ -67,15 +64,15 @@ namespace ToolTest
             #endregion
 
             #region 亚马逊店铺利润表
-            //var p店铺流水压缩包 = @"C:\Users\Leon\Desktop\亚马逊流水汇总表(第一张表).zip";
-            var p店铺流水压缩包 = @"C:\Users\Leon\Desktop\aaa.zip";
-            var p亚马逊汇总表各站点标题匹配表 = @"C:\Users\Leon\Desktop\亚马逊店铺流水\亚马逊汇总表各站点标题.xlsx";
-            var p亚马逊店铺汇总表 = @"C:\Users\Leon\Desktop\亚马逊店铺流水\店铺汇总表.xlsx";
-            //var p店铺ASIN负责表 = @"C:\Users\Leon\Desktop\源数据表\店铺-ASIN负责人表.xlsx";
-            //var p平台费用表 = @"C:\Users\Leon\Desktop\源数据表\6月平台费用(2) - 副本.xlsx";
-            var handler = new AmazonShopProfit(p店铺流水压缩包, p亚马逊汇总表各站点标题匹配表, p亚马逊店铺汇总表, null, null, exportFolder);
-            var ms = await handler.Handle();
-            saveExport(ms, "export.xlsx");
+            ////var p店铺流水压缩包 = @"C:\Users\Leon\Desktop\亚马逊流水汇总表(第一张表).zip";
+            //var p店铺流水压缩包 = @"C:\Users\Leon\Desktop\aaa.zip";
+            //var p亚马逊汇总表各站点标题匹配表 = @"C:\Users\Leon\Desktop\亚马逊店铺流水\亚马逊汇总表各站点标题.xlsx";
+            //var p亚马逊店铺汇总表 = @"C:\Users\Leon\Desktop\亚马逊店铺流水\店铺汇总表.xlsx";
+            ////var p店铺ASIN负责表 = @"C:\Users\Leon\Desktop\源数据表\店铺-ASIN负责人表.xlsx";
+            ////var p平台费用表 = @"C:\Users\Leon\Desktop\源数据表\6月平台费用(2) - 副本.xlsx";
+            //var handler = new AmazonShopProfit(p店铺流水压缩包, p亚马逊汇总表各站点标题匹配表, p亚马逊店铺汇总表, null, null, exportFolder);
+            //var ms = await handler.Handle();
+            //saveExport(ms, "export.xlsx");
             #endregion
         }
 

@@ -826,6 +826,11 @@ namespace ExcelTool.Domain.Handler.Compensations
         {
             listSKU匹配.ForEach(it =>
             {
+                if (string.IsNullOrWhiteSpace(it.SKU) || string.IsNullOrWhiteSpace(it.MSKU))
+                {
+                    return;
+                }
+
                 dictMSKU2SKU映射[it.MSKU] = it.SKU;
             });
             list价格匹配.ForEach(it =>
