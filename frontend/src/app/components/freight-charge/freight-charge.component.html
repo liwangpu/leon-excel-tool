@@ -1,9 +1,15 @@
 <form nz-form nzLayout="inline" [formGroup]="form">
-    <nz-form-item>
-        <nz-form-label>赔偿单</nz-form-label>
-        <nz-form-control>
-            <workstation-shared-uploader accept=".xlsx" formControlName="bill">
-            </workstation-shared-uploader>
-        </nz-form-control>
-    </nz-form-item>
+  <nz-form-item>
+    <nz-form-label>空海运差异比例</nz-form-label>
+    <nz-form-control>
+      <workstation-shared-uploader accept=".xlsx" formControlName="freightChargeFile">
+      </workstation-shared-uploader>
+    </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+    <nz-form-control>
+      <button nz-button nzType="primary" (click)="upload()" [disabled]="!form?.valid">上传</button>
+    </nz-form-control>
+  </nz-form-item>
 </form>

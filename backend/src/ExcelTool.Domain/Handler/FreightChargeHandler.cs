@@ -64,7 +64,6 @@ namespace ExcelTool.Domain.Handler
                     list空海运差异数据.Add(it);
                 });
 
-                var aa = 1;
                 groupMap.ForEach(kv =>
                 {
                     var items = kv.Value;

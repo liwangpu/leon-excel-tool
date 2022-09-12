@@ -68,8 +68,6 @@ namespace ExcelTool.Commands.StockAnalysiss
                 dict分析结果.Add($"{depName}{ res2.type}", res2);
             });
 
-            var aaa = 1;
-
             list源数据.ForEach(item =>
             {
                 _结果类型 type = item._差异数量 > 0 ? _结果类型._南棠ERP可用库存大于亚马逊后台库存 : _结果类型._南棠ERP可用库存小于亚马逊后台库存;

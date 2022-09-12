@@ -180,6 +180,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 var sheetDatas = mapper.Take<_退货订单>().Select(x => x.Value).ToList();
                 sheetDatas.ForEach(it =>
                 {
+
                     it._南棠店铺名称 = util店铺更名工具._标准化店铺名称(it._国家, it._领星店铺名称);
                     utilSKU成本价匹配.匹配数据(it);
                     it._数据处理(util退货处理方案匹配._匹配操作(it));
@@ -221,10 +222,6 @@ namespace ExcelTool.Domain.Handler.Compensations
             #region 处理退货订单数据
             list退货订单.ForEach(it =>
             {
-                //if (it.MSKU == "I7-8U0E-S6TA")
-                //{
-                //    var a = 1;
-                //}
                 if (dict退货订单统计项映射.ContainsKey(it.Key))
                 {
                     var ditem = dict退货订单统计项映射[it.Key];
@@ -413,16 +410,17 @@ namespace ExcelTool.Domain.Handler.Compensations
         private static void _生成退货订单Sheet(ExcelWorksheet sheet, List<_退货订单统计项> datas)
         {
             #region 标题列
-            sheet.Cells[2, 3].Value = "领星店铺";
-            sheet.Cells[2, 4].Value = "南棠店铺";
-            sheet.Cells[2, 5].Value = "MSKU";
-            sheet.Cells[2, 6].Value = "SKU";
-            sheet.Cells[2, 7].Value = "数量";
-            sheet.Cells[2, 8].Value = "采购成本单价";
-            sheet.Cells[2, 9].Value = "盘入单号";
-            sheet.Cells[2, 10].Value = "审批单号";
-            sheet.Cells[2, 11].Value = "备注";
-            sheet.Cells[2, 12].Value = "部门";
+            sheet.Cells[2, 1].Value = "领星店铺";
+            sheet.Cells[2, 2].Value = "南棠店铺";
+            sheet.Cells[2, 3].Value = "MSKU";
+            sheet.Cells[2, 4].Value = "SKU";
+            sheet.Cells[2, 5].Value = "订单号";
+            sheet.Cells[2, 6].Value = "数量";
+            sheet.Cells[2, 7].Value = "采购成本单价";
+            sheet.Cells[2, 8].Value = "盘入单号";
+            sheet.Cells[2, 9].Value = "审批单号";
+            sheet.Cells[2, 10].Value = "备注";
+            sheet.Cells[2, 11].Value = "部门";
             #endregion
 
             #region 数据列
@@ -432,16 +430,17 @@ namespace ExcelTool.Domain.Handler.Compensations
             for (int idx = 0; idx < datas.Count; idx++)
             {
                 var data = datas[idx];
-                sheet.Cells[rowIndex, 3].Value = data._领星店铺名称;
-                sheet.Cells[rowIndex, 4].Value = data._南棠店铺名称;
+                sheet.Cells[rowIndex, 1].Value = data._领星店铺名称;
+                sheet.Cells[rowIndex, 2].Value = data._南棠店铺名称;
+                sheet.Cells[rowIndex, 3].Value = data.MSKU;
                 if (!data._无匹配SKU)
                 {
-                    sheet.Cells[rowIndex, 5].Value = data.MSKU;
+                    sheet.Cells[rowIndex, 4].Value = data.SKU;
+                    sheet.Cells[rowIndex, 7].Value = data._采购成本单价;
                 }
-                sheet.Cells[rowIndex, 6].Value = data.SKU;
-                sheet.Cells[rowIndex, 7].Value = data._数量汇总;
-                sheet.Cells[rowIndex, 8].Value = data._采购成本单价;
-                sheet.Cells[rowIndex, 12].Value = data._部门;
+                sheet.Cells[rowIndex, 5].Value = data._订单号;
+                sheet.Cells[rowIndex, 6].Value = data._数量汇总;
+                sheet.Cells[rowIndex, 11].Value = data._部门;
                 rowIndex++;
             }
             #endregion
@@ -451,15 +450,16 @@ namespace ExcelTool.Domain.Handler.Compensations
             sheet.Column(2).Width = 30;
             sheet.Column(3).Width = 30;
             sheet.Column(4).Width = 18;
-            sheet.Column(5).Width = 12;
-            sheet.Column(6).Width = 14;
-            sheet.Column(7).Width = 16;
+            sheet.Column(5).Width = 18;
+            sheet.Column(6).Width = 12;
+            sheet.Column(7).Width = 14;
             sheet.Column(8).Width = 16;
             sheet.Column(9).Width = 16;
-            sheet.Column(10).Width = 14;
+            sheet.Column(10).Width = 16;
+            sheet.Column(11).Width = 14;
             sheet.Row(1).Height = 46;
 
-            using (var rng = sheet.Cells[1, 1, 1, 12])
+            using (var rng = sheet.Cells[1, 1, 1, 11])
             {
                 rng.Merge = true;
                 rng.Style.VerticalAlignment = ExcelVerticalAlignment.Center;//垂直居中
@@ -470,7 +470,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 rng.Style.Font.Size = 14;
             }
 
-            using (var rng = sheet.Cells[1, 1, rowIndex - 1, 12])
+            using (var rng = sheet.Cells[1, 1, rowIndex - 1, 11])
             {
                 rng.Style.Border.Top.Style = ExcelBorderStyle.Thin;
                 rng.Style.Border.Right.Style = ExcelBorderStyle.Thin;
@@ -478,7 +478,7 @@ namespace ExcelTool.Domain.Handler.Compensations
                 rng.Style.Border.Left.Style = ExcelBorderStyle.Thin;
             }
 
-            using (var rng = sheet.Cells[2, 1, 2, 12])
+            using (var rng = sheet.Cells[2, 1, 2, 11])
             {
                 var colFromHex = System.Drawing.ColorTranslator.FromHtml("#FFFF00");
                 rng.Style.Fill.PatternType = ExcelFillStyle.Solid;
@@ -743,6 +743,14 @@ namespace ExcelTool.Domain.Handler.Compensations
     class _退货订单统计项 : 赔偿退货统计项
     {
         public List<_退货订单> Items { get; protected set; } = new List<_退货订单>();
+        public string _订单号
+        {
+            get
+            {
+                if (Items.Count < 1) { return null; }
+                return string.Join(",", Items.Select(x => x._订单号).ToList());
+            }
+        }
 
         public _退货订单统计项()
             : base()
@@ -826,7 +834,7 @@ namespace ExcelTool.Domain.Handler.Compensations
         {
             listSKU匹配.ForEach(it =>
             {
-                if (string.IsNullOrWhiteSpace(it.SKU) || string.IsNullOrWhiteSpace(it.MSKU))
+                if (string.IsNullOrWhiteSpace(it.MSKU))
                 {
                     return;
                 }

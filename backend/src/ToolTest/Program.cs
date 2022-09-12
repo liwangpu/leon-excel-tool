@@ -12,8 +12,8 @@ namespace ToolTest
     internal class Program
     {
         //public static string exportFolder = @"C:\Users\Leon\Desktop\ExcelToolExport";
-        public static string exportFolder = @"C:\Users\hp\Desktop\ExcelToolExport";
-        public static string _基础数据文件夹 = @"C:\Users\hp\Desktop\ExcelToolBasicFile";
+        public static string exportFolder = @"C:\Users\Leon\Desktop\ExcelToolExport";
+        public static string _基础数据文件夹 = @"C:\Users\Leon\Desktop\ExcelToolBasicFile";
         public static void Main(string[] args)
         {
             if (!Directory.Exists(exportFolder))
@@ -31,11 +31,11 @@ namespace ToolTest
 
         public static async Task MainAsync(string[] args)
         {
-            await downloadBasicFiles();
+            //await downloadBasicFiles();
 
             #region 赔偿退货订单报表
-            var p退货订单 = @"C:\Users\hp\Desktop\退货9.7.xlsx";
-            var p赔偿订单 = @"C:\Users\hp\Desktop\赔偿9.7.xlsx";
+            var p退货订单 = @"C:\Users\Leon\Desktop\8月\退货9.1-9.9.xlsx";
+            var p赔偿订单 = @"C:\Users\Leon\Desktop\8月\赔偿9.1-9.9.xlsx";
             var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
             var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
             var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
@@ -56,8 +56,8 @@ namespace ToolTest
             #endregion
 
             #region 空海运差异报表
-            //var p空海运差异表 = @"C:\Users\hp\Desktop\7月份空海运差异报表.xlsx";
-            //var p空海运差异表 = @"C:\Users\Leon\Desktop\11.xlsx";
+            //var p空海运差异表 = @"C:\Users\Leon\Desktop\8月\11.xlsx";
+            ////var p空海运差异表 = @"C:\Users\Leon\Desktop\11.xlsx";
             //var handler = new FreightChargeHandler(p空海运差异表, exportFolder);
             //var ms = await handler.Handle();
             //saveExport(ms, "export1.xlsx");

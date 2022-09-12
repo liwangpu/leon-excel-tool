@@ -1,4 +1,5 @@
-﻿using ExcelTool.Commands.StockAnalysiss;
+﻿using ExcelTool.Commands.FreightCharges;
+using ExcelTool.Commands.StockAnalysiss;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
@@ -14,6 +15,13 @@ namespace ExcelTool.Controllers
         public FreightChargeController(IMediator mediator)
         {
             this.mediator = mediator;
+        }
+
+        [HttpPost("FreightChargeAnylysis")]
+        public async Task<IActionResult> FreightChargeAnylysis([FromForm] FreightChargeCommand command)
+        {
+            var result = await mediator.Send(command);
+            return File(result.ToArray(), "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", ".xlsx");
         }
 
         [HttpPost("DifferenceAnylysis")]
