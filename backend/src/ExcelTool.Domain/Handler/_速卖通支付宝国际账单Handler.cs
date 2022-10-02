@@ -61,7 +61,11 @@ namespace ExcelTool.Domain.Handler
                             string stringField = csv.GetField<string>(0);
                             if (!inDataRow)
                             {
-                                if (csv.GetField<string>(0) == "Time" && csv.GetField<string>(1) == "Type" && csv.GetField<string>(2) == "Reference No." && csv.GetField<string>(3) == "Alipay Transaction No.")
+                                var timeField = csv.GetField<string>(0);
+                                var typeField = csv.GetField<string>(1);
+                                var referenceNoField = csv.GetField<string>(2);
+                                var alipayTransactionNoField = csv.GetField<string>(3);
+                                if ((timeField == "Time" || timeField == "时间") && (typeField == "Type" || typeField == "类型") && (referenceNoField == "Reference No." || referenceNoField == "流水号") && (alipayTransactionNoField == "Alipay Transaction No." || alipayTransactionNoField == "支付宝交易号|商家订单号"))
                                 {
                                     inDataRow = true;
                                 }
@@ -99,19 +103,19 @@ namespace ExcelTool.Domain.Handler
 
                     #region 标题行
                     sheet.Cells[1, 1].Value = "店铺名称";
-                    sheet.Cells[1, 2].Value = "Time";
-                    sheet.Cells[1, 3].Value = "Type";
-                    sheet.Cells[1, 4].Value = "Reference No.";
-                    sheet.Cells[1, 5].Value = "Alipay Transaction No.";
-                    sheet.Cells[1, 6].Value = "Amount";
-                    sheet.Cells[1, 7].Value = "Balance";
-                    sheet.Cells[1, 8].Value = "Currency";
-                    sheet.Cells[1, 9].Value = "Remarks";
-                    sheet.Cells[1, 10].Value = "Merchant Transaction No.";
-                    sheet.Cells[1, 11].Value = "Product Name";
-                    sheet.Cells[1, 12].Value = "Counterparty Name";
-                    sheet.Cells[1, 13].Value = "Counterparty Account";
-                    sheet.Cells[1, 14].Value = "Exchange Rate";
+                    sheet.Cells[1, 2].Value = "时间";
+                    sheet.Cells[1, 3].Value = "类型";
+                    sheet.Cells[1, 4].Value = "流水号";
+                    sheet.Cells[1, 5].Value = "支付宝交易号|商家订单号";
+                    sheet.Cells[1, 6].Value = "金额";
+                    sheet.Cells[1, 7].Value = "余额";
+                    sheet.Cells[1, 8].Value = "币种";
+                    sheet.Cells[1, 9].Value = "备注";
+                    sheet.Cells[1, 10].Value = "商家订单号";
+                    sheet.Cells[1, 11].Value = "商品名称";
+                    sheet.Cells[1, 12].Value = "对方名称";
+                    sheet.Cells[1, 13].Value = "对方账号";
+                    sheet.Cells[1, 14].Value = "汇率";
 
                     #endregion
 
