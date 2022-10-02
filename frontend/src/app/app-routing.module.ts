@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 import { standardSubAppRouterGenerator } from 'workstation-shared/starter';
+import { AlipayIntelBillCollectComponent } from './components/alipay-intel-bill-collect/alipay-intel-bill-collect.component';
 import { AmazonCompensationComponent } from './components/amazon-compensation/amazon-compensation.component';
 import { CompensationComponent } from './components/compensation/compensation.component';
 import { FreightChargeComponent } from './components/freight-charge/freight-charge.component';
@@ -17,6 +18,7 @@ const routes: Routes = standardSubAppRouterGenerator([
     { path: 'stock-difference-analysis', component: StockDifferenceAnalysisComponent },
     { path: 'stock-difference-visual', component: StockDifferenceChartComponent },
     { path: 'fregith-charge', component: FreightChargeComponent },
+    { path: 'alipay-intel-bill-collect', component: AlipayIntelBillCollectComponent },
     { path: '', pathMatch: 'full', redirectTo: 'home' }
 ]);
 

@@ -21,6 +21,7 @@ import { StockDifferenceChartComponent } from './components/stock-difference-cha
 import { DepartmentChartComponent } from './components/stock-difference-chart/department-chart/department-chart.component';
 import { AmazonCompensationComponent } from './components/amazon-compensation/amazon-compensation.component';
 import { FreightChargeComponent } from './components/freight-charge/freight-charge.component';
+import { AlipayIntelBillCollectComponent } from './components/alipay-intel-bill-collect/alipay-intel-bill-collect.component';
 
 const icons: Array<IconDefinition> = [];
 
@@ -34,7 +35,8 @@ const icons: Array<IconDefinition> = [];
         StockDifferenceChartComponent,
         DepartmentChartComponent,
         AmazonCompensationComponent,
-        FreightChargeComponent
+        FreightChargeComponent,
+        AlipayIntelBillCollectComponent
     ],
     imports: [
         StarterModule.forRoot(),

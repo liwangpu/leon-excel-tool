@@ -48,6 +48,17 @@ export class LayoutStartupService implements ILayoutStartup {
                     }
                 ]
             },
+            {
+              key: 'aliExpress',
+              title: '速卖通',
+              children: [
+                  {
+                      key: 'alipay-intel-bill-collect',
+                      title: '支付宝国际账单汇总',
+                      url: '/alipay-intel-bill-collect',
+                  }
+              ]
+          },
         ];
     }
 

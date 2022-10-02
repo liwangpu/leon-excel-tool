@@ -34,17 +34,17 @@ namespace ToolTest
             //await downloadBasicFiles();
 
             #region 赔偿退货订单报表
-            var p退货订单 = @"C:\Users\Leon\Desktop\8月\退货9.1-9.9.xlsx";
-            var p赔偿订单 = @"C:\Users\Leon\Desktop\8月\赔偿9.1-9.9.xlsx";
-            var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
-            var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
-            var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
-            var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";
-            var pMSKU2SKU = $"{_基础数据文件夹}/MSKU_SKU匹配表.xlsx";
-            var pSKU价格匹配 = $"{_基础数据文件夹}/SKU_价格匹配表.xlsx";
-            var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, p汇率匹配, exportFolder);
-            var ms = await handler.Handle();
-            saveExport(ms, "export.xlsx");
+            //var p退货订单 = @"C:\Users\Leon\Desktop\8月\退货9.1-9.9.xlsx";
+            //var p赔偿订单 = @"C:\Users\Leon\Desktop\8月\赔偿9.1-9.9.xlsx";
+            //var p汇率匹配 = $"{_基础数据文件夹}/汇率匹配表.xlsx";
+            //var p处理方案 = $"{_基础数据文件夹}/退货赔偿处理方案.xlsx";
+            //var p部门映射 = $"{_基础数据文件夹}/店铺运营配置表.xlsx";
+            //var p店铺更名匹配 = $"{_基础数据文件夹}/领星店铺更名为南棠店铺匹配表.xlsx";
+            //var pMSKU2SKU = $"{_基础数据文件夹}/MSKU_SKU匹配表.xlsx";
+            //var pSKU价格匹配 = $"{_基础数据文件夹}/SKU_价格匹配表.xlsx";
+            //var handler = new CompensationHandler(p赔偿订单, p退货订单, p处理方案, p部门映射, p店铺更名匹配, pMSKU2SKU, pSKU价格匹配, p汇率匹配, exportFolder);
+            //var ms = await handler.Handle();
+            //saveExport(ms, "export.xlsx");
             #endregion
 
             #region 亚马逊索赔
@@ -73,6 +73,13 @@ namespace ToolTest
             //var handler = new AmazonShopProfit(p店铺流水压缩包, p亚马逊汇总表各站点标题匹配表, p亚马逊店铺汇总表, null, null, exportFolder);
             //var ms = await handler.Handle();
             //saveExport(ms, "export.xlsx");
+            #endregion
+
+            #region 速卖通支付宝国际账单汇总
+            var p压缩包文件夹 = @"C:\Users\Leon\Desktop\支付宝国际账单10.1";
+            var handler = new _速卖通支付宝国际账单Handler(p压缩包文件夹,exportFolder);
+            var ms = await handler.Handle();
+            saveExport(ms, "export.xlsx");
             #endregion
         }
 

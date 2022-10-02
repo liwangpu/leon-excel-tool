@@ -1,0 +1,15 @@
+<form nz-form nzLayout="inline" [formGroup]="form">
+  <nz-form-item>
+      <nz-form-label nzRequired>账单压缩包</nz-form-label>
+      <nz-form-control>
+          <workstation-shared-uploader accept=".zip" multiple="true" formControlName="packages">
+          </workstation-shared-uploader>
+      </nz-form-control>
+  </nz-form-item>
+
+  <nz-form-item>
+      <nz-form-control>
+          <button nz-button nzType="primary" (click)="upload()" [disabled]="!form?.valid">上传</button>
+      </nz-form-control>
+  </nz-form-item>
+</form>
